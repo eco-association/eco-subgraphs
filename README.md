@@ -9,6 +9,8 @@ Running the subgraph in development is a task on it's own, in order to run the s
 
 Once you have the address, paste it in [networks.json](./networks.json) under 'localhost', then run `yarn network` to sync the `subgraph.yaml` file.
 
+Start up the graph node from the submodule by running the command `yarn graph-node` (if you haven't added the submodule yet, run `git submodule update --init`)
+
 Once you start up the graph-node, run `yarn create-local` once to create your subgraph on the local node. Then to deploy (or redeploy after making changes), run `yarn deploy-local`.
 
 If you make changes to entities in `schema.graphql` or add templates or data sources to `subgraph.yaml`, run `yarn codegen` to generate AssemblyScript code before working on mappings.

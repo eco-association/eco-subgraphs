@@ -2,6 +2,7 @@
     "name": "Policy",
     "license": "UNLICENSED",
     "scripts": {
+        "graph-node": "node scripts/runGraphNode.js",
         "network": "node scripts/setupNetwork.js :",
         "codegen": "graph codegen",
         "build": "graph build",
