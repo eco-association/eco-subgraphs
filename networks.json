@@ -1,0 +1,8 @@
+{
+    "kovan": {
+        "TimedPolicies": "0x45827a55D1B0F4327D0c37df44B7845350df43e9"
+    },
+    "localhost": {
+        "TimedPolicies": "0x2f3Cb31b751E71c6f432fD63296137E085B2E46C"
+    }
+}
