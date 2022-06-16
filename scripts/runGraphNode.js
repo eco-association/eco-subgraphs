@@ -1,7 +1,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 /**
  * run the graph node locally
@@ -28,18 +28,22 @@ function runGraphNode() {
 
     // now run the graph node using exec
     
-    exec('docker-compose up', {cwd: path.join(pathToNode, '/docker/') }, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Graph Node error: ${error.message}`);
-            return;
-        }
-        
-        if (stderr) {
-            console.error(`Graph Node stderr: ${stderr}`);
-            return;
-        }
-        
-        console.log(stdout);
+    const graphNode = spawn('docker-compose', ['up'], {cwd: path.join(pathToNode, '/docker/') });
+
+    graphNode.on('exit', function (code, signal) {
+        console.log(`graph node exited with code ${code} and signal ${signal}`);
+    });
+
+    graphNode.on('error', function (error) {
+        console.log(`graph node error: ${error}`);
+    });
+
+    graphNode.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
+      
+    graphNode.stderr.on('data', (data) => {
+        console.error(`Graph Node stderr: ${data.toString()}`);
     });
 
 }
