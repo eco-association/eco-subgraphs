@@ -1,46 +1,50 @@
 
 "entity for an ECO generation"
 type Generation @entity(immutable: true) {
-    id: Bytes!
-    num: BigInt!
+    id: String! "generation number"
     policyProposal: PolicyProposal! @derivedFrom(field: "generation")
+    policyVote: PolicyVotes! @derivedFrom(field: "generation")
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
 }
 
 "Community Support entities"
-type PolicyProposal @entity {
+type PolicyProposal @entity(immutable: true) {
     id: Bytes! "address"
-    generation: Generation!
+    generation: Generation
     blockNumber: BigInt!
 }
-type CommunityProposal @entity(immutable: true) {
-    id: Bytes! "address"
+
+type CommunityProposal @entity {
+    id: String! "address"
     proposer: Bytes!
     name: String!
     description: String!
     url: String!
     generation: Generation
     reachedSupportThreshold: Boolean!
+    refunded: Boolean!
     support: [CommunityProposalSupport!]! @derivedFrom(field: "proposal")
 }
+
 type CommunityProposalSupport @entity {
-    id: Bytes!
+    id: String!
     supporter: Bytes!
-    proposal: CommunityProposal!
+    proposal: CommunityProposal
     amount: BigInt!
 }
 
 "Community Vote entities"
 type PolicyVotes @entity(immutable: true) {
     id: Bytes! "address"
-    generation: Generation!
+    generation: Generation
     blockNumber: BigInt!
-    proposal: CommunityProposal!
+    proposal: CommunityProposal
     votes: [CommunityProposalVote!]! @derivedFrom(field: "policyVote")
 }
+
 type CommunityProposalVote @entity {
     id: Bytes!
-    policyVote: PolicyVotes! 
+    policyVote: PolicyVotes
     voter: Bytes!
     vote: Boolean!
     amount: BigInt!

@@ -6,7 +6,7 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x3222dF4898A3f19a3422CB79bC970E86A9dEe4F6"
+      address: "0x5f0F73712c6b5a63AbbE489680cf746F206C5687"
       abi: TimedPolicies
     mapping:
       kind: ethereum/events
@@ -46,8 +46,14 @@ templates:
       eventHandlers:
         - event: ProposalAdded(address,address)
           handler: handleProposalAdded
+        - event: ProposalSupported(address,address)
+          handler: handleProposalSupported
+        - event: ProposalUnsupported(address,address)
+          handler: handleProposalUnsupported
         - event: SupportThresholdReached(address)
           handler: handleSupportThresholdReached
+        - event: ProposalRefunded(address,address)
+          handler: handleProposalRefunded
         - event: VotingStarted(address)
           handler: handleVotingStarted
       file: ./src/governance/mapping.ts
