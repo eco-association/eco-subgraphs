@@ -3,14 +3,14 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 
+
 /**
  * run the graph node locally
  * 
  * before running this script, ensure both docker and the local blockchain on localhost:8545 are running
  */
 
-
-function runGraphNode() {
+function main() {
 
     const pathToNode = path.resolve('./graph-node/');
 
@@ -26,12 +26,53 @@ function runGraphNode() {
         fs.rmSync(pathToData, { recursive: true, force: true });
     }
 
-    // now run the graph node using exec
+    const options = {
+        cwd: path.join(pathToNode, '/docker/') 
+    }
+
+    resetGraphNode(options);
+}
+
+function resetGraphNode(options) {
+    console.log('resetting graph node container');
+    // reset container and images from last build by running docker-compose down
+    const resetNode = spawn('docker-compose', ['down'], options);
+
+    resetNode.on('error', function (error) {
+        console.log(`graph node reset error: ${error}`);
+    });
+
+    resetNode.stdout.on('data', (data) => {
+        console.log(data.toString());
+    });
     
-    const graphNode = spawn('docker-compose', ['up'], {cwd: path.join(pathToNode, '/docker/') });
+    resetNode.stderr.on('data', (data) => {
+        console.error(data.toString());
+    });
+
+    resetNode.on('exit', function (code, signal) {
+        if (code === 0) {
+            console.log('graph node reset successfully');
+
+            resetNode.stdout.removeAllListeners();
+            resetNode.stderr.removeAllListeners();
+            resetNode.removeAllListeners();
+
+            runGraphNode(options);
+        }
+        else {
+            console.log('Graph node reset failed');
+        }
+    });
+}
+
+function runGraphNode(options) {
+    // now run the graph node using spawn
+    const graphNode = spawn('docker-compose', ['up'], options);
 
     graphNode.on('exit', function (code, signal) {
-        console.log(`graph node exited with code ${code} and signal ${signal}`);
+        graphNode.removeAllListeners();
+        process.exit(0);
     });
 
     graphNode.on('error', function (error) {
@@ -41,10 +82,21 @@ function runGraphNode() {
     graphNode.stdout.on('data', (data) => {
         console.log(data.toString());
     });
-      
+    
     graphNode.stderr.on('data', (data) => {
-        console.error(`Graph Node stderr: ${data.toString()}`);
+        console.error(data.toString());
     });
 
+    // shut down gracefully
+    process.on('SIGINT', () => {
+        console.log('\nKilling graph node nicely');
+
+        graphNode.stdout.removeAllListeners();
+        graphNode.stderr.removeAllListeners();
+
+        graphNode.kill();
+    });
 }
-runGraphNode();
+
+
+main();
