@@ -28,7 +28,8 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void 
     let newPolicyProposals = new PolicyProposal(policyProposalsAddress);
     newPolicyProposals.generation = generationNum.toString();
     newPolicyProposals.proposalEnds = policyProposalsContract.proposalEnds();
-    newPolicyProposals.blockNumber = policyProposalsContract.blockNumber()
+    newPolicyProposals.blockNumber = policyProposalsContract.blockNumber();
+    newPolicyProposals.totalVotingPower = policyProposalsContract.totalVotingPower(newPolicyProposals.blockNumber);
     newPolicyProposals.save();
     
 }
@@ -101,7 +102,7 @@ export function handleVotingStarted(event: VotingStarted): void {
 
     // new entity for vote
     let newPolicyVotes = new PolicyVote(event.params.contractAddress);
-    
+
     // get generation from policyProposals
     let policyProposal = PolicyProposal.load(event.address);
     if (policyProposal) {
@@ -113,6 +114,7 @@ export function handleVotingStarted(event: VotingStarted): void {
     newPolicyVotes.voteEnds = policyVoteContract.voteEnds();
     newPolicyVotes.ENACTION_DELAY = policyVoteContract.ENACTION_DELAY();
     newPolicyVotes.blockNumber = policyVoteContract.blockNumber();
+    newPolicyVotes.totalVotingPower = policyVoteContract.totalVotingPower(newPolicyVotes.blockNumber);
     newPolicyVotes.proposal = policyVoteContract.proposal();
 
     // save entity

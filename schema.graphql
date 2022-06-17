@@ -13,6 +13,7 @@ type PolicyProposal @entity {
     generation: Generation
     proposalEnds: BigInt!
     blockNumber: BigInt!
+    totalVotingPower: BigInt!
 }
 
 type CommunityProposal @entity {
@@ -47,6 +48,7 @@ type PolicyVote @entity {
     voteEnds: BigInt!
     blockNumber: BigInt!
     ENACTION_DELAY: BigInt!
+    totalVotingPower: BigInt!
     proposal: CommunityProposal!
     result: VoteResult
     votes: [CommunityProposalVote!]! @derivedFrom(field: "policyVote")

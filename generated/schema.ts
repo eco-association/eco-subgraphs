@@ -145,6 +145,15 @@ export class PolicyProposal extends Entity {
   set blockNumber(value: BigInt) {
     this.set("blockNumber", Value.fromBigInt(value));
   }
+
+  get totalVotingPower(): BigInt {
+    let value = this.get("totalVotingPower");
+    return value!.toBigInt();
+  }
+
+  set totalVotingPower(value: BigInt) {
+    this.set("totalVotingPower", Value.fromBigInt(value));
+  }
 }
 
 export class CommunityProposal extends Entity {
@@ -408,6 +417,15 @@ export class PolicyVote extends Entity {
 
   set ENACTION_DELAY(value: BigInt) {
     this.set("ENACTION_DELAY", Value.fromBigInt(value));
+  }
+
+  get totalVotingPower(): BigInt {
+    let value = this.get("totalVotingPower");
+    return value!.toBigInt();
+  }
+
+  set totalVotingPower(value: BigInt) {
+    this.set("totalVotingPower", Value.fromBigInt(value));
   }
 
   get proposal(): Bytes {
