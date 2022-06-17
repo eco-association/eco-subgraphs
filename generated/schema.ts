@@ -51,22 +51,30 @@ export class Generation extends Entity {
     this.set("policyProposal", Value.fromBytes(value));
   }
 
-  get policyVote(): Bytes {
+  get policyVote(): Bytes | null {
     let value = this.get("policyVote");
-    return value!.toBytes();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
   }
 
-  set policyVote(value: Bytes) {
-    this.set("policyVote", Value.fromBytes(value));
+  set policyVote(value: Bytes | null) {
+    if (!value) {
+      this.unset("policyVote");
+    } else {
+      this.set("policyVote", Value.fromBytes(<Bytes>value));
+    }
   }
 
-  get communityProposals(): Array<string> {
+  get communityProposals(): Array<Bytes> {
     let value = this.get("communityProposals");
-    return value!.toStringArray();
+    return value!.toBytesArray();
   }
 
-  set communityProposals(value: Array<string>) {
-    this.set("communityProposals", Value.fromStringArray(value));
+  set communityProposals(value: Array<Bytes>) {
+    this.set("communityProposals", Value.fromBytesArray(value));
   }
 }
 
@@ -120,6 +128,15 @@ export class PolicyProposal extends Entity {
     }
   }
 
+  get proposalEnds(): BigInt {
+    let value = this.get("proposalEnds");
+    return value!.toBigInt();
+  }
+
+  set proposalEnds(value: BigInt) {
+    this.set("proposalEnds", Value.fromBigInt(value));
+  }
+
   get blockNumber(): BigInt {
     let value = this.get("blockNumber");
     return value!.toBigInt();
@@ -131,9 +148,9 @@ export class PolicyProposal extends Entity {
 }
 
 export class CommunityProposal extends Entity {
-  constructor(id: string) {
+  constructor(id: Bytes) {
     super();
-    this.set("id", Value.fromString(id));
+    this.set("id", Value.fromBytes(id));
   }
 
   save(): void {
@@ -141,26 +158,26 @@ export class CommunityProposal extends Entity {
     assert(id != null, "Cannot save CommunityProposal entity without an ID");
     if (id) {
       assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type CommunityProposal must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        id.kind == ValueKind.BYTES,
+        `Entities of type CommunityProposal must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("CommunityProposal", id.toString(), this);
+      store.set("CommunityProposal", id.toBytes().toHexString(), this);
     }
   }
 
-  static load(id: string): CommunityProposal | null {
+  static load(id: Bytes): CommunityProposal | null {
     return changetype<CommunityProposal | null>(
-      store.get("CommunityProposal", id)
+      store.get("CommunityProposal", id.toHexString())
     );
   }
 
-  get id(): string {
+  get id(): Bytes {
     let value = this.get("id");
-    return value!.toString();
+    return value!.toBytes();
   }
 
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
   }
 
   get proposer(): Bytes {
@@ -289,20 +306,20 @@ export class CommunityProposalSupport extends Entity {
     this.set("supporter", Value.fromBytes(value));
   }
 
-  get proposal(): string | null {
+  get proposal(): Bytes | null {
     let value = this.get("proposal");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
-      return value.toString();
+      return value.toBytes();
     }
   }
 
-  set proposal(value: string | null) {
+  set proposal(value: Bytes | null) {
     if (!value) {
       this.unset("proposal");
     } else {
-      this.set("proposal", Value.fromString(<string>value));
+      this.set("proposal", Value.fromBytes(<Bytes>value));
     }
   }
 
@@ -316,7 +333,7 @@ export class CommunityProposalSupport extends Entity {
   }
 }
 
-export class PolicyVotes extends Entity {
+export class PolicyVote extends Entity {
   constructor(id: Bytes) {
     super();
     this.set("id", Value.fromBytes(id));
@@ -324,19 +341,19 @@ export class PolicyVotes extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save PolicyVotes entity without an ID");
+    assert(id != null, "Cannot save PolicyVote entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.BYTES,
-        `Entities of type PolicyVotes must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type PolicyVote must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("PolicyVotes", id.toBytes().toHexString(), this);
+      store.set("PolicyVote", id.toBytes().toHexString(), this);
     }
   }
 
-  static load(id: Bytes): PolicyVotes | null {
-    return changetype<PolicyVotes | null>(
-      store.get("PolicyVotes", id.toHexString())
+  static load(id: Bytes): PolicyVote | null {
+    return changetype<PolicyVote | null>(
+      store.get("PolicyVote", id.toHexString())
     );
   }
 
@@ -366,6 +383,15 @@ export class PolicyVotes extends Entity {
     }
   }
 
+  get voteEnds(): BigInt {
+    let value = this.get("voteEnds");
+    return value!.toBigInt();
+  }
+
+  set voteEnds(value: BigInt) {
+    this.set("voteEnds", Value.fromBigInt(value));
+  }
+
   get blockNumber(): BigInt {
     let value = this.get("blockNumber");
     return value!.toBigInt();
@@ -375,8 +401,26 @@ export class PolicyVotes extends Entity {
     this.set("blockNumber", Value.fromBigInt(value));
   }
 
-  get proposal(): string | null {
+  get ENACTION_DELAY(): BigInt {
+    let value = this.get("ENACTION_DELAY");
+    return value!.toBigInt();
+  }
+
+  set ENACTION_DELAY(value: BigInt) {
+    this.set("ENACTION_DELAY", Value.fromBigInt(value));
+  }
+
+  get proposal(): Bytes {
     let value = this.get("proposal");
+    return value!.toBytes();
+  }
+
+  set proposal(value: Bytes) {
+    this.set("proposal", Value.fromBytes(value));
+  }
+
+  get result(): string | null {
+    let value = this.get("result");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -384,11 +428,11 @@ export class PolicyVotes extends Entity {
     }
   }
 
-  set proposal(value: string | null) {
+  set result(value: string | null) {
     if (!value) {
-      this.unset("proposal");
+      this.unset("result");
     } else {
-      this.set("proposal", Value.fromString(<string>value));
+      this.set("result", Value.fromString(<string>value));
     }
   }
 
@@ -453,15 +497,6 @@ export class CommunityProposalVote extends Entity {
     } else {
       this.set("policyVote", Value.fromBytes(<Bytes>value));
     }
-  }
-
-  get voter(): Bytes {
-    let value = this.get("voter");
-    return value!.toBytes();
-  }
-
-  set voter(value: Bytes) {
-    this.set("voter", Value.fromBytes(value));
   }
 
   get vote(): boolean {
