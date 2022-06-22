@@ -10,7 +10,7 @@ type Generation @entity {
 
 "Community Support entities"
 type PolicyProposal @entity {
-    id: Bytes! "address"
+    id: String! "address"
     generation: Generation!
     proposalEnds: BigInt!
     totalVotingPower: BigInt!
@@ -18,7 +18,7 @@ type PolicyProposal @entity {
 }
 
 type CommunityProposal @entity {
-    id: Bytes! "address"
+    id: String! "address"
     generation: Generation!
     proposer: Bytes!
     name: String!
@@ -33,14 +33,14 @@ type CommunityProposal @entity {
 type CommunityProposalSupport @entity {
     id: String! "supporter + - + proposal"
     supporter: Bytes!
-    proposal: CommunityProposal
+    proposal: CommunityProposal!
     amount: BigInt!
 }
 
 
 "Community Vote entities"
 type PolicyVote @entity {
-    id: Bytes! "address"
+    id: String! "address"
     generation: Generation!
     voteEnds: BigInt!
     ENACTION_DELAY: BigInt!
@@ -61,7 +61,7 @@ enum VoteResult {
 
 
 type CommunityProposalVote @entity {
-    id: Bytes! "voter"
+    id: String! "voter address"
     policyVote: PolicyVote!
     vote: Boolean!
     amount: BigInt!
