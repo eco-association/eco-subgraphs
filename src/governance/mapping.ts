@@ -5,7 +5,7 @@ import { Proposal } from "../../generated/templates/PolicyProposals/Proposal";
 import { PolicyProposals as PolicyProposalsTemplate, PolicyVotes as PolicyVotesTemplate } from "../../generated/templates";
 import { CommunityProposal, CommunityProposalSupport, CommunityProposalVote, Generation, PolicyProposal, PolicyVote } from "../../generated/schema";
 
-import { Bytes, log, store } from "@graphprotocol/graph-ts";
+import { BigInt, store } from "@graphprotocol/graph-ts";
 
 // TimedPolicies.PolicyDesicionStarted(address contractAddress)
 export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void {
@@ -28,8 +28,9 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void 
     let newPolicyProposals = new PolicyProposal(policyProposalsAddress);
     newPolicyProposals.generation = generationNum.toString();
     newPolicyProposals.proposalEnds = policyProposalsContract.proposalEnds();
-    newPolicyProposals.blockNumber = policyProposalsContract.blockNumber();
-    newPolicyProposals.totalVotingPower = policyProposalsContract.totalVotingPower(newPolicyProposals.blockNumber);
+    let blockNumber = policyProposalsContract.blockNumber();
+    newPolicyProposals.blockNumber = blockNumber;
+    newPolicyProposals.totalVotingPower = policyProposalsContract.totalVotingPower(blockNumber);
     newPolicyProposals.save();
     
 }
@@ -53,28 +54,48 @@ export function handleProposalAdded(event: ProposalAdded): void {
     proposal.url = proposalContract.url();
     proposal.reachedSupportThreshold = false;
     proposal.refunded = false;
+    proposal.totalSupportAmount = BigInt.fromString('0');
 
     proposal.save();
 }
 
 // PolicyProposals.ProposalSupported(address supporter, address proposalAddress)
 export function handleProposalSupported(event: ProposalSupported): void {
-    let id = event.params.supporter.toHexString() + event.params.proposalAddress.toHexString();
+    let id = event.params.supporter.toHexString() + "-" + event.params.proposalAddress.toHexString();
     let support = new CommunityProposalSupport(id);
     support.supporter = event.params.supporter;
     support.proposal = event.params.proposalAddress;
 
     // get amount
     let policyProposalsContract = PolicyProposals.bind(event.address);
-    support.amount = policyProposalsContract.votingPower(event.params.supporter, policyProposalsContract.blockNumber());
+    let amount = policyProposalsContract.votingPower(event.params.supporter, policyProposalsContract.blockNumber());
+    support.amount = amount;
+
+    // update proposal total support amount
+    let proposal = CommunityProposal.load(event.params.proposalAddress);
+    if (proposal) {
+        proposal.totalSupportAmount = proposal.totalSupportAmount.plus(support.amount);
+        proposal.save();
+    }
 
     support.save();
 }
 
 // PolicyProposals.ProposalUnsupported(address unsupporter, address proposalAddress)
 export function handleProposalUnsupported(event: ProposalUnsupported): void {
-    let id = event.params.unsupporter.toHexString() + event.params.proposalAddress.toHexString();
+    let id = event.params.unsupporter.toHexString() + "-" + event.params.proposalAddress.toHexString();
     store.remove('CommunityProposalSupport', id);
+
+    // get amount
+    let policyProposalsContract = PolicyProposals.bind(event.address);
+    let amount = policyProposalsContract.votingPower(event.params.unsupporter, policyProposalsContract.blockNumber());
+
+    // update proposal total support amount
+    let proposal = CommunityProposal.load(event.params.proposalAddress);
+    if (proposal) {
+        proposal.totalSupportAmount = proposal.totalSupportAmount.minus(amount);
+        proposal.save();
+    }
 }
 
 // PolicyPropsals.SupportThresholdReached(address proposalAddress)
@@ -116,6 +137,8 @@ export function handleVotingStarted(event: VotingStarted): void {
     newPolicyVotes.blockNumber = policyVoteContract.blockNumber();
     newPolicyVotes.totalVotingPower = policyVoteContract.totalVotingPower(newPolicyVotes.blockNumber);
     newPolicyVotes.proposal = policyVoteContract.proposal();
+    newPolicyVotes.yesVoteAmount = BigInt.fromString('0');
+    newPolicyVotes.totalVoteAmount = BigInt.fromString('0');
 
     // save entity
     newPolicyVotes.save();
@@ -124,15 +147,33 @@ export function handleVotingStarted(event: VotingStarted): void {
 
 // PolicyVotes.PolicyVoteCast(address indexed voter, bool vote, uint256 amount)
 export function handlePolicyVoteCast(event: PolicyVoteCast): void {
-    let support = CommunityProposalVote.load(event.params.voter);
-    if (!support) {
-        // new support
-        support = new CommunityProposalVote(event.params.voter);
-        support.policyVote = event.address;
+    let vote = CommunityProposalVote.load(event.params.voter);
+    let policyVote = PolicyVote.load(event.address);
+
+    let voteAmount = event.params.amount;
+
+    // check and set vote stats
+    if (policyVote) {
+        if (event.params.vote) {
+            // add to yes amount if vote is for (whether vote is new or not)
+            policyVote.yesVoteAmount = policyVote.yesVoteAmount.plus(voteAmount);
+        }
+        else if (vote) {
+            // if vote is against and vote is not new, remove from yes amount
+            policyVote.yesVoteAmount = policyVote.yesVoteAmount.minus(voteAmount);
+        }
+        policyVote.save();
     }
-    support.amount = event.params.amount;
-    support.vote = event.params.vote;
-    support.save();
+
+    if (!vote) {
+        // new vote
+        vote = new CommunityProposalVote(event.params.voter);
+        vote.policyVote = event.address;
+    }
+
+    vote.amount = voteAmount;
+    vote.vote = event.params.vote;
+    vote.save();
 }
 
 // PolicyVotes.VoteCompleted(Result result)

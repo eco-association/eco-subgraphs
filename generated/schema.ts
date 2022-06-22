@@ -111,21 +111,13 @@ export class PolicyProposal extends Entity {
     this.set("id", Value.fromBytes(value));
   }
 
-  get generation(): string | null {
+  get generation(): string {
     let value = this.get("generation");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
-  set generation(value: string | null) {
-    if (!value) {
-      this.unset("generation");
-    } else {
-      this.set("generation", Value.fromString(<string>value));
-    }
+  set generation(value: string) {
+    this.set("generation", Value.fromString(value));
   }
 
   get proposalEnds(): BigInt {
@@ -137,15 +129,6 @@ export class PolicyProposal extends Entity {
     this.set("proposalEnds", Value.fromBigInt(value));
   }
 
-  get blockNumber(): BigInt {
-    let value = this.get("blockNumber");
-    return value!.toBigInt();
-  }
-
-  set blockNumber(value: BigInt) {
-    this.set("blockNumber", Value.fromBigInt(value));
-  }
-
   get totalVotingPower(): BigInt {
     let value = this.get("totalVotingPower");
     return value!.toBigInt();
@@ -153,6 +136,15 @@ export class PolicyProposal extends Entity {
 
   set totalVotingPower(value: BigInt) {
     this.set("totalVotingPower", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
   }
 }
 
@@ -187,6 +179,15 @@ export class CommunityProposal extends Entity {
 
   set id(value: Bytes) {
     this.set("id", Value.fromBytes(value));
+  }
+
+  get generation(): string {
+    let value = this.get("generation");
+    return value!.toString();
+  }
+
+  set generation(value: string) {
+    this.set("generation", Value.fromString(value));
   }
 
   get proposer(): Bytes {
@@ -225,23 +226,6 @@ export class CommunityProposal extends Entity {
     this.set("url", Value.fromString(value));
   }
 
-  get generation(): string | null {
-    let value = this.get("generation");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set generation(value: string | null) {
-    if (!value) {
-      this.unset("generation");
-    } else {
-      this.set("generation", Value.fromString(<string>value));
-    }
-  }
-
   get reachedSupportThreshold(): boolean {
     let value = this.get("reachedSupportThreshold");
     return value!.toBoolean();
@@ -258,6 +242,15 @@ export class CommunityProposal extends Entity {
 
   set refunded(value: boolean) {
     this.set("refunded", Value.fromBoolean(value));
+  }
+
+  get totalSupportAmount(): BigInt {
+    let value = this.get("totalSupportAmount");
+    return value!.toBigInt();
+  }
+
+  set totalSupportAmount(value: BigInt) {
+    this.set("totalSupportAmount", Value.fromBigInt(value));
   }
 
   get support(): Array<string> {
@@ -375,21 +368,13 @@ export class PolicyVote extends Entity {
     this.set("id", Value.fromBytes(value));
   }
 
-  get generation(): string | null {
+  get generation(): string {
     let value = this.get("generation");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+    return value!.toString();
   }
 
-  set generation(value: string | null) {
-    if (!value) {
-      this.unset("generation");
-    } else {
-      this.set("generation", Value.fromString(<string>value));
-    }
+  set generation(value: string) {
+    this.set("generation", Value.fromString(value));
   }
 
   get voteEnds(): BigInt {
@@ -399,15 +384,6 @@ export class PolicyVote extends Entity {
 
   set voteEnds(value: BigInt) {
     this.set("voteEnds", Value.fromBigInt(value));
-  }
-
-  get blockNumber(): BigInt {
-    let value = this.get("blockNumber");
-    return value!.toBigInt();
-  }
-
-  set blockNumber(value: BigInt) {
-    this.set("blockNumber", Value.fromBigInt(value));
   }
 
   get ENACTION_DELAY(): BigInt {
@@ -426,6 +402,15 @@ export class PolicyVote extends Entity {
 
   set totalVotingPower(value: BigInt) {
     this.set("totalVotingPower", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
   }
 
   get proposal(): Bytes {
@@ -452,6 +437,24 @@ export class PolicyVote extends Entity {
     } else {
       this.set("result", Value.fromString(<string>value));
     }
+  }
+
+  get yesVoteAmount(): BigInt {
+    let value = this.get("yesVoteAmount");
+    return value!.toBigInt();
+  }
+
+  set yesVoteAmount(value: BigInt) {
+    this.set("yesVoteAmount", Value.fromBigInt(value));
+  }
+
+  get totalVoteAmount(): BigInt {
+    let value = this.get("totalVoteAmount");
+    return value!.toBigInt();
+  }
+
+  set totalVoteAmount(value: BigInt) {
+    this.set("totalVoteAmount", Value.fromBigInt(value));
   }
 
   get votes(): Array<Bytes> {
@@ -500,21 +503,13 @@ export class CommunityProposalVote extends Entity {
     this.set("id", Value.fromBytes(value));
   }
 
-  get policyVote(): Bytes | null {
+  get policyVote(): Bytes {
     let value = this.get("policyVote");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytes();
-    }
+    return value!.toBytes();
   }
 
-  set policyVote(value: Bytes | null) {
-    if (!value) {
-      this.unset("policyVote");
-    } else {
-      this.set("policyVote", Value.fromBytes(<Bytes>value));
-    }
+  set policyVote(value: Bytes) {
+    this.set("policyVote", Value.fromBytes(value));
   }
 
   get vote(): boolean {

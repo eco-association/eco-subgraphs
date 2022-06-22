@@ -7,32 +7,50 @@ type Generation @entity {
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
 }
 
+
 "Community Support entities"
 type PolicyProposal @entity {
     id: Bytes! "address"
-    generation: Generation
+    generation: Generation!
     proposalEnds: BigInt!
-    blockNumber: BigInt!
     totalVotingPower: BigInt!
+    blockNumber: BigInt!
 }
 
 type CommunityProposal @entity {
     id: Bytes! "address"
+    generation: Generation!
     proposer: Bytes!
     name: String!
     description: String!
     url: String!
-    generation: Generation
     reachedSupportThreshold: Boolean!
     refunded: Boolean!
+    totalSupportAmount: BigInt!
     support: [CommunityProposalSupport!]! @derivedFrom(field: "proposal")
 }
 
 type CommunityProposalSupport @entity {
-    id: String! "supporter+proposal"
+    id: String! "supporter + - + proposal"
     supporter: Bytes!
     proposal: CommunityProposal
     amount: BigInt!
+}
+
+
+"Community Vote entities"
+type PolicyVote @entity {
+    id: Bytes! "address"
+    generation: Generation!
+    voteEnds: BigInt!
+    ENACTION_DELAY: BigInt!
+    totalVotingPower: BigInt!
+    blockNumber: BigInt!
+    proposal: CommunityProposal!
+    result: VoteResult
+    yesVoteAmount: BigInt!
+    totalVoteAmount: BigInt!
+    votes: [CommunityProposalVote!]! @derivedFrom(field: "policyVote")
 }
 
 enum VoteResult {
@@ -41,22 +59,10 @@ enum VoteResult {
     Failed
 }
 
-"Community Vote entities"
-type PolicyVote @entity {
-    id: Bytes! "address"
-    generation: Generation
-    voteEnds: BigInt!
-    blockNumber: BigInt!
-    ENACTION_DELAY: BigInt!
-    totalVotingPower: BigInt!
-    proposal: CommunityProposal!
-    result: VoteResult
-    votes: [CommunityProposalVote!]! @derivedFrom(field: "policyVote")
-}
 
 type CommunityProposalVote @entity {
     id: Bytes! "voter"
-    policyVote: PolicyVote
+    policyVote: PolicyVote!
     vote: Boolean!
     amount: BigInt!
 }
