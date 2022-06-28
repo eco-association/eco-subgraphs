@@ -6,7 +6,7 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x908894c503c203B87680C79670dC5CEdda1e68A7"
+      address: "0x1dF30B75fB5D942DA5574F0128bd876d4740B01F"
       abi: TimedPolicies
     mapping:
       kind: ethereum/events
@@ -24,6 +24,33 @@ dataSources:
         - event: PolicyDecisionStarted(address)
           handler: handlePolicyDesicionStarted
       file: ./src/governance/mapping.ts
+  - kind: ethereum
+    name: ECO
+    network: mainnet
+    source:
+      address: "0xd49017754Cfe7fb2Aee15Ac00aCa3C73198E3F2a"
+      abi: ECO
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Generation
+      abis:
+        - name: ECO
+          file: ./abis/ECO.json
+      eventHandlers:
+        - event: NewInflationMultiplier(uint256)
+          handler: handleNewInflationMultiplier
+        - event: BaseValueTransfer(indexed address,indexed address,uint256)
+          handler: handleBaseValueTransfer
+        - event: ChangeDelegateVotes(indexed address,uint256)
+          handler: handleChangeDelegateVotes
+        - event: ChangeDelegate(indexed address,indexed address)
+          handler: handleChangeDelegate
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/currency/mapping.ts
 templates:
   - kind: ethereum
     name: PolicyProposals
