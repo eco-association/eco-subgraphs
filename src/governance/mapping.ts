@@ -8,7 +8,7 @@ import { PolicyProposals as PolicyProposalsTemplate, PolicyVotes as PolicyVotesT
 
 import { CommunityProposal, CommunityProposalSupport, CommunityProposalVote, Generation, PolicyProposal, PolicyVote } from "../../generated/schema";
 
-import { BigInt, store, log } from "@graphprotocol/graph-ts";
+import { BigInt, store } from "@graphprotocol/graph-ts";
 
 // TimedPolicies.PolicyDesicionStarted(address contractAddress)
 export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void {

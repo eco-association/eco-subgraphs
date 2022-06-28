@@ -1,10 +1,14 @@
 {
     "kovan": {
         "TimedPolicies": "0x45827a55D1B0F4327D0c37df44B7845350df43e9",
-        "ECO": ""
+        "ECO": "",
+        "ECOx": "",
+        "ECOxLockup": ""
     },
     "localhost": {
         "TimedPolicies": "0x1dF30B75fB5D942DA5574F0128bd876d4740B01F",
-        "ECO": "0xd49017754Cfe7fb2Aee15Ac00aCa3C73198E3F2a"
+        "ECO": "0xd49017754Cfe7fb2Aee15Ac00aCa3C73198E3F2a",
+        "ECOx": "0x0aB5eE2C3C9aA19180a712914272d4DB541A247c",
+        "ECOxLockup": "0xfa618fe0dA54E2dFC7e45e8e4B19644fbe36679E"
     }
 }

@@ -1,6 +1,7 @@
-import { BaseValueTransfer, ChangeDelegate, ChangeDelegateVotes, NewInflationMultiplier, Transfer } from "../../generated/ECO/ECO";
-
-import { Account, ECOBalance, InflationMultiplier } from "../../generated/schema";
+import { NewInflationMultiplier, BaseValueTransfer, Approval} from "../../generated/ECO/ECO";
+import { Transfer } from "../../generated/ECOx/ECOx";
+import { ChangeDelegateVotes } from "../../generated/ECOxLockup/ECOxLockup";
+import { Account, ECOAllowance, ECOBalance, InflationMultiplier } from "../../generated/schema";
 
 import { NULL_ADDRESS } from "../constants";
 import { BigInt, log } from "@graphprotocol/graph-ts";
@@ -18,7 +19,6 @@ export function handleNewInflationMultiplier(event: NewInflationMultiplier): voi
 
 }
 
-
 function loadOrCreateAccount(address: string): Account {
     let account = Account.load(address);
     if (!account) {
@@ -29,14 +29,32 @@ function loadOrCreateAccount(address: string): Account {
     return account;
 }
 
+// ECO.Approval(address indexed owner, address indexed spender, uint256 value)
+export function handleApproval(event: Approval): void {
+    log.info("ECO Approval: owner = {}, spender = {} value = {}", [event.params.owner.toHexString(), event.params.spender.toHexString(), event.params.value.toString()]);
+    
+    let ownerAccount = loadOrCreateAccount(event.params.owner.toHexString());
+    let spender = event.params.spender.toHexString();
+    
+    // load or create a new allowance entity
+    let newAllowance = ECOAllowance.load(ownerAccount.id + "-" + spender);
+    if (!newAllowance) {
+        newAllowance = new ECOAllowance(ownerAccount.id + "-" + spender);
+        newAllowance.spender = spender;
+        newAllowance.owner = ownerAccount.id;
+    }
+    // set allowed value
+    newAllowance.value = event.params.value;
+    newAllowance.save();
+
+}
+
 // ECO.BaseValueTransfer(address indexed from, address indexed to, uint256 value)
 export function handleBaseValueTransfer(event: BaseValueTransfer): void {
     log.info("ECO Transfer (base): from = {}, to = {} value = {}", [event.params.from.toHexString(), event.params.to.toHexString(), event.params.value.toString()]);
 
     let from = loadOrCreateAccount(event.params.from.toHexString());
     let to = loadOrCreateAccount(event.params.to.toHexString());
-
-    // save underlying value with new balance
 
     if (from.id != NULL_ADDRESS.toHexString()) {
         // not a mint
@@ -46,7 +64,7 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         let newBalance = new ECOBalance(event.transaction.hash.toHexString() + "-" + from.id);
 
         newBalance.account = from.id;
-        newBalance.amount = from.ECO;
+        newBalance.value = from.ECO;
         newBalance.blockNumber = event.block.number;
         newBalance.save();
     }
@@ -59,23 +77,21 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         let newBalance = new ECOBalance(event.transaction.hash.toHexString() + "-" + to.id);
 
         newBalance.account = to.id;
-        newBalance.amount = to.ECO;
+        newBalance.value = to.ECO;
         newBalance.blockNumber = event.block.number;
         newBalance.save();
     }
 }
 
-// ECO.Transfer(address indexed from, address indexed to, uint256 value)
+
+// ECOx.Transfer(address indexed from, address indexed to, uint256 value)
 export function handleTransfer(event: Transfer): void {
-    log.info("ECO Transfer: from = {}, to = {} value = {}", [event.params.from.toHexString(), event.params.to.toHexString(), event.params.value.toString()]);
+    log.info("ECOx Transfer: from = {}, to = {} value = {}", [event.params.from.toHexString(), event.params.to.toHexString(), event.params.value.toString()]);
+
 }
 
-// ECO.ChangeDelegateVotes(address indexed delegate, uint256 newBalance)
+// ECOxLockup.ChangeDelegateVotes(address indexed delegate, uint256 newBalance)
 export function handleChangeDelegateVotes(event: ChangeDelegateVotes): void {
-    log.info("ECO Delegate votes changed: delegate = {}, new balance = {}", [event.params.delegate.toHexString(), event.params.newBalance.toString()]);
-}
+    log.info("ECOxLockup Delegate votes changed: delegate = {}, new balance = {}", [event.params.delegate.toHexString(), event.params.newBalance.toString()]);
 
-// ECO.ChangeDelegate(address indexed delegator, address indexed toDelegate)
-export function handleChangeDelegate(event: ChangeDelegate): void {
-    log.info("ECO Delegate Changed: delegator = {}, toDelegate = {}", [event.params.delegator.toHexString(), event.params.toDelegate.toHexString()]);
 }

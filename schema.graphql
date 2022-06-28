@@ -72,14 +72,22 @@ type CommunityProposalVote @entity {
 type Account @entity {
     id: String! "address"
     ECO: BigInt!
+    approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
+}
+
+type ECOAllowance @entity {
+    id: String! "owner + - + spender"
+    value: BigInt! "non-underlying value"
+    owner: Account!
+    spender: String!
 }
 
 "ECO balance"
 type ECOBalance @entity {
     id: String!
     account: Account!
-    amount: BigInt! "underlying value"
+    value: BigInt! "underlying value"
     blockNumber: BigInt!
 }
 

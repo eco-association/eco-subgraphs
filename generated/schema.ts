@@ -559,6 +559,15 @@ export class Account extends Entity {
     this.set("ECO", Value.fromBigInt(value));
   }
 
+  get approvedECO(): Array<string> {
+    let value = this.get("approvedECO");
+    return value!.toStringArray();
+  }
+
+  set approvedECO(value: Array<string>) {
+    this.set("approvedECO", Value.fromStringArray(value));
+  }
+
   get historicalECOBalances(): Array<string> {
     let value = this.get("historicalECOBalances");
     return value!.toStringArray();
@@ -566,6 +575,65 @@ export class Account extends Entity {
 
   set historicalECOBalances(value: Array<string>) {
     this.set("historicalECOBalances", Value.fromStringArray(value));
+  }
+}
+
+export class ECOAllowance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save ECOAllowance entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type ECOAllowance must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("ECOAllowance", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ECOAllowance | null {
+    return changetype<ECOAllowance | null>(store.get("ECOAllowance", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get value(): BigInt {
+    let value = this.get("value");
+    return value!.toBigInt();
+  }
+
+  set value(value: BigInt) {
+    this.set("value", Value.fromBigInt(value));
+  }
+
+  get owner(): string {
+    let value = this.get("owner");
+    return value!.toString();
+  }
+
+  set owner(value: string) {
+    this.set("owner", Value.fromString(value));
+  }
+
+  get spender(): string {
+    let value = this.get("spender");
+    return value!.toString();
+  }
+
+  set spender(value: string) {
+    this.set("spender", Value.fromString(value));
   }
 }
 
@@ -609,13 +677,13 @@ export class ECOBalance extends Entity {
     this.set("account", Value.fromString(value));
   }
 
-  get amount(): BigInt {
-    let value = this.get("amount");
+  get value(): BigInt {
+    let value = this.get("value");
     return value!.toBigInt();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set value(value: BigInt) {
+    this.set("value", Value.fromBigInt(value));
   }
 
   get blockNumber(): BigInt {

@@ -35,21 +35,57 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - Generation
+        - Account
+        - ECOBalance
+        - InflationMultiplier
       abis:
         - name: ECO
           file: ./abis/ECO.json
       eventHandlers:
         - event: NewInflationMultiplier(uint256)
           handler: handleNewInflationMultiplier
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
         - event: BaseValueTransfer(indexed address,indexed address,uint256)
           handler: handleBaseValueTransfer
-        - event: ChangeDelegateVotes(indexed address,uint256)
-          handler: handleChangeDelegateVotes
-        - event: ChangeDelegate(indexed address,indexed address)
-          handler: handleChangeDelegate
+      file: ./src/currency/mapping.ts
+  - kind: ethereum
+    name: ECOx
+    network: mainnet
+    source:
+      address: "0x0aB5eE2C3C9aA19180a712914272d4DB541A247c"
+      abi: ECOx
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Generation
+      abis:
+        - name: ECOx
+          file: ./abis/ECOx.json
+      eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
+      file: ./src/currency/mapping.ts
+  - kind: ethereum
+    name: ECOxLockup
+    network: mainnet
+    source:
+      address: "0xfa618fe0dA54E2dFC7e45e8e4B19644fbe36679E"
+      abi: ECOxLockup
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Generation
+      abis:
+        - name: ECOxLockup
+          file: ./abis/ECOxLockup.json
+      eventHandlers:
+        - event: ChangeDelegateVotes(indexed address,uint256)
+          handler: handleChangeDelegateVotes
       file: ./src/currency/mapping.ts
 templates:
   - kind: ethereum
