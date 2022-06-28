@@ -24,6 +24,7 @@ function loadOrCreateAccount(address: string): Account {
     if (!account) {
         account = new Account(address);
         account.ECO = BigInt.fromString("0");
+        account.ECOx = BigInt.fromString("0");
         account.save();
     }
     return account;
@@ -87,7 +88,22 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
 // ECOx.Transfer(address indexed from, address indexed to, uint256 value)
 export function handleTransfer(event: Transfer): void {
     log.info("ECOx Transfer: from = {}, to = {} value = {}", [event.params.from.toHexString(), event.params.to.toHexString(), event.params.value.toString()]);
+    
+    let from = loadOrCreateAccount(event.params.from.toHexString());
+    let to = loadOrCreateAccount(event.params.to.toHexString());
 
+    if (from.id != NULL_ADDRESS.toHexString()) {
+        // not a mint
+        from.ECOx = from.ECOx.minus(event.params.value);
+        from.save();
+
+    }
+    if (to.id != NULL_ADDRESS.toHexString()) {
+        // not a burn
+        to.ECOx = to.ECOx.plus(event.params.value);
+        to.save();
+
+    }
 }
 
 // ECOxLockup.ChangeDelegateVotes(address indexed delegate, uint256 newBalance)

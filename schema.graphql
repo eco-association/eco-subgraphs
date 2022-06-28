@@ -72,6 +72,7 @@ type CommunityProposalVote @entity {
 type Account @entity {
     id: String! "address"
     ECO: BigInt!
+    ECOx: BigInt!
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
 }
@@ -90,7 +91,6 @@ type ECOBalance @entity {
     value: BigInt! "underlying value"
     blockNumber: BigInt!
 }
-
 
 "historical linear inflation multipliers"
 type InflationMultiplier @entity {

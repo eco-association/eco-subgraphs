@@ -559,6 +559,15 @@ export class Account extends Entity {
     this.set("ECO", Value.fromBigInt(value));
   }
 
+  get ECOx(): BigInt {
+    let value = this.get("ECOx");
+    return value!.toBigInt();
+  }
+
+  set ECOx(value: BigInt) {
+    this.set("ECOx", Value.fromBigInt(value));
+  }
+
   get approvedECO(): Array<string> {
     let value = this.get("approvedECO");
     return value!.toStringArray();
@@ -745,5 +754,55 @@ export class InflationMultiplier extends Entity {
 
   set blockNumber(value: BigInt) {
     this.set("blockNumber", Value.fromBigInt(value));
+  }
+}
+
+export class ECOxBalance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save ECOxBalance entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type ECOxBalance must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("ECOxBalance", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ECOxBalance | null {
+    return changetype<ECOxBalance | null>(store.get("ECOxBalance", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get account(): string {
+    let value = this.get("account");
+    return value!.toString();
+  }
+
+  set account(value: string) {
+    this.set("account", Value.fromString(value));
+  }
+
+  get value(): BigInt {
+    let value = this.get("value");
+    return value!.toBigInt();
+  }
+
+  set value(value: BigInt) {
+    this.set("value", Value.fromBigInt(value));
   }
 }
