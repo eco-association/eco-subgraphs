@@ -568,6 +568,15 @@ export class Account extends Entity {
     this.set("ECOx", Value.fromBigInt(value));
   }
 
+  get sECOx(): BigInt {
+    let value = this.get("sECOx");
+    return value!.toBigInt();
+  }
+
+  set sECOx(value: BigInt) {
+    this.set("sECOx", Value.fromBigInt(value));
+  }
+
   get approvedECO(): Array<string> {
     let value = this.get("approvedECO");
     return value!.toStringArray();
@@ -584,6 +593,15 @@ export class Account extends Entity {
 
   set historicalECOBalances(value: Array<string>) {
     this.set("historicalECOBalances", Value.fromStringArray(value));
+  }
+
+  get historicalsECOxBalances(): Array<Bytes> {
+    let value = this.get("historicalsECOxBalances");
+    return value!.toBytesArray();
+  }
+
+  set historicalsECOxBalances(value: Array<Bytes>) {
+    this.set("historicalsECOxBalances", Value.fromBytesArray(value));
   }
 }
 
@@ -618,15 +636,6 @@ export class ECOAllowance extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get value(): BigInt {
-    let value = this.get("value");
-    return value!.toBigInt();
-  }
-
-  set value(value: BigInt) {
-    this.set("value", Value.fromBigInt(value));
-  }
-
   get owner(): string {
     let value = this.get("owner");
     return value!.toString();
@@ -643,6 +652,15 @@ export class ECOAllowance extends Entity {
 
   set spender(value: string) {
     this.set("spender", Value.fromString(value));
+  }
+
+  get value(): BigInt {
+    let value = this.get("value");
+    return value!.toBigInt();
+  }
+
+  set value(value: BigInt) {
+    this.set("value", Value.fromBigInt(value));
   }
 }
 
@@ -757,35 +775,37 @@ export class InflationMultiplier extends Entity {
   }
 }
 
-export class ECOxBalance extends Entity {
-  constructor(id: string) {
+export class sECOxBalance extends Entity {
+  constructor(id: Bytes) {
     super();
-    this.set("id", Value.fromString(id));
+    this.set("id", Value.fromBytes(id));
   }
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save ECOxBalance entity without an ID");
+    assert(id != null, "Cannot save sECOxBalance entity without an ID");
     if (id) {
       assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type ECOxBalance must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        id.kind == ValueKind.BYTES,
+        `Entities of type sECOxBalance must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("ECOxBalance", id.toString(), this);
+      store.set("sECOxBalance", id.toBytes().toHexString(), this);
     }
   }
 
-  static load(id: string): ECOxBalance | null {
-    return changetype<ECOxBalance | null>(store.get("ECOxBalance", id));
+  static load(id: Bytes): sECOxBalance | null {
+    return changetype<sECOxBalance | null>(
+      store.get("sECOxBalance", id.toHexString())
+    );
   }
 
-  get id(): string {
+  get id(): Bytes {
     let value = this.get("id");
-    return value!.toString();
+    return value!.toBytes();
   }
 
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
   }
 
   get account(): string {
@@ -804,5 +824,14 @@ export class ECOxBalance extends Entity {
 
   set value(value: BigInt) {
     this.set("value", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
   }
 }

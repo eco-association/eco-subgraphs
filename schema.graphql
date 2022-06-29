@@ -1,5 +1,6 @@
-
-"entity for an ECO generation"
+"""
+ECO generation
+"""
 type Generation @entity {
     id: String! "generation number"
     policyProposal: PolicyProposal! @derivedFrom(field: "generation")
@@ -7,8 +8,9 @@ type Generation @entity {
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
 }
 
-
-"Community Support entities"
+"""
+Community Support entities
+"""
 type PolicyProposal @entity {
     id: String! "address"
     generation: Generation!
@@ -38,9 +40,14 @@ type CommunityProposalSupport @entity {
 }
 
 
-"Community Vote entities"
+"""
+Community Vote entities
+"""
 type PolicyVote @entity {
-    id: String! "address"
+    """
+    id: PolicyVotes address
+    """
+    id: String! 
     generation: Generation!
     voteEnds: BigInt!
     ENACTION_DELAY: BigInt!
@@ -59,42 +66,81 @@ enum VoteResult {
     Failed
 }
 
-
 type CommunityProposalVote @entity {
-    id: String! "voter address"
+    """
+    id: voter address
+    """
+    id: String!
     policyVote: PolicyVote!
     vote: Boolean!
     amount: BigInt!
 }
 
 
-"Account"
+"""
+Account
+"""
 type Account @entity {
-    id: String! "address"
+    """
+    id: account address
+    """
+    id: String! 
     ECO: BigInt!
     ECOx: BigInt!
+    sECOx: BigInt!
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
+    historicalsECOxBalances: [sECOxBalance!]! @derivedFrom(field: "account")
 }
 
+
+"""
+ECO Allowance
+"""
 type ECOAllowance @entity {
-    id: String! "owner + - + spender"
-    value: BigInt! "non-underlying value"
+    """
+    id: owner + "-" + spender
+    """
+    id: String! 
     owner: Account!
     spender: String!
+    value: BigInt! 
 }
 
-"ECO balance"
+
+"""
+ECO balance
+historical ECO balance at blockNumber
+"""
 type ECOBalance @entity {
     id: String!
     account: Account!
-    value: BigInt! "underlying value"
+    """
+    underlying value, to get the value adjusted for inflation/deflation, 
+    divide the value by the inflationmultiplier value whose blocknumber is nearest to and less than this balance (or 1e18 if none exists)
+    """
+    value: BigInt! 
     blockNumber: BigInt!
 }
 
-"historical linear inflation multipliers"
+
+"""
+historical linear inflation multipliers
+"""
 type InflationMultiplier @entity {
     id: Bytes!
     value: BigInt!
+    blockNumber: BigInt!
+}
+
+
+"""
+sECOx balance
+historical sECOx balance at blockNumber (representing a part of voting power)
+"""
+type sECOxBalance @entity {
+    id: Bytes!
+    account: Account!
+    value: BigInt! 
     blockNumber: BigInt!
 }

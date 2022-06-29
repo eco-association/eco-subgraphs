@@ -1,7 +1,7 @@
 import { NewInflationMultiplier, BaseValueTransfer, Approval} from "../../generated/ECO/ECO";
 import { Transfer } from "../../generated/ECOx/ECOx";
 import { ChangeDelegateVotes } from "../../generated/ECOxLockup/ECOxLockup";
-import { Account, ECOAllowance, ECOBalance, InflationMultiplier } from "../../generated/schema";
+import { Account, ECOAllowance, ECOBalance, sECOxBalance, InflationMultiplier } from "../../generated/schema";
 
 import { NULL_ADDRESS } from "../constants";
 import { BigInt, log } from "@graphprotocol/graph-ts";
@@ -25,6 +25,7 @@ function loadOrCreateAccount(address: string): Account {
         account = new Account(address);
         account.ECO = BigInt.fromString("0");
         account.ECOx = BigInt.fromString("0");
+        account.sECOx = BigInt.fromString("0");
         account.save();
     }
     return account;
@@ -62,8 +63,8 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         from.ECO = from.ECO.minus(event.params.value);
         from.save();
 
+        // create new historical ECO balance entry
         let newBalance = new ECOBalance(event.transaction.hash.toHexString() + "-" + from.id);
-
         newBalance.account = from.id;
         newBalance.value = from.ECO;
         newBalance.blockNumber = event.block.number;
@@ -76,14 +77,12 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         to.save();
 
         let newBalance = new ECOBalance(event.transaction.hash.toHexString() + "-" + to.id);
-
         newBalance.account = to.id;
         newBalance.value = to.ECO;
         newBalance.blockNumber = event.block.number;
         newBalance.save();
     }
 }
-
 
 // ECOx.Transfer(address indexed from, address indexed to, uint256 value)
 export function handleTransfer(event: Transfer): void {
@@ -109,5 +108,17 @@ export function handleTransfer(event: Transfer): void {
 // ECOxLockup.ChangeDelegateVotes(address indexed delegate, uint256 newBalance)
 export function handleChangeDelegateVotes(event: ChangeDelegateVotes): void {
     log.info("ECOxLockup Delegate votes changed: delegate = {}, new balance = {}", [event.params.delegate.toHexString(), event.params.newBalance.toString()]);
+
+    const delegate = loadOrCreateAccount(event.params.delegate.toHexString());
+
+    delegate.sECOx = event.params.newBalance;
+    delegate.save();
+
+    // create new historical sECOx balance entry
+    let newBalance = new sECOxBalance(event.transaction.hash);
+    newBalance.account = delegate.id;
+    newBalance.value = delegate.sECOx;
+    newBalance.blockNumber = event.block.number;
+    newBalance.save();
 
 }
