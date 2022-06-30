@@ -4,7 +4,7 @@ import { ChangeDelegateVotes } from "../../generated/ECOxLockup/ECOxLockup";
 import { Account, ECOAllowance, ECOBalance, sECOxBalance, InflationMultiplier } from "../../generated/schema";
 
 import { NULL_ADDRESS } from "../constants";
-import { BigInt, log } from "@graphprotocol/graph-ts";
+import { BigInt, log, store } from "@graphprotocol/graph-ts";
 
 // ECO.NewInflationMultiplier(uint256)
 export function handleNewInflationMultiplier(event: NewInflationMultiplier): void {
@@ -38,17 +38,26 @@ export function handleApproval(event: Approval): void {
     let ownerAccount = loadOrCreateAccount(event.params.owner.toHexString());
     let spender = event.params.spender.toHexString();
     
-    // load or create a new allowance entity
-    let newAllowance = ECOAllowance.load(ownerAccount.id + "-" + spender);
-    if (!newAllowance) {
-        newAllowance = new ECOAllowance(ownerAccount.id + "-" + spender);
-        newAllowance.spender = spender;
-        newAllowance.owner = ownerAccount.id;
-    }
-    // set allowed value
-    newAllowance.value = event.params.value;
-    newAllowance.save();
+    const id = ownerAccount.id + "-" + spender;
 
+    // load or create an allowance entity
+    let allowance = ECOAllowance.load(id);
+
+    if (allowance && event.params.value.equals(BigInt.fromString("0"))) {
+        // allowance is not new and now zero, delete it
+        store.remove('ECOAllowance', id);
+    }
+    else {
+        if (!allowance) {
+            allowance = new ECOAllowance(id);
+            allowance.spender = spender;
+            allowance.owner = ownerAccount.id;
+        }
+
+        // set allowed value
+        allowance.value = event.params.value;
+        allowance.save();
+    }
 }
 
 // ECO.BaseValueTransfer(address indexed from, address indexed to, uint256 value)
@@ -58,7 +67,7 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
     let from = loadOrCreateAccount(event.params.from.toHexString());
     let to = loadOrCreateAccount(event.params.to.toHexString());
 
-    if (from.id != NULL_ADDRESS.toHexString()) {
+    if (from.id != NULL_ADDRESS) {
         // not a mint
         from.ECO = from.ECO.minus(event.params.value);
         from.save();
@@ -71,7 +80,7 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         newBalance.save();
     }
 
-    if (to.id != NULL_ADDRESS.toHexString()) {
+    if (to.id != NULL_ADDRESS) {
         // not a burn
         to.ECO = to.ECO.plus(event.params.value);
         to.save();
@@ -91,13 +100,13 @@ export function handleTransfer(event: Transfer): void {
     let from = loadOrCreateAccount(event.params.from.toHexString());
     let to = loadOrCreateAccount(event.params.to.toHexString());
 
-    if (from.id != NULL_ADDRESS.toHexString()) {
+    if (from.id != NULL_ADDRESS) {
         // not a mint
         from.ECOx = from.ECOx.minus(event.params.value);
         from.save();
 
     }
-    if (to.id != NULL_ADDRESS.toHexString()) {
+    if (to.id != NULL_ADDRESS) {
         // not a burn
         to.ECOx = to.ECOx.plus(event.params.value);
         to.save();

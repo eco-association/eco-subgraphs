@@ -14,6 +14,7 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
+        - ContractAddresses
         - Generation
         - PolicyProposals
       abis:
@@ -21,6 +22,8 @@ dataSources:
           file: ./abis/TimedPolicies.json
         - name: PolicyProposals
           file: ./abis/PolicyProposals.json
+        - name: Policy
+          file: ./abis/Policy.json
       eventHandlers:
         - event: PolicyDecisionStarted(address)
           handler: handlePolicyDesicionStarted

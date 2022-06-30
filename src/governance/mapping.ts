@@ -1,4 +1,5 @@
 import { PolicyDecisionStarted, TimedPolicies } from "../../generated/TimedPolicies/TimedPolicies";
+import { Policy } from "../../generated/TimedPolicies/Policy";
 
 import { PolicyProposals, ProposalAdded, ProposalRefunded, ProposalSupported, ProposalUnsupported, SupportThresholdReached, VotingStarted } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyVotes, PolicyVoteCast, VoteCompleted } from "../../generated/templates/PolicyVotes/PolicyVotes";
@@ -6,9 +7,27 @@ import { Proposal } from "../../generated/templates/PolicyProposals/Proposal";
 
 import { PolicyProposals as PolicyProposalsTemplate, PolicyVotes as PolicyVotesTemplate } from "../../generated/templates";
 
-import { CommunityProposal, CommunityProposalSupport, CommunityProposalVote, Generation, PolicyProposal, PolicyVote } from "../../generated/schema";
+import { CommunityProposal, CommunityProposalSupport, CommunityProposalVote, ContractAddresses, Generation, PolicyProposal, PolicyVote } from "../../generated/schema";
 
 import { BigInt, store } from "@graphprotocol/graph-ts";
+import { NULL_ADDRESS, ID_ECO, ID_ECOX, ID_TIMED_POLICIES } from "../constants";
+
+
+function loadContractAddresses(): ContractAddresses | null {
+    return ContractAddresses.load('0');
+}
+
+function loadOrCreateContractAddresses(policy: Policy): ContractAddresses {
+    let contracts = loadContractAddresses();
+    if (!contracts) {
+        contracts = new ContractAddresses('0');
+        contracts.policy = policy._address.toHexString();
+        contracts.timedPolicies = policy.policyFor(ID_TIMED_POLICIES).toHexString();
+        contracts.eco = policy.policyFor(ID_ECO).toHexString();
+        contracts.ecox = policy.policyFor(ID_ECOX).toHexString();
+    }
+    return contracts;
+}
 
 // TimedPolicies.PolicyDesicionStarted(address contractAddress)
 export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void {
@@ -35,6 +54,13 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void 
     newPolicyProposals.blockNumber = blockNumber;
     newPolicyProposals.totalVotingPower = policyProposalsContract.totalVotingPower(blockNumber);
     newPolicyProposals.save();
+
+    // get contracts
+    let policyContract = Policy.bind(timedPoliciesContract.policy());
+    let contracts = loadOrCreateContractAddresses(policyContract);
+    contracts.policyProposals = policyProposalsAddress.toHexString();
+    contracts.policyVotes = NULL_ADDRESS;
+    contracts.save();
     
 }
 
@@ -145,6 +171,13 @@ export function handleVotingStarted(event: VotingStarted): void {
 
     // save entity
     newPolicyVotes.save();
+
+    // update contracts with the new PolicyVotes address
+    let contracts = loadContractAddresses();
+    if (contracts) {
+        contracts.policyVotes = event.params.contractAddress.toHexString();
+        contracts.save();
+    }
 }
 
 

@@ -1,4 +1,19 @@
 """
+ECO contract addresses
+only even one entity of this type, with id: "0" which returns the current contract addresses of each attribute
+"""
+type ContractAddresses @entity {
+    id: String!
+    policy: String!
+    timedPolicies: String!
+    policyProposals: String!
+    policyVotes: String!
+    eco: String!
+    ecox: String!
+}
+
+
+"""
 ECO generation
 """
 type Generation @entity {
@@ -7,6 +22,7 @@ type Generation @entity {
     policyVote: PolicyVote @derivedFrom(field: "generation")
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
 }
+
 
 """
 Community Support entities

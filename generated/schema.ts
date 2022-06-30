@@ -11,6 +11,94 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
+export class ContractAddresses extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save ContractAddresses entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type ContractAddresses must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("ContractAddresses", id.toString(), this);
+    }
+  }
+
+  static load(id: string): ContractAddresses | null {
+    return changetype<ContractAddresses | null>(
+      store.get("ContractAddresses", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get policy(): string {
+    let value = this.get("policy");
+    return value!.toString();
+  }
+
+  set policy(value: string) {
+    this.set("policy", Value.fromString(value));
+  }
+
+  get timedPolicies(): string {
+    let value = this.get("timedPolicies");
+    return value!.toString();
+  }
+
+  set timedPolicies(value: string) {
+    this.set("timedPolicies", Value.fromString(value));
+  }
+
+  get policyProposals(): string {
+    let value = this.get("policyProposals");
+    return value!.toString();
+  }
+
+  set policyProposals(value: string) {
+    this.set("policyProposals", Value.fromString(value));
+  }
+
+  get policyVotes(): string {
+    let value = this.get("policyVotes");
+    return value!.toString();
+  }
+
+  set policyVotes(value: string) {
+    this.set("policyVotes", Value.fromString(value));
+  }
+
+  get eco(): string {
+    let value = this.get("eco");
+    return value!.toString();
+  }
+
+  set eco(value: string) {
+    this.set("eco", Value.fromString(value));
+  }
+
+  get ecox(): string {
+    let value = this.get("ecox");
+    return value!.toString();
+  }
+
+  set ecox(value: string) {
+    this.set("ecox", Value.fromString(value));
+  }
+}
+
 export class Generation extends Entity {
   constructor(id: string) {
     super();
