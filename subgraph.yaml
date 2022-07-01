@@ -27,7 +27,7 @@ dataSources:
       eventHandlers:
         - event: NewCurrencyGovernance(indexed address)
           handler: handleNewCurrencyGovernance
-      file: ./src/governance/mapping.ts
+      file: ./src/governance/CurrencyTimer.ts
   - kind: ethereum
     name: TimedPolicies
     network: mainnet
@@ -51,7 +51,7 @@ dataSources:
       eventHandlers:
         - event: PolicyDecisionStarted(address)
           handler: handlePolicyDesicionStarted
-      file: ./src/governance/mapping.ts
+      file: ./src/governance/TimedPolicies.ts
   - kind: ethereum
     name: ECO
     network: mainnet
@@ -77,7 +77,7 @@ dataSources:
           handler: handleApproval
         - event: BaseValueTransfer(indexed address,indexed address,uint256)
           handler: handleBaseValueTransfer
-      file: ./src/currency/mapping.ts
+      file: ./src/currency/ECO.ts
   - kind: ethereum
     name: ECOx
     network: mainnet
@@ -97,7 +97,7 @@ dataSources:
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-      file: ./src/currency/mapping.ts
+      file: ./src/currency/ECOx.ts
   - kind: ethereum
     name: ECOxLockup
     network: mainnet
@@ -117,7 +117,7 @@ dataSources:
       eventHandlers:
         - event: UpdatedVotes(indexed address,uint256)
           handler: handleUpdatedVotes
-      file: ./src/currency/mapping.ts
+      file: ./src/currency/ECOxLockup.ts
 templates:
   - kind: ethereum
     name: PolicyProposals
@@ -152,7 +152,7 @@ templates:
           handler: handleProposalRefund
         - event: VoteStart(indexed address)
           handler: handleVoteStart
-      file: ./src/governance/mapping.ts
+      file: ./src/governance/PolicyProposals.ts
   - kind: ethereum
     name: PolicyVotes
     network: mainnet
@@ -178,4 +178,4 @@ templates:
           handler: handlePolicyVoteCast
         - event: VoteCompleted(uint8)
           handler: handleVoteCompleted
-      file: ./src/governance/mapping.ts
+      file: ./src/governance/PolicyVotes.ts

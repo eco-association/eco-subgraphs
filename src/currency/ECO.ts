@@ -1,10 +1,10 @@
 import { NewInflationMultiplier, BaseValueTransfer, Approval} from "../../generated/ECO/ECO";
-import { Transfer } from "../../generated/ECOx/ECOx";
-import { UpdatedVotes } from "../../generated/ECOxLockup/ECOxLockup";
-import { Account, ECOAllowance, ECOBalance, sECOxBalance, InflationMultiplier } from "../../generated/schema";
+import { ECOAllowance, ECOBalance, InflationMultiplier } from "../../generated/schema";
 
 import { NULL_ADDRESS } from "../constants";
-import { BigInt, log, store } from "@graphprotocol/graph-ts";
+import { BigInt, store } from "@graphprotocol/graph-ts";
+
+import { loadOrCreateAccount } from "./";
 
 // ECO.NewInflationMultiplier(uint256)
 export function handleNewInflationMultiplier(event: NewInflationMultiplier): void {
@@ -15,18 +15,6 @@ export function handleNewInflationMultiplier(event: NewInflationMultiplier): voi
     newInflationMultiplier.blockNumber = event.block.number;
     newInflationMultiplier.save();
 
-}
-
-function loadOrCreateAccount(address: string): Account {
-    let account = Account.load(address);
-    if (!account) {
-        account = new Account(address);
-        account.ECO = BigInt.fromString("0");
-        account.ECOx = BigInt.fromString("0");
-        account.sECOx = BigInt.fromString("0");
-        account.save();
-    }
-    return account;
 }
 
 // ECO.Approval(address owner, address spender, uint256 value)
@@ -85,39 +73,4 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         newBalance.blockNumber = event.block.number;
         newBalance.save();
     }
-}
-
-// ECOx.Transfer(address from, address to, uint256 value)
-export function handleTransfer(event: Transfer): void {
-    let from = loadOrCreateAccount(event.params.from.toHexString());
-    let to = loadOrCreateAccount(event.params.to.toHexString());
-
-    if (from.id != NULL_ADDRESS) {
-        // not a mint
-        from.ECOx = from.ECOx.minus(event.params.value);
-        from.save();
-
-    }
-    if (to.id != NULL_ADDRESS) {
-        // not a burn
-        to.ECOx = to.ECOx.plus(event.params.value);
-        to.save();
-
-    }
-}
-
-// ECOxLockup.UpdatedVotes(address delegate, uint256 newBalance)
-export function handleUpdatedVotes(event: UpdatedVotes): void {
-    const delegate = loadOrCreateAccount(event.params.voter.toHexString());
-
-    delegate.sECOx = event.params.newVotes;
-    delegate.save();
-
-    // create new historical sECOx balance entry
-    let newBalance = new sECOxBalance(event.transaction.hash);
-    newBalance.account = delegate.id;
-    newBalance.value = delegate.sECOx;
-    newBalance.blockNumber = event.block.number;
-    newBalance.save();
-
 }
