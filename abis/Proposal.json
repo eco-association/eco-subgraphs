@@ -54,7 +54,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"description\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_self\",\"type\":\"address\"}],\"name\":\"enacted\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"url\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"enacted(address)\":{\"params\":{\"_self\":\"The address of the proposal contract.\"}}},\"title\":\"Proposal Interface specification for proposals. Any proposal submitted in the policy decision process must implement this interface.\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"description()\":{\"notice\":\"A longer description of what this proposal achieves.\"},\"enacted(address)\":{\"notice\":\"Called to enact the proposal. This will be called from the root policy contract using delegatecall, with the direct proposal address passed in as _self so that storage data can be accessed if needed.\"},\"name()\":{\"notice\":\"The name of the proposal. This should be relatively unique and descriptive.\"},\"url()\":{\"notice\":\"A URL where voters can go to see the case in favour of this proposal, and learn more about it.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/governance/Proposal.sol\":\"Proposal\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":500},\"remappings\":[]},\"sources\":{\"project:/contracts/governance/Proposal.sol\":{\"keccak256\":\"0xa5ab407d607a169e60f4de23c6c8ad96b788a25f213fc49ba3710e606224014b\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b81242d5dd6ec57f65663db1d628c0b36b6dbe01cee7a28106083be06cb64829\",\"dweb:/ipfs/QmfYyRxn8UCQ4xhW5CiFsRqAsXgcXkCoZHYkM7KA8isptj\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.9+commit.e5eed63a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"description\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_self\",\"type\":\"address\"}],\"name\":\"enacted\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"url\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"enacted(address)\":{\"params\":{\"_self\":\"The address of the proposal contract.\"}}},\"title\":\"Proposal Interface specification for proposals. Any proposal submitted in the policy decision process must implement this interface.\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"description()\":{\"notice\":\"A longer description of what this proposal achieves.\"},\"enacted(address)\":{\"notice\":\"Called to enact the proposal. This will be called from the root policy contract using delegatecall, with the direct proposal address passed in as _self so that storage data can be accessed if needed.\"},\"name()\":{\"notice\":\"The name of the proposal. This should be relatively unique and descriptive.\"},\"url()\":{\"notice\":\"A URL where voters can go to see the case in favour of this proposal, and learn more about it.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/governance/Proposal.sol\":\"Proposal\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":500},\"remappings\":[]},\"sources\":{\"project:/contracts/governance/Proposal.sol\":{\"keccak256\":\"0x54644b5204b10eb6f97290eef1fefb633f108c7facb3feb12b2d0a7847a95333\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://04eb89925c361e4058a0d7ce181f7bd54f1b6fe06cf659307ace3c76de6ede23\",\"dweb:/ipfs/QmezPJo7PEZt4qrPeq8YC5aaFzfLa9aQNU4f3Kt77Ud6ZN\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -62,26 +62,26 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.9;\n\n/** @title Proposal\n * Interface specification for proposals. Any proposal submitted in the\n * policy decision process must implement this interface.\n */\nabstract contract Proposal {\n    /** The name of the proposal.\n     *\n     * This should be relatively unique and descriptive.\n     */\n    function name() external view virtual returns (string memory);\n\n    /** A longer description of what this proposal achieves.\n     */\n    function description() external view virtual returns (string memory);\n\n    /** A URL where voters can go to see the case in favour of this proposal,\n     * and learn more about it.\n     */\n    function url() external view virtual returns (string memory);\n\n    /** Called to enact the proposal.\n     *\n     * This will be called from the root policy contract using delegatecall,\n     * with the direct proposal address passed in as _self so that storage\n     * data can be accessed if needed.\n     *\n     * @param _self The address of the proposal contract.\n     */\n    function enacted(address _self) external virtual;\n}\n",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\n/** @title Proposal\n * Interface specification for proposals. Any proposal submitted in the\n * policy decision process must implement this interface.\n */\nabstract contract Proposal {\n    /** The name of the proposal.\n     *\n     * This should be relatively unique and descriptive.\n     */\n    function name() external view virtual returns (string memory);\n\n    /** A longer description of what this proposal achieves.\n     */\n    function description() external view virtual returns (string memory);\n\n    /** A URL where voters can go to see the case in favour of this proposal,\n     * and learn more about it.\n     */\n    function url() external view virtual returns (string memory);\n\n    /** Called to enact the proposal.\n     *\n     * This will be called from the root policy contract using delegatecall,\n     * with the direct proposal address passed in as _self so that storage\n     * data can be accessed if needed.\n     *\n     * @param _self The address of the proposal contract.\n     */\n    function enacted(address _self) external virtual;\n}\n",
   "sourcePath": "/Users/dirksmac/dev/eco/currency/contracts/governance/Proposal.sol",
   "ast": {
     "absolutePath": "project:/contracts/governance/Proposal.sol",
     "exportedSymbols": {
       "Proposal": [
-        12316
+        12757
       ]
     },
-    "id": 12317,
+    "id": 12758,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 12290,
+        "id": 12731,
         "literals": [
           "solidity",
           "^",
           "0.8",
-          ".9"
+          ".0"
         ],
         "nodeType": "PragmaDirective",
         "src": "32:23:47"
@@ -93,15 +93,15 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "documentation": {
-          "id": 12291,
+          "id": 12732,
           "nodeType": "StructuredDocumentation",
           "src": "57:153:47",
           "text": "@title Proposal\n Interface specification for proposals. Any proposal submitted in the\n policy decision process must implement this interface."
         },
         "fullyImplemented": false,
-        "id": 12316,
+        "id": 12757,
         "linearizedBaseContracts": [
-          12316
+          12757
         ],
         "name": "Proposal",
         "nameLocation": "229:8:47",
@@ -109,13 +109,13 @@
         "nodes": [
           {
             "documentation": {
-              "id": 12292,
+              "id": 12733,
               "nodeType": "StructuredDocumentation",
               "src": "244:101:47",
               "text": "The name of the proposal.\n This should be relatively unique and descriptive."
             },
             "functionSelector": "06fdde03",
-            "id": 12297,
+            "id": 12738,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -123,23 +123,23 @@
             "nameLocation": "359:4:47",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 12293,
+              "id": 12734,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "363:2:47"
             },
             "returnParameters": {
-              "id": 12296,
+              "id": 12737,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 12295,
+                  "id": 12736,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12297,
+                  "scope": 12738,
                   "src": "397:13:47",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -148,7 +148,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 12294,
+                    "id": 12735,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "397:6:47",
@@ -162,7 +162,7 @@
               ],
               "src": "396:15:47"
             },
-            "scope": 12316,
+            "scope": 12757,
             "src": "350:62:47",
             "stateMutability": "view",
             "virtual": true,
@@ -170,13 +170,13 @@
           },
           {
             "documentation": {
-              "id": 12298,
+              "id": 12739,
               "nodeType": "StructuredDocumentation",
               "src": "418:64:47",
               "text": "A longer description of what this proposal achieves."
             },
             "functionSelector": "7284e416",
-            "id": 12303,
+            "id": 12744,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -184,23 +184,23 @@
             "nameLocation": "496:11:47",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 12299,
+              "id": 12740,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "507:2:47"
             },
             "returnParameters": {
-              "id": 12302,
+              "id": 12743,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 12301,
+                  "id": 12742,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12303,
+                  "scope": 12744,
                   "src": "541:13:47",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -209,7 +209,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 12300,
+                    "id": 12741,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "541:6:47",
@@ -223,7 +223,7 @@
               ],
               "src": "540:15:47"
             },
-            "scope": 12316,
+            "scope": 12757,
             "src": "487:69:47",
             "stateMutability": "view",
             "virtual": true,
@@ -231,13 +231,13 @@
           },
           {
             "documentation": {
-              "id": 12304,
+              "id": 12745,
               "nodeType": "StructuredDocumentation",
               "src": "562:113:47",
               "text": "A URL where voters can go to see the case in favour of this proposal,\n and learn more about it."
             },
             "functionSelector": "5600f04f",
-            "id": 12309,
+            "id": 12750,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -245,23 +245,23 @@
             "nameLocation": "689:3:47",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 12305,
+              "id": 12746,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "692:2:47"
             },
             "returnParameters": {
-              "id": 12308,
+              "id": 12749,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 12307,
+                  "id": 12748,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12309,
+                  "scope": 12750,
                   "src": "726:13:47",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -270,7 +270,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 12306,
+                    "id": 12747,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "726:6:47",
@@ -284,7 +284,7 @@
               ],
               "src": "725:15:47"
             },
-            "scope": 12316,
+            "scope": 12757,
             "src": "680:61:47",
             "stateMutability": "view",
             "virtual": true,
@@ -292,13 +292,13 @@
           },
           {
             "documentation": {
-              "id": 12310,
+              "id": 12751,
               "nodeType": "StructuredDocumentation",
               "src": "747:304:47",
               "text": "Called to enact the proposal.\n This will be called from the root policy contract using delegatecall,\n with the direct proposal address passed in as _self so that storage\n data can be accessed if needed.\n @param _self The address of the proposal contract."
             },
             "functionSelector": "d6466c79",
-            "id": 12315,
+            "id": 12756,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -306,17 +306,17 @@
             "nameLocation": "1065:7:47",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 12313,
+              "id": 12754,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 12312,
+                  "id": 12753,
                   "mutability": "mutable",
                   "name": "_self",
                   "nameLocation": "1081:5:47",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12315,
+                  "scope": 12756,
                   "src": "1073:13:47",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -325,7 +325,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 12311,
+                    "id": 12752,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1073:7:47",
@@ -341,19 +341,19 @@
               "src": "1072:15:47"
             },
             "returnParameters": {
-              "id": 12314,
+              "id": 12755,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1104:0:47"
             },
-            "scope": 12316,
+            "scope": 12757,
             "src": "1056:49:47",
             "stateMutability": "nonpayable",
             "virtual": true,
             "visibility": "external"
           }
         ],
-        "scope": 12317,
+        "scope": 12758,
         "src": "211:896:47",
         "usedErrors": []
       }
@@ -364,20 +364,20 @@
     "absolutePath": "project:/contracts/governance/Proposal.sol",
     "exportedSymbols": {
       "Proposal": [
-        12316
+        12757
       ]
     },
-    "id": 12317,
+    "id": 12758,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 12290,
+        "id": 12731,
         "literals": [
           "solidity",
           "^",
           "0.8",
-          ".9"
+          ".0"
         ],
         "nodeType": "PragmaDirective",
         "src": "32:23:47"
@@ -389,15 +389,15 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "documentation": {
-          "id": 12291,
+          "id": 12732,
           "nodeType": "StructuredDocumentation",
           "src": "57:153:47",
           "text": "@title Proposal\n Interface specification for proposals. Any proposal submitted in the\n policy decision process must implement this interface."
         },
         "fullyImplemented": false,
-        "id": 12316,
+        "id": 12757,
         "linearizedBaseContracts": [
-          12316
+          12757
         ],
         "name": "Proposal",
         "nameLocation": "229:8:47",
@@ -405,13 +405,13 @@
         "nodes": [
           {
             "documentation": {
-              "id": 12292,
+              "id": 12733,
               "nodeType": "StructuredDocumentation",
               "src": "244:101:47",
               "text": "The name of the proposal.\n This should be relatively unique and descriptive."
             },
             "functionSelector": "06fdde03",
-            "id": 12297,
+            "id": 12738,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -419,23 +419,23 @@
             "nameLocation": "359:4:47",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 12293,
+              "id": 12734,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "363:2:47"
             },
             "returnParameters": {
-              "id": 12296,
+              "id": 12737,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 12295,
+                  "id": 12736,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12297,
+                  "scope": 12738,
                   "src": "397:13:47",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -444,7 +444,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 12294,
+                    "id": 12735,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "397:6:47",
@@ -458,7 +458,7 @@
               ],
               "src": "396:15:47"
             },
-            "scope": 12316,
+            "scope": 12757,
             "src": "350:62:47",
             "stateMutability": "view",
             "virtual": true,
@@ -466,13 +466,13 @@
           },
           {
             "documentation": {
-              "id": 12298,
+              "id": 12739,
               "nodeType": "StructuredDocumentation",
               "src": "418:64:47",
               "text": "A longer description of what this proposal achieves."
             },
             "functionSelector": "7284e416",
-            "id": 12303,
+            "id": 12744,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -480,23 +480,23 @@
             "nameLocation": "496:11:47",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 12299,
+              "id": 12740,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "507:2:47"
             },
             "returnParameters": {
-              "id": 12302,
+              "id": 12743,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 12301,
+                  "id": 12742,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12303,
+                  "scope": 12744,
                   "src": "541:13:47",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -505,7 +505,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 12300,
+                    "id": 12741,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "541:6:47",
@@ -519,7 +519,7 @@
               ],
               "src": "540:15:47"
             },
-            "scope": 12316,
+            "scope": 12757,
             "src": "487:69:47",
             "stateMutability": "view",
             "virtual": true,
@@ -527,13 +527,13 @@
           },
           {
             "documentation": {
-              "id": 12304,
+              "id": 12745,
               "nodeType": "StructuredDocumentation",
               "src": "562:113:47",
               "text": "A URL where voters can go to see the case in favour of this proposal,\n and learn more about it."
             },
             "functionSelector": "5600f04f",
-            "id": 12309,
+            "id": 12750,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -541,23 +541,23 @@
             "nameLocation": "689:3:47",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 12305,
+              "id": 12746,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "692:2:47"
             },
             "returnParameters": {
-              "id": 12308,
+              "id": 12749,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 12307,
+                  "id": 12748,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12309,
+                  "scope": 12750,
                   "src": "726:13:47",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -566,7 +566,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 12306,
+                    "id": 12747,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "726:6:47",
@@ -580,7 +580,7 @@
               ],
               "src": "725:15:47"
             },
-            "scope": 12316,
+            "scope": 12757,
             "src": "680:61:47",
             "stateMutability": "view",
             "virtual": true,
@@ -588,13 +588,13 @@
           },
           {
             "documentation": {
-              "id": 12310,
+              "id": 12751,
               "nodeType": "StructuredDocumentation",
               "src": "747:304:47",
               "text": "Called to enact the proposal.\n This will be called from the root policy contract using delegatecall,\n with the direct proposal address passed in as _self so that storage\n data can be accessed if needed.\n @param _self The address of the proposal contract."
             },
             "functionSelector": "d6466c79",
-            "id": 12315,
+            "id": 12756,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -602,17 +602,17 @@
             "nameLocation": "1065:7:47",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 12313,
+              "id": 12754,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 12312,
+                  "id": 12753,
                   "mutability": "mutable",
                   "name": "_self",
                   "nameLocation": "1081:5:47",
                   "nodeType": "VariableDeclaration",
-                  "scope": 12315,
+                  "scope": 12756,
                   "src": "1073:13:47",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -621,7 +621,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 12311,
+                    "id": 12752,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "1073:7:47",
@@ -637,19 +637,19 @@
               "src": "1072:15:47"
             },
             "returnParameters": {
-              "id": 12314,
+              "id": 12755,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1104:0:47"
             },
-            "scope": 12316,
+            "scope": 12757,
             "src": "1056:49:47",
             "stateMutability": "nonpayable",
             "virtual": true,
             "visibility": "external"
           }
         ],
-        "scope": 12317,
+        "scope": 12758,
         "src": "211:896:47",
         "usedErrors": []
       }
@@ -662,7 +662,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.3",
-  "updatedAt": "2022-06-11T00:24:20.957Z",
+  "updatedAt": "2022-06-27T16:03:32.354Z",
   "devdoc": {
     "kind": "dev",
     "methods": {

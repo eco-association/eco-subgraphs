@@ -1,7 +1,7 @@
 import { PolicyDecisionStarted, TimedPolicies } from "../../generated/TimedPolicies/TimedPolicies";
 import { Policy } from "../../generated/TimedPolicies/Policy";
 
-import { PolicyProposals, ProposalAdded, ProposalRefunded, ProposalSupported, ProposalUnsupported, SupportThresholdReached, VotingStarted } from "../../generated/templates/PolicyProposals/PolicyProposals";
+import { PolicyProposals, Register, ProposalRefund, Support, Unsupport, SupportThresholdReached, VoteStart } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyVotes, PolicyVoteCast, VoteCompleted } from "../../generated/templates/PolicyVotes/PolicyVotes";
 import { Proposal } from "../../generated/templates/PolicyProposals/Proposal";
 
@@ -64,8 +64,8 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void 
     
 }
 
-// PolicyPropsals.ProposalAdded(address proposer, address proposalAddress)
-export function handleProposalAdded(event: ProposalAdded): void {
+// PolicyPropsals.Register(address proposer, address proposalAddress)
+export function handleRegister(event: Register): void {
     // create a new proposal entity
     let proposal = new CommunityProposal(event.params.proposalAddress.toHexString());
     proposal.proposer = event.params.proposer;
@@ -88,8 +88,8 @@ export function handleProposalAdded(event: ProposalAdded): void {
     proposal.save();
 }
 
-// PolicyProposals.ProposalSupported(address supporter, address proposalAddress)
-export function handleProposalSupported(event: ProposalSupported): void {
+// PolicyProposals.Support(address supporter, address proposalAddress)
+export function handleSupport(event: Support): void {
     let id = event.params.supporter.toHexString() + "-" + event.params.proposalAddress.toHexString();
     let support = new CommunityProposalSupport(id);
     support.supporter = event.params.supporter;
@@ -110,8 +110,8 @@ export function handleProposalSupported(event: ProposalSupported): void {
     support.save();
 }
 
-// PolicyProposals.ProposalUnsupported(address unsupporter, address proposalAddress)
-export function handleProposalUnsupported(event: ProposalUnsupported): void {
+// PolicyProposals.Unsupport(address unsupporter, address proposalAddress)
+export function handleUnsupport(event: Unsupport): void {
     let id = event.params.unsupporter.toHexString() + "-" + event.params.proposalAddress.toHexString();
     store.remove('CommunityProposalSupport', id);
 
@@ -136,8 +136,8 @@ export function handleSupportThresholdReached(event: SupportThresholdReached): v
     }
 }
 
-// PolicyProposals.ProposalRefunded(address proposer, address proposalAddress)
-export function handleProposalRefunded(event: ProposalRefunded): void {
+// PolicyProposals.ProposalRefund(address proposer, address proposalAddress)
+export function handleProposalRefund(event: ProposalRefund): void {
     let proposal = CommunityProposal.load(event.params.proposalAddress.toHexString());
     if (proposal) {
         proposal.refunded = true;
@@ -145,8 +145,8 @@ export function handleProposalRefunded(event: ProposalRefunded): void {
     }
 }
 
-// PolicyPropsals.VotingStarted(address contractAddress)
-export function handleVotingStarted(event: VotingStarted): void {
+// PolicyPropsals.VoteStart(address contractAddress)
+export function handleVoteStart(event: VoteStart): void {
     // subscribe to policyVotes events
     PolicyVotesTemplate.create(event.params.contractAddress);
 
@@ -181,7 +181,7 @@ export function handleVotingStarted(event: VotingStarted): void {
 }
 
 
-// PolicyVotes.PolicyVoteCast(address indexed voter, bool vote, uint256 amount)
+// PolicyVotes.PolicyVoteCast(address voter, bool vote, uint256 amount)
 export function handlePolicyVoteCast(event: PolicyVoteCast): void {
     let vote = CommunityProposalVote.load(event.params.voter.toHexString());
     let policyVote = PolicyVote.load(event.address.toHexString());

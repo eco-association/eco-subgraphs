@@ -10,20 +10,6 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class Initialized extends ethereum.Event {
-  get params(): Initialized__Params {
-    return new Initialized__Params(this);
-  }
-}
-
-export class Initialized__Params {
-  _event: Initialized;
-
-  constructor(event: Initialized) {
-    this._event = event;
-  }
-}
-
 export class Policy extends ethereum.SmartContract {
   static bind(address: Address): Policy {
     return new Policy("Policy", address);
@@ -113,6 +99,40 @@ export class RemoveSelfCall__Outputs {
   _call: RemoveSelfCall;
 
   constructor(call: RemoveSelfCall) {
+    this._call = call;
+  }
+}
+
+export class SetPolicyCall extends ethereum.Call {
+  get inputs(): SetPolicyCall__Inputs {
+    return new SetPolicyCall__Inputs(this);
+  }
+
+  get outputs(): SetPolicyCall__Outputs {
+    return new SetPolicyCall__Outputs(this);
+  }
+}
+
+export class SetPolicyCall__Inputs {
+  _call: SetPolicyCall;
+
+  constructor(call: SetPolicyCall) {
+    this._call = call;
+  }
+
+  get _key(): Bytes {
+    return this._call.inputValues[0].value.toBytes();
+  }
+
+  get _implementer(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class SetPolicyCall__Outputs {
+  _call: SetPolicyCall;
+
+  constructor(call: SetPolicyCall) {
     this._call = call;
   }
 }
