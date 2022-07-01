@@ -5,7 +5,9 @@ only even one entity of this type, with id: "0" which returns the current contra
 type ContractAddresses @entity {
     id: String!
     policy: String!
+    currencyTimer: String!
     timedPolicies: String!
+    currencyGovernance: String!
     policyProposals: String!
     policyVotes: String!
     eco: String!
@@ -18,9 +20,19 @@ ECO generation
 """
 type Generation @entity {
     id: String! "generation number"
-    policyProposal: PolicyProposal! @derivedFrom(field: "generation")
+    currencyGovernance: CurrencyGovernance! @derivedFrom(field: "generation")
+    policyProposal: PolicyProposal @derivedFrom(field: "generation")
     policyVote: PolicyVote @derivedFrom(field: "generation")
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
+}
+
+
+"""
+Currency Governance entities
+"""
+type CurrencyGovernance @entity {
+    id: String! "address"
+    generation: Generation!
 }
 
 

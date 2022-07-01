@@ -3,6 +3,32 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
+    name: CurrencyTimer
+    network: mainnet
+    source:
+      address: "0x1dF30B75fB5D942DA5574F0128bd876d4740B01F"
+      abi: CurrencyTimer
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - ContractAddresses
+        - Generation
+        - CurrencyGovernance
+      abis:
+        - name: CurrencyTimer
+          file: ./abis/CurrencyTimer.json
+        - name: CurrencyGovernance
+          file: ./abis/CurrencyGovernance.json
+        - name: Policy
+          file: ./abis/Policy.json
+      eventHandlers:
+        - event: NewCurrencyGovernance(indexed address)
+          handler: handleNewCurrencyGovernance
+      file: ./src/governance/mapping.ts
+  - kind: ethereum
     name: TimedPolicies
     network: mainnet
     source:
@@ -22,8 +48,6 @@ dataSources:
           file: ./abis/TimedPolicies.json
         - name: PolicyProposals
           file: ./abis/PolicyProposals.json
-        - name: Policy
-          file: ./abis/Policy.json
       eventHandlers:
         - event: PolicyDecisionStarted(address)
           handler: handlePolicyDesicionStarted

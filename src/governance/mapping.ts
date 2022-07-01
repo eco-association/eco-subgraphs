@@ -1,5 +1,6 @@
+import { NewCurrencyGovernance, CurrencyTimer } from "../../generated/CurrencyTimer/CurrencyTimer";
+import { Policy } from "../../generated/CurrencyTimer/Policy";
 import { PolicyDecisionStarted, TimedPolicies } from "../../generated/TimedPolicies/TimedPolicies";
-import { Policy } from "../../generated/TimedPolicies/Policy";
 
 import { PolicyProposals, Register, ProposalRefund, Support, Unsupport, SupportThresholdReached, VoteStart } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyVotes, PolicyVoteCast, VoteCompleted } from "../../generated/templates/PolicyVotes/PolicyVotes";
@@ -7,10 +8,10 @@ import { Proposal } from "../../generated/templates/PolicyProposals/Proposal";
 
 import { PolicyProposals as PolicyProposalsTemplate, PolicyVotes as PolicyVotesTemplate } from "../../generated/templates";
 
-import { CommunityProposal, CommunityProposalSupport, CommunityProposalVote, ContractAddresses, Generation, PolicyProposal, PolicyVote } from "../../generated/schema";
+import { CommunityProposal, CommunityProposalSupport, CommunityProposalVote, ContractAddresses, CurrencyGovernance, Generation, PolicyProposal, PolicyVote } from "../../generated/schema";
 
 import { BigInt, store } from "@graphprotocol/graph-ts";
-import { NULL_ADDRESS, ID_ECO, ID_ECOX, ID_TIMED_POLICIES } from "../constants";
+import { NULL_ADDRESS, ID_ECO, ID_ECOX, ID_TIMED_POLICIES, ID_CURRENCY_TIMER } from "../constants";
 
 
 function loadContractAddresses(): ContractAddresses | null {
@@ -22,12 +23,47 @@ function loadOrCreateContractAddresses(policy: Policy): ContractAddresses {
     if (!contracts) {
         contracts = new ContractAddresses('0');
         contracts.policy = policy._address.toHexString();
+        contracts.currencyTimer = policy.policyFor(ID_CURRENCY_TIMER).toHexString();
         contracts.timedPolicies = policy.policyFor(ID_TIMED_POLICIES).toHexString();
         contracts.eco = policy.policyFor(ID_ECO).toHexString();
         contracts.ecox = policy.policyFor(ID_ECOX).toHexString();
     }
     return contracts;
 }
+
+// CurrencyTimer.NewCurrencyGovernance(addr)
+export function handleNewCurrencyGovernance(event: NewCurrencyGovernance) {
+    // get the new address
+    let currencyTimerContract = CurrencyTimer.bind(event.address);
+
+    let currencyGovernanceAddress = event.params.addr;
+
+    // create new generation
+    let generationNum = currencyTimerContract.currentGeneration();
+
+    let currentGeneration = new Generation(generationNum.toString());
+    currentGeneration.save();
+
+    // subscribe to events from this generation's currencyGovernance contract
+    // CurrencyGovernanceTemplate.create(currencyGovernanceAddress);
+
+    // create currencyGovernance entity
+    let newCurrencyGovernance = new CurrencyGovernance(currencyGovernanceAddress.toHexString());
+    newCurrencyGovernance.generation = generationNum.toString();
+    newCurrencyGovernance.save();
+
+    // get contracts
+    let policyContract = Policy.bind(currencyTimerContract.policy());
+    let contracts = loadOrCreateContractAddresses(policyContract);
+    // set current currencyGovernance contract
+    // refresh policyVotes and policyProposals addresses
+    contracts.currencyGovernance = currencyGovernanceAddress.toHexString();
+    contracts.policyProposals = NULL_ADDRESS;
+    contracts.policyVotes = NULL_ADDRESS;
+    contracts.save();
+
+}
+
 
 // TimedPolicies.PolicyDesicionStarted(address contractAddress)
 export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void {
@@ -36,11 +72,8 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void 
 
     let policyProposalsAddress = event.params.contractAddress;
 
-    // create generation
+    // get generation
     let generationNum = timedPoliciesContract.internalGeneration();
-
-    let currentGeneration = new Generation(generationNum.toString());
-    currentGeneration.save();
 
     // subscribe to events from this generation's PolicyProposals contract
     PolicyProposalsTemplate.create(policyProposalsAddress);
@@ -55,12 +88,12 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void 
     newPolicyProposals.totalVotingPower = policyProposalsContract.totalVotingPower(blockNumber);
     newPolicyProposals.save();
 
-    // get contracts
-    let policyContract = Policy.bind(timedPoliciesContract.policy());
-    let contracts = loadOrCreateContractAddresses(policyContract);
-    contracts.policyProposals = policyProposalsAddress.toHexString();
-    contracts.policyVotes = NULL_ADDRESS;
-    contracts.save();
+    // update contracts with the new PolicyProposals address
+    let contracts = loadContractAddresses();
+    if (contracts) {
+        contracts.policyProposals = event.params.contractAddress.toHexString();
+        contracts.save();
+    }
     
 }
 

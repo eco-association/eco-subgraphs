@@ -53,6 +53,15 @@ export class ContractAddresses extends Entity {
     this.set("policy", Value.fromString(value));
   }
 
+  get currencyTimer(): string {
+    let value = this.get("currencyTimer");
+    return value!.toString();
+  }
+
+  set currencyTimer(value: string) {
+    this.set("currencyTimer", Value.fromString(value));
+  }
+
   get timedPolicies(): string {
     let value = this.get("timedPolicies");
     return value!.toString();
@@ -60,6 +69,15 @@ export class ContractAddresses extends Entity {
 
   set timedPolicies(value: string) {
     this.set("timedPolicies", Value.fromString(value));
+  }
+
+  get currencyGovernance(): string {
+    let value = this.get("currencyGovernance");
+    return value!.toString();
+  }
+
+  set currencyGovernance(value: string) {
+    this.set("currencyGovernance", Value.fromString(value));
   }
 
   get policyProposals(): string {
@@ -130,13 +148,30 @@ export class Generation extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get policyProposal(): string {
-    let value = this.get("policyProposal");
+  get currencyGovernance(): string {
+    let value = this.get("currencyGovernance");
     return value!.toString();
   }
 
-  set policyProposal(value: string) {
-    this.set("policyProposal", Value.fromString(value));
+  set currencyGovernance(value: string) {
+    this.set("currencyGovernance", Value.fromString(value));
+  }
+
+  get policyProposal(): string | null {
+    let value = this.get("policyProposal");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set policyProposal(value: string | null) {
+    if (!value) {
+      this.unset("policyProposal");
+    } else {
+      this.set("policyProposal", Value.fromString(<string>value));
+    }
   }
 
   get policyVote(): string | null {
@@ -163,6 +198,49 @@ export class Generation extends Entity {
 
   set communityProposals(value: Array<string>) {
     this.set("communityProposals", Value.fromStringArray(value));
+  }
+}
+
+export class CurrencyGovernance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CurrencyGovernance entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type CurrencyGovernance must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("CurrencyGovernance", id.toString(), this);
+    }
+  }
+
+  static load(id: string): CurrencyGovernance | null {
+    return changetype<CurrencyGovernance | null>(
+      store.get("CurrencyGovernance", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get generation(): string {
+    let value = this.get("generation");
+    return value!.toString();
+  }
+
+  set generation(value: string) {
+    this.set("generation", Value.fromString(value));
   }
 }
 
