@@ -94,6 +94,7 @@ export function handleSupport(event: Support): void {
     let support = new CommunityProposalSupport(id);
     support.supporter = event.params.supporter;
     support.proposal = event.params.proposalAddress.toHexString();
+    support.policyProposal = event.address.toHexString();
 
     // get amount
     let policyProposalsContract = PolicyProposals.bind(event.address);
