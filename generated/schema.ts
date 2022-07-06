@@ -232,6 +232,15 @@ export class PolicyProposal extends Entity {
   set blockNumber(value: BigInt) {
     this.set("blockNumber", Value.fromBigInt(value));
   }
+
+  get support(): Array<string> {
+    let value = this.get("support");
+    return value!.toStringArray();
+  }
+
+  set support(value: Array<string>) {
+    this.set("support", Value.fromStringArray(value));
+  }
 }
 
 export class CommunityProposal extends Entity {
@@ -401,6 +410,15 @@ export class CommunityProposalSupport extends Entity {
 
   set proposal(value: string) {
     this.set("proposal", Value.fromString(value));
+  }
+
+  get policyProposal(): string {
+    let value = this.get("policyProposal");
+    return value!.toString();
+  }
+
+  set policyProposal(value: string) {
+    this.set("policyProposal", Value.fromString(value));
   }
 
   get amount(): BigInt {
