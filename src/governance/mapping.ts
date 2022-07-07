@@ -2,7 +2,7 @@ import { PolicyDecisionStart, TimedPolicies } from "../../generated/TimedPolicie
 import { Policy } from "../../generated/TimedPolicies/Policy";
 
 import { PolicyProposals, Register, ProposalRefund, Support, Unsupport, SupportThresholdReached, VoteStart } from "../../generated/templates/PolicyProposals/PolicyProposals";
-import { PolicyVotes, PolicyVoteCast, VoteCompleted } from "../../generated/templates/PolicyVotes/PolicyVotes";
+import { PolicyVotes, PolicyVoteCast, PolicySplitVoteCast, VoteCompleted } from "../../generated/templates/PolicyVotes/PolicyVotes";
 import { Proposal } from "../../generated/templates/PolicyProposals/Proposal";
 
 import { PolicyProposals as PolicyProposalsTemplate, PolicyVotes as PolicyVotesTemplate } from "../../generated/templates";
@@ -181,7 +181,6 @@ export function handleVoteStart(event: VoteStart): void {
     }
 }
 
-
 // PolicyVotes.PolicyVoteCast(address voter, bool vote, uint256 amount)
 export function handlePolicyVoteCast(event: PolicyVoteCast): void {
     let id = event.params.voter.toHexString() + "-" + event.address.toHexString();
@@ -189,31 +188,70 @@ export function handlePolicyVoteCast(event: PolicyVoteCast): void {
     let vote = CommunityProposalVote.load(id);
     let policyVote = PolicyVote.load(event.address.toHexString());
 
-    let voteAmount = event.params.amount;
+    let amount = event.params.amount;
 
-    // check and set vote stats
     if (policyVote) {
+        if (vote) {
+            // vote is not new, reset past amounts before setting new values
+            policyVote.totalVoteAmount = policyVote.totalVoteAmount.minus(vote.totalAmount);
+            policyVote.yesVoteAmount = policyVote.yesVoteAmount.minus(vote.yesAmount);
+        }
+        else {
+            // create new vote entity
+            vote = new CommunityProposalVote(id);
+            vote.voter = event.params.voter;
+            vote.policyVote = event.address.toHexString();
+        }
+        // set vote values and policyVote values
+        policyVote.totalVoteAmount = policyVote.totalVoteAmount.plus(amount);
+
         if (event.params.vote) {
-            // add to yes amount if vote is for (whether vote is new or not)
-            policyVote.yesVoteAmount = policyVote.yesVoteAmount.plus(voteAmount);
+            policyVote.yesVoteAmount = policyVote.yesVoteAmount.plus(amount);
+            vote.yesAmount = amount;
         }
-        else if (vote) {
-            // if vote is against and vote is not new, remove from yes amount
-            policyVote.yesVoteAmount = policyVote.yesVoteAmount.minus(voteAmount);
+        else {
+            vote.yesAmount = BigInt.fromString('0');
         }
+        
+        vote.totalAmount = amount;
+
         policyVote.save();
+        vote.save();
     }
+}
 
-    if (!vote) {
-        // new vote
-        vote = new CommunityProposalVote(id);
-        vote.voter = event.params.voter;
-        vote.policyVote = event.address.toHexString();
+// PolicyVotes.PolicySplitVoteCast(address indexed voter, uint256 votesYes, uint256 votesNo)
+export function handleSplitPolicyVoteCast(event: PolicySplitVoteCast): void {
+    let id = event.params.voter.toHexString() + "-" + event.address.toHexString();
+
+    let vote = CommunityProposalVote.load(id);
+    let policyVote = PolicyVote.load(event.address.toHexString());
+
+    let amount = event.params.votesYes.plus(event.params.votesNo);
+
+    if (policyVote) {
+        if (vote) {
+            // vote is not new, reset past amounts before setting new values
+            policyVote.totalVoteAmount = policyVote.totalVoteAmount.minus(vote.totalAmount);
+            policyVote.yesVoteAmount = policyVote.yesVoteAmount.minus(vote.yesAmount);
+        }
+        else {
+            // create new vote entity
+            vote = new CommunityProposalVote(id);
+            vote.voter = event.params.voter;
+            vote.policyVote = event.address.toHexString();
+        }
+        // set vote values and policyVote values
+        policyVote.totalVoteAmount = policyVote.totalVoteAmount.plus(amount);
+
+        policyVote.yesVoteAmount = policyVote.yesVoteAmount.plus(event.params.votesYes);
+        vote.yesAmount = event.params.votesYes;
+
+        vote.totalAmount = amount;
+
+        policyVote.save();
+        vote.save();
     }
-
-    vote.amount = voteAmount;
-    vote.vote = event.params.vote;
-    vote.save();
 }
 
 // PolicyVotes.VoteCompleted(Result result)

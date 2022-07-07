@@ -6,7 +6,7 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x66Ef5dB389c51A3879325C1C9aC5BDC491540C64"
+      address: "0x6911b9667DCaa4E4844e5878F0162B0ff3B80Ad6"
       abi: TimedPolicies
       startBlock: 0
     mapping:
@@ -32,7 +32,7 @@ dataSources:
     name: ECO
     network: mainnet
     source:
-      address: "0x4234BF87d8E670a8437209E8c7614257Ec6d1558"
+      address: "0x889E8Ee3101710f9adf61079abd451F8F0c3C2DF"
       abi: ECO
       startBlock: 0
     mapping:
@@ -58,7 +58,7 @@ dataSources:
     name: ECOx
     network: mainnet
     source:
-      address: "0xDDF50ac127e4Bf0A23750ae73f3dfFebeA63bcC7"
+      address: "0x0baf1eeD93F8e9a452c8B5dE2cAB74Dc0A78f491"
       abi: ECOx
       startBlock: 0
     mapping:
@@ -78,7 +78,7 @@ dataSources:
     name: ECOxLockup
     network: mainnet
     source:
-      address: "0x1b78FF1940333F0bcaAfe5A00d986c70caC66896"
+      address: "0x4f877599705B121B24Afc4738dcB772C4475c2ef"
       abi: ECOxLockup
       startBlock: 0
     mapping:
@@ -152,6 +152,8 @@ templates:
       eventHandlers:
         - event: PolicyVoteCast(indexed address,bool,uint256)
           handler: handlePolicyVoteCast
+        - event: PolicySplitVoteCast(indexed address,uint256,uint256)
+          handler: handleSplitPolicyVoteCast
         - event: VoteCompleted(uint8)
           handler: handleVoteCompleted
       file: ./src/governance/mapping.ts
