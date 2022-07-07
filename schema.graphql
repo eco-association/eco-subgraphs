@@ -86,9 +86,10 @@ enum VoteResult {
 
 type CommunityProposalVote @entity {
     """
-    id: voter address
+    id: voter address + - + policyVote address
     """
     id: String!
+    voter: Bytes!
     policyVote: PolicyVote!
     vote: Boolean!
     amount: BigInt!
