@@ -23,23 +23,23 @@
     },
     "localhost": {
         "CurrencyTimer": {
-            "address": "0x10928cf4e60958767ee3aB21357ad99a2614bf1f",
+            "address": "0x89bBcc203d429732f95d392C5d462f08530986C0",
             "startBlock": 0
         },
         "TimedPolicies": {
-            "address": "0xf0739f9525dc89FC862d6803617c3F442BE12Bf9",
+            "address": "0x6911b9667DCaa4E4844e5878F0162B0ff3B80Ad6",
             "startBlock": 0
         },
         "ECO": {
-            "address": "0xfb6c52606747bbE14B8355548037E7a87F41AcbC",
+            "address": "0x889E8Ee3101710f9adf61079abd451F8F0c3C2DF",
             "startBlock": 0
         },
         "ECOx": {
-            "address": "0xE29ceb5A891C0E2fa6D3E5032b8C4a853EF49b38",
+            "address": "0x0baf1eeD93F8e9a452c8B5dE2cAB74Dc0A78f491",
             "startBlock": 0
         },
         "ECOxLockup": {
-            "address": "0x2E7D9E50de1D2C8696EF50c4c3e674Baf3649D2d",
+            "address": "0x4f877599705B121B24Afc4738dcB772C4475c2ef",
             "startBlock": 0
         }
     }

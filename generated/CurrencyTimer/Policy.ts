@@ -34,6 +34,25 @@ export class Policy extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  policyFor(_interfaceIdentifierHash: Bytes): Address {
+    let result = super.call("policyFor", "policyFor(bytes32):(address)", [
+      ethereum.Value.fromFixedBytes(_interfaceIdentifierHash)
+    ]);
+
+    return result[0].toAddress();
+  }
+
+  try_policyFor(_interfaceIdentifierHash: Bytes): ethereum.CallResult<Address> {
+    let result = super.tryCall("policyFor", "policyFor(bytes32):(address)", [
+      ethereum.Value.fromFixedBytes(_interfaceIdentifierHash)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   setters(param0: BigInt): Bytes {
     let result = super.call("setters", "setters(uint256):(bytes32)", [
       ethereum.Value.fromUnsignedBigInt(param0)
@@ -52,24 +71,65 @@ export class Policy extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
+}
 
-  policyFor(_interfaceIdentifierHash: Bytes): Address {
-    let result = super.call("policyFor", "policyFor(bytes32):(address)", [
-      ethereum.Value.fromFixedBytes(_interfaceIdentifierHash)
-    ]);
-
-    return result[0].toAddress();
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
   }
 
-  try_policyFor(_interfaceIdentifierHash: Bytes): ethereum.CallResult<Address> {
-    let result = super.tryCall("policyFor", "policyFor(bytes32):(address)", [
-      ethereum.Value.fromFixedBytes(_interfaceIdentifierHash)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
+  }
+}
+
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+
+  get _self(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+}
+
+export class InternalCommandCall extends ethereum.Call {
+  get inputs(): InternalCommandCall__Inputs {
+    return new InternalCommandCall__Inputs(this);
+  }
+
+  get outputs(): InternalCommandCall__Outputs {
+    return new InternalCommandCall__Outputs(this);
+  }
+}
+
+export class InternalCommandCall__Inputs {
+  _call: InternalCommandCall;
+
+  constructor(call: InternalCommandCall) {
+    this._call = call;
+  }
+
+  get _delegate(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class InternalCommandCall__Outputs {
+  _call: InternalCommandCall;
+
+  constructor(call: InternalCommandCall) {
+    this._call = call;
   }
 }
 
@@ -133,66 +193,6 @@ export class SetPolicyCall__Outputs {
   _call: SetPolicyCall;
 
   constructor(call: SetPolicyCall) {
-    this._call = call;
-  }
-}
-
-export class InternalCommandCall extends ethereum.Call {
-  get inputs(): InternalCommandCall__Inputs {
-    return new InternalCommandCall__Inputs(this);
-  }
-
-  get outputs(): InternalCommandCall__Outputs {
-    return new InternalCommandCall__Outputs(this);
-  }
-}
-
-export class InternalCommandCall__Inputs {
-  _call: InternalCommandCall;
-
-  constructor(call: InternalCommandCall) {
-    this._call = call;
-  }
-
-  get _delegate(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class InternalCommandCall__Outputs {
-  _call: InternalCommandCall;
-
-  constructor(call: InternalCommandCall) {
-    this._call = call;
-  }
-}
-
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
-  }
-
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
-  }
-}
-
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-
-  get _self(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
     this._call = call;
   }
 }

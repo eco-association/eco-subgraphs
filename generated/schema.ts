@@ -310,6 +310,15 @@ export class PolicyProposal extends Entity {
   set blockNumber(value: BigInt) {
     this.set("blockNumber", Value.fromBigInt(value));
   }
+
+  get support(): Array<string> {
+    let value = this.get("support");
+    return value!.toStringArray();
+  }
+
+  set support(value: Array<string>) {
+    this.set("support", Value.fromStringArray(value));
+  }
 }
 
 export class CommunityProposal extends Entity {
@@ -479,6 +488,15 @@ export class CommunityProposalSupport extends Entity {
 
   set proposal(value: string) {
     this.set("proposal", Value.fromString(value));
+  }
+
+  get policyProposal(): string {
+    let value = this.get("policyProposal");
+    return value!.toString();
+  }
+
+  set policyProposal(value: string) {
+    this.set("policyProposal", Value.fromString(value));
   }
 
   get amount(): BigInt {
@@ -657,6 +675,15 @@ export class CommunityProposalVote extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get voter(): Bytes {
+    let value = this.get("voter");
+    return value!.toBytes();
+  }
+
+  set voter(value: Bytes) {
+    this.set("voter", Value.fromBytes(value));
+  }
+
   get policyVote(): string {
     let value = this.get("policyVote");
     return value!.toString();
@@ -666,22 +693,22 @@ export class CommunityProposalVote extends Entity {
     this.set("policyVote", Value.fromString(value));
   }
 
-  get vote(): boolean {
-    let value = this.get("vote");
-    return value!.toBoolean();
-  }
-
-  set vote(value: boolean) {
-    this.set("vote", Value.fromBoolean(value));
-  }
-
-  get amount(): BigInt {
-    let value = this.get("amount");
+  get yesAmount(): BigInt {
+    let value = this.get("yesAmount");
     return value!.toBigInt();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set yesAmount(value: BigInt) {
+    this.set("yesAmount", Value.fromBigInt(value));
+  }
+
+  get totalAmount(): BigInt {
+    let value = this.get("totalAmount");
+    return value!.toBigInt();
+  }
+
+  set totalAmount(value: BigInt) {
+    this.set("totalAmount", Value.fromBigInt(value));
   }
 }
 

@@ -134,6 +134,20 @@ export class VoteStart__Params {
   }
 }
 
+export class PolicyProposals__allProposalDataResultValue0Struct extends ethereum.Tuple {
+  get proposer(): Address {
+    return this[0].toAddress();
+  }
+
+  get proposal(): Address {
+    return this[1].toAddress();
+  }
+
+  get totalStake(): BigInt {
+    return this[2].toBigInt();
+  }
+}
+
 export class PolicyProposals__proposalsResult {
   value0: Address;
   value1: Address;
@@ -151,20 +165,6 @@ export class PolicyProposals__proposalsResult {
     map.set("value1", ethereum.Value.fromAddress(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     return map;
-  }
-}
-
-export class PolicyProposals__allProposalDataResultValue0Struct extends ethereum.Tuple {
-  get proposer(): Address {
-    return this[0].toAddress();
-  }
-
-  get proposal(): Address {
-    return this[1].toAddress();
-  }
-
-  get totalStake(): BigInt {
-    return this[2].toBigInt();
   }
 }
 
@@ -274,6 +274,60 @@ export class PolicyProposals extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  allProposalAddresses(): Array<Address> {
+    let result = super.call(
+      "allProposalAddresses",
+      "allProposalAddresses():(address[])",
+      []
+    );
+
+    return result[0].toAddressArray();
+  }
+
+  try_allProposalAddresses(): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall(
+      "allProposalAddresses",
+      "allProposalAddresses():(address[])",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
+  }
+
+  allProposalData(): Array<PolicyProposals__allProposalDataResultValue0Struct> {
+    let result = super.call(
+      "allProposalData",
+      "allProposalData():((address,address,uint256)[])",
+      []
+    );
+
+    return result[0].toTupleArray<
+      PolicyProposals__allProposalDataResultValue0Struct
+    >();
+  }
+
+  try_allProposalData(): ethereum.CallResult<
+    Array<PolicyProposals__allProposalDataResultValue0Struct>
+  > {
+    let result = super.tryCall(
+      "allProposalData",
+      "allProposalData():((address,address,uint256)[])",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      value[0].toTupleArray<
+        PolicyProposals__allProposalDataResultValue0Struct
+      >()
+    );
   }
 
   allProposals(param0: BigInt): Address {
@@ -536,6 +590,29 @@ export class PolicyProposals extends ethereum.SmartContract {
     );
   }
 
+  registerProposal(_prop: Address): BigInt {
+    let result = super.call(
+      "registerProposal",
+      "registerProposal(address):(uint256)",
+      [ethereum.Value.fromAddress(_prop)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_registerProposal(_prop: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "registerProposal",
+      "registerProposal(address):(uint256)",
+      [ethereum.Value.fromAddress(_prop)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   staked(param0: Address, param1: Address): boolean {
     let result = super.call("staked", "staked(address,address):(bool)", [
       ethereum.Value.fromAddress(param0),
@@ -630,83 +707,6 @@ export class PolicyProposals extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
-
-  allProposalAddresses(): Array<Address> {
-    let result = super.call(
-      "allProposalAddresses",
-      "allProposalAddresses():(address[])",
-      []
-    );
-
-    return result[0].toAddressArray();
-  }
-
-  try_allProposalAddresses(): ethereum.CallResult<Array<Address>> {
-    let result = super.tryCall(
-      "allProposalAddresses",
-      "allProposalAddresses():(address[])",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddressArray());
-  }
-
-  allProposalData(): Array<PolicyProposals__allProposalDataResultValue0Struct> {
-    let result = super.call(
-      "allProposalData",
-      "allProposalData():((address,address,uint256)[])",
-      []
-    );
-
-    return result[0].toTupleArray<
-      PolicyProposals__allProposalDataResultValue0Struct
-    >();
-  }
-
-  try_allProposalData(): ethereum.CallResult<
-    Array<PolicyProposals__allProposalDataResultValue0Struct>
-  > {
-    let result = super.tryCall(
-      "allProposalData",
-      "allProposalData():((address,address,uint256)[])",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(
-      value[0].toTupleArray<
-        PolicyProposals__allProposalDataResultValue0Struct
-      >()
-    );
-  }
-
-  registerProposal(_prop: Address): BigInt {
-    let result = super.call(
-      "registerProposal",
-      "registerProposal(address):(uint256)",
-      [ethereum.Value.fromAddress(_prop)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_registerProposal(_prop: Address): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "registerProposal",
-      "registerProposal(address):(uint256)",
-      [ethereum.Value.fromAddress(_prop)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
 }
 
 export class ConstructorCall extends ethereum.Call {
@@ -781,6 +781,88 @@ export class CloneCall__Outputs {
   }
 }
 
+export class DeployProposalVotingCall extends ethereum.Call {
+  get inputs(): DeployProposalVotingCall__Inputs {
+    return new DeployProposalVotingCall__Inputs(this);
+  }
+
+  get outputs(): DeployProposalVotingCall__Outputs {
+    return new DeployProposalVotingCall__Outputs(this);
+  }
+}
+
+export class DeployProposalVotingCall__Inputs {
+  _call: DeployProposalVotingCall;
+
+  constructor(call: DeployProposalVotingCall) {
+    this._call = call;
+  }
+}
+
+export class DeployProposalVotingCall__Outputs {
+  _call: DeployProposalVotingCall;
+
+  constructor(call: DeployProposalVotingCall) {
+    this._call = call;
+  }
+}
+
+export class DestructCall extends ethereum.Call {
+  get inputs(): DestructCall__Inputs {
+    return new DestructCall__Inputs(this);
+  }
+
+  get outputs(): DestructCall__Outputs {
+    return new DestructCall__Outputs(this);
+  }
+}
+
+export class DestructCall__Inputs {
+  _call: DestructCall;
+
+  constructor(call: DestructCall) {
+    this._call = call;
+  }
+}
+
+export class DestructCall__Outputs {
+  _call: DestructCall;
+
+  constructor(call: DestructCall) {
+    this._call = call;
+  }
+}
+
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
+  }
+
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
+  }
+}
+
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+
+  get _self(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+}
+
 export class PolicyCommandCall extends ethereum.Call {
   get inputs(): PolicyCommandCall__Inputs {
     return new PolicyCommandCall__Inputs(this);
@@ -815,62 +897,32 @@ export class PolicyCommandCall__Outputs {
   }
 }
 
-export class SetExpectedInterfaceSetCall extends ethereum.Call {
-  get inputs(): SetExpectedInterfaceSetCall__Inputs {
-    return new SetExpectedInterfaceSetCall__Inputs(this);
+export class RefundCall extends ethereum.Call {
+  get inputs(): RefundCall__Inputs {
+    return new RefundCall__Inputs(this);
   }
 
-  get outputs(): SetExpectedInterfaceSetCall__Outputs {
-    return new SetExpectedInterfaceSetCall__Outputs(this);
+  get outputs(): RefundCall__Outputs {
+    return new RefundCall__Outputs(this);
   }
 }
 
-export class SetExpectedInterfaceSetCall__Inputs {
-  _call: SetExpectedInterfaceSetCall;
+export class RefundCall__Inputs {
+  _call: RefundCall;
 
-  constructor(call: SetExpectedInterfaceSetCall) {
+  constructor(call: RefundCall) {
     this._call = call;
   }
 
-  get _addr(): Address {
+  get _prop(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 }
 
-export class SetExpectedInterfaceSetCall__Outputs {
-  _call: SetExpectedInterfaceSetCall;
+export class RefundCall__Outputs {
+  _call: RefundCall;
 
-  constructor(call: SetExpectedInterfaceSetCall) {
-    this._call = call;
-  }
-}
-
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
-  }
-
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
-  }
-}
-
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-
-  get _self(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
+  constructor(call: RefundCall) {
     this._call = call;
   }
 }
@@ -906,6 +958,36 @@ export class RegisterProposalCall__Outputs {
 
   get value0(): BigInt {
     return this._call.outputValues[0].value.toBigInt();
+  }
+}
+
+export class SetExpectedInterfaceSetCall extends ethereum.Call {
+  get inputs(): SetExpectedInterfaceSetCall__Inputs {
+    return new SetExpectedInterfaceSetCall__Inputs(this);
+  }
+
+  get outputs(): SetExpectedInterfaceSetCall__Outputs {
+    return new SetExpectedInterfaceSetCall__Outputs(this);
+  }
+}
+
+export class SetExpectedInterfaceSetCall__Inputs {
+  _call: SetExpectedInterfaceSetCall;
+
+  constructor(call: SetExpectedInterfaceSetCall) {
+    this._call = call;
+  }
+
+  get _addr(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetExpectedInterfaceSetCall__Outputs {
+  _call: SetExpectedInterfaceSetCall;
+
+  constructor(call: SetExpectedInterfaceSetCall) {
+    this._call = call;
   }
 }
 
@@ -965,88 +1047,6 @@ export class UnsupportCall__Outputs {
   _call: UnsupportCall;
 
   constructor(call: UnsupportCall) {
-    this._call = call;
-  }
-}
-
-export class DeployProposalVotingCall extends ethereum.Call {
-  get inputs(): DeployProposalVotingCall__Inputs {
-    return new DeployProposalVotingCall__Inputs(this);
-  }
-
-  get outputs(): DeployProposalVotingCall__Outputs {
-    return new DeployProposalVotingCall__Outputs(this);
-  }
-}
-
-export class DeployProposalVotingCall__Inputs {
-  _call: DeployProposalVotingCall;
-
-  constructor(call: DeployProposalVotingCall) {
-    this._call = call;
-  }
-}
-
-export class DeployProposalVotingCall__Outputs {
-  _call: DeployProposalVotingCall;
-
-  constructor(call: DeployProposalVotingCall) {
-    this._call = call;
-  }
-}
-
-export class RefundCall extends ethereum.Call {
-  get inputs(): RefundCall__Inputs {
-    return new RefundCall__Inputs(this);
-  }
-
-  get outputs(): RefundCall__Outputs {
-    return new RefundCall__Outputs(this);
-  }
-}
-
-export class RefundCall__Inputs {
-  _call: RefundCall;
-
-  constructor(call: RefundCall) {
-    this._call = call;
-  }
-
-  get _prop(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class RefundCall__Outputs {
-  _call: RefundCall;
-
-  constructor(call: RefundCall) {
-    this._call = call;
-  }
-}
-
-export class DestructCall extends ethereum.Call {
-  get inputs(): DestructCall__Inputs {
-    return new DestructCall__Inputs(this);
-  }
-
-  get outputs(): DestructCall__Outputs {
-    return new DestructCall__Outputs(this);
-  }
-}
-
-export class DestructCall__Inputs {
-  _call: DestructCall;
-
-  constructor(call: DestructCall) {
-    this._call = call;
-  }
-}
-
-export class DestructCall__Outputs {
-  _call: DestructCall;
-
-  constructor(call: DestructCall) {
     this._call = call;
   }
 }

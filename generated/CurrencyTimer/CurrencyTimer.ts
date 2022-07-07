@@ -420,6 +420,100 @@ export class CloneCall__Outputs {
   }
 }
 
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
+  }
+
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
+  }
+}
+
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+
+  get _self(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+}
+
+export class LockupWithdrawalCall extends ethereum.Call {
+  get inputs(): LockupWithdrawalCall__Inputs {
+    return new LockupWithdrawalCall__Inputs(this);
+  }
+
+  get outputs(): LockupWithdrawalCall__Outputs {
+    return new LockupWithdrawalCall__Outputs(this);
+  }
+}
+
+export class LockupWithdrawalCall__Inputs {
+  _call: LockupWithdrawalCall;
+
+  constructor(call: LockupWithdrawalCall) {
+    this._call = call;
+  }
+
+  get _withdrawer(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _amount(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+
+  get _penalty(): boolean {
+    return this._call.inputValues[2].value.toBoolean();
+  }
+}
+
+export class LockupWithdrawalCall__Outputs {
+  _call: LockupWithdrawalCall;
+
+  constructor(call: LockupWithdrawalCall) {
+    this._call = call;
+  }
+}
+
+export class NotifyGenerationIncreaseCall extends ethereum.Call {
+  get inputs(): NotifyGenerationIncreaseCall__Inputs {
+    return new NotifyGenerationIncreaseCall__Inputs(this);
+  }
+
+  get outputs(): NotifyGenerationIncreaseCall__Outputs {
+    return new NotifyGenerationIncreaseCall__Outputs(this);
+  }
+}
+
+export class NotifyGenerationIncreaseCall__Inputs {
+  _call: NotifyGenerationIncreaseCall;
+
+  constructor(call: NotifyGenerationIncreaseCall) {
+    this._call = call;
+  }
+}
+
+export class NotifyGenerationIncreaseCall__Outputs {
+  _call: NotifyGenerationIncreaseCall;
+
+  constructor(call: NotifyGenerationIncreaseCall) {
+    this._call = call;
+  }
+}
+
 export class PolicyCommandCall extends ethereum.Call {
   get inputs(): PolicyCommandCall__Inputs {
     return new PolicyCommandCall__Inputs(this);
@@ -480,100 +574,6 @@ export class SetExpectedInterfaceSetCall__Outputs {
   _call: SetExpectedInterfaceSetCall;
 
   constructor(call: SetExpectedInterfaceSetCall) {
-    this._call = call;
-  }
-}
-
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
-  }
-
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
-  }
-}
-
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-
-  get _self(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-}
-
-export class NotifyGenerationIncreaseCall extends ethereum.Call {
-  get inputs(): NotifyGenerationIncreaseCall__Inputs {
-    return new NotifyGenerationIncreaseCall__Inputs(this);
-  }
-
-  get outputs(): NotifyGenerationIncreaseCall__Outputs {
-    return new NotifyGenerationIncreaseCall__Outputs(this);
-  }
-}
-
-export class NotifyGenerationIncreaseCall__Inputs {
-  _call: NotifyGenerationIncreaseCall;
-
-  constructor(call: NotifyGenerationIncreaseCall) {
-    this._call = call;
-  }
-}
-
-export class NotifyGenerationIncreaseCall__Outputs {
-  _call: NotifyGenerationIncreaseCall;
-
-  constructor(call: NotifyGenerationIncreaseCall) {
-    this._call = call;
-  }
-}
-
-export class LockupWithdrawalCall extends ethereum.Call {
-  get inputs(): LockupWithdrawalCall__Inputs {
-    return new LockupWithdrawalCall__Inputs(this);
-  }
-
-  get outputs(): LockupWithdrawalCall__Outputs {
-    return new LockupWithdrawalCall__Outputs(this);
-  }
-}
-
-export class LockupWithdrawalCall__Inputs {
-  _call: LockupWithdrawalCall;
-
-  constructor(call: LockupWithdrawalCall) {
-    this._call = call;
-  }
-
-  get _withdrawer(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get _amount(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-
-  get _penalty(): boolean {
-    return this._call.inputValues[2].value.toBoolean();
-  }
-}
-
-export class LockupWithdrawalCall__Outputs {
-  _call: LockupWithdrawalCall;
-
-  constructor(call: LockupWithdrawalCall) {
     this._call = call;
   }
 }

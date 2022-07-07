@@ -761,61 +761,6 @@ export class ECOxLockup extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  votingTracker(param0: Address): BigInt {
-    let result = super.call(
-      "votingTracker",
-      "votingTracker(address):(uint256)",
-      [ethereum.Value.fromAddress(param0)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_votingTracker(param0: Address): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "votingTracker",
-      "votingTracker(address):(uint256)",
-      [ethereum.Value.fromAddress(param0)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  votingECOx(_voter: Address, _blockNumber: BigInt): BigInt {
-    let result = super.call(
-      "votingECOx",
-      "votingECOx(address,uint256):(uint256)",
-      [
-        ethereum.Value.fromAddress(_voter),
-        ethereum.Value.fromUnsignedBigInt(_blockNumber)
-      ]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_votingECOx(
-    _voter: Address,
-    _blockNumber: BigInt
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "votingECOx",
-      "votingECOx(address,uint256):(uint256)",
-      [
-        ethereum.Value.fromAddress(_voter),
-        ethereum.Value.fromUnsignedBigInt(_blockNumber)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   totalVotingECOx(_blockNumber: BigInt): BigInt {
     let result = super.call(
       "totalVotingECOx",
@@ -893,6 +838,61 @@ export class ECOxLockup extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  votingECOx(_voter: Address, _blockNumber: BigInt): BigInt {
+    let result = super.call(
+      "votingECOx",
+      "votingECOx(address,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(_voter),
+        ethereum.Value.fromUnsignedBigInt(_blockNumber)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_votingECOx(
+    _voter: Address,
+    _blockNumber: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "votingECOx",
+      "votingECOx(address,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(_voter),
+        ethereum.Value.fromUnsignedBigInt(_blockNumber)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  votingTracker(param0: Address): BigInt {
+    let result = super.call(
+      "votingTracker",
+      "votingTracker(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_votingTracker(param0: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "votingTracker",
+      "votingTracker(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 }
 
@@ -1100,6 +1100,36 @@ export class DelegateAmountCall__Outputs {
   }
 }
 
+export class DepositCall extends ethereum.Call {
+  get inputs(): DepositCall__Inputs {
+    return new DepositCall__Inputs(this);
+  }
+
+  get outputs(): DepositCall__Outputs {
+    return new DepositCall__Outputs(this);
+  }
+}
+
+export class DepositCall__Inputs {
+  _call: DepositCall;
+
+  constructor(call: DepositCall) {
+    this._call = call;
+  }
+
+  get _amount(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class DepositCall__Outputs {
+  _call: DepositCall;
+
+  constructor(call: DepositCall) {
+    this._call = call;
+  }
+}
+
 export class DisableDelegationCall extends ethereum.Call {
   get inputs(): DisableDelegationCall__Inputs {
     return new DisableDelegationCall__Inputs(this);
@@ -1190,6 +1220,62 @@ export class IncreaseAllowanceCall__Outputs {
   }
 }
 
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
+  }
+
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
+  }
+}
+
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+
+  get _self(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+}
+
+export class NotifyGenerationIncreaseCall extends ethereum.Call {
+  get inputs(): NotifyGenerationIncreaseCall__Inputs {
+    return new NotifyGenerationIncreaseCall__Inputs(this);
+  }
+
+  get outputs(): NotifyGenerationIncreaseCall__Outputs {
+    return new NotifyGenerationIncreaseCall__Outputs(this);
+  }
+}
+
+export class NotifyGenerationIncreaseCall__Inputs {
+  _call: NotifyGenerationIncreaseCall;
+
+  constructor(call: NotifyGenerationIncreaseCall) {
+    this._call = call;
+  }
+}
+
+export class NotifyGenerationIncreaseCall__Outputs {
+  _call: NotifyGenerationIncreaseCall;
+
+  constructor(call: NotifyGenerationIncreaseCall) {
+    this._call = call;
+  }
+}
+
 export class PolicyCommandCall extends ethereum.Call {
   get inputs(): PolicyCommandCall__Inputs {
     return new PolicyCommandCall__Inputs(this);
@@ -1220,6 +1306,36 @@ export class PolicyCommandCall__Outputs {
   _call: PolicyCommandCall;
 
   constructor(call: PolicyCommandCall) {
+    this._call = call;
+  }
+}
+
+export class RecordVoteCall extends ethereum.Call {
+  get inputs(): RecordVoteCall__Inputs {
+    return new RecordVoteCall__Inputs(this);
+  }
+
+  get outputs(): RecordVoteCall__Outputs {
+    return new RecordVoteCall__Outputs(this);
+  }
+}
+
+export class RecordVoteCall__Inputs {
+  _call: RecordVoteCall;
+
+  constructor(call: RecordVoteCall) {
+    this._call = call;
+  }
+
+  get _who(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class RecordVoteCall__Outputs {
+  _call: RecordVoteCall;
+
+  constructor(call: RecordVoteCall) {
     this._call = call;
   }
 }
@@ -1310,36 +1426,6 @@ export class UndelegateFromAddressCall__Outputs {
   }
 }
 
-export class DepositCall extends ethereum.Call {
-  get inputs(): DepositCall__Inputs {
-    return new DepositCall__Inputs(this);
-  }
-
-  get outputs(): DepositCall__Outputs {
-    return new DepositCall__Outputs(this);
-  }
-}
-
-export class DepositCall__Inputs {
-  _call: DepositCall;
-
-  constructor(call: DepositCall) {
-    this._call = call;
-  }
-
-  get _amount(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class DepositCall__Outputs {
-  _call: DepositCall;
-
-  constructor(call: DepositCall) {
-    this._call = call;
-  }
-}
-
 export class WithdrawCall extends ethereum.Call {
   get inputs(): WithdrawCall__Inputs {
     return new WithdrawCall__Inputs(this);
@@ -1366,92 +1452,6 @@ export class WithdrawCall__Outputs {
   _call: WithdrawCall;
 
   constructor(call: WithdrawCall) {
-    this._call = call;
-  }
-}
-
-export class RecordVoteCall extends ethereum.Call {
-  get inputs(): RecordVoteCall__Inputs {
-    return new RecordVoteCall__Inputs(this);
-  }
-
-  get outputs(): RecordVoteCall__Outputs {
-    return new RecordVoteCall__Outputs(this);
-  }
-}
-
-export class RecordVoteCall__Inputs {
-  _call: RecordVoteCall;
-
-  constructor(call: RecordVoteCall) {
-    this._call = call;
-  }
-
-  get _who(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class RecordVoteCall__Outputs {
-  _call: RecordVoteCall;
-
-  constructor(call: RecordVoteCall) {
-    this._call = call;
-  }
-}
-
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
-  }
-
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
-  }
-}
-
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-
-  get _self(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-}
-
-export class NotifyGenerationIncreaseCall extends ethereum.Call {
-  get inputs(): NotifyGenerationIncreaseCall__Inputs {
-    return new NotifyGenerationIncreaseCall__Inputs(this);
-  }
-
-  get outputs(): NotifyGenerationIncreaseCall__Outputs {
-    return new NotifyGenerationIncreaseCall__Outputs(this);
-  }
-}
-
-export class NotifyGenerationIncreaseCall__Inputs {
-  _call: NotifyGenerationIncreaseCall;
-
-  constructor(call: NotifyGenerationIncreaseCall) {
-    this._call = call;
-  }
-}
-
-export class NotifyGenerationIncreaseCall__Outputs {
-  _call: NotifyGenerationIncreaseCall;
-
-  constructor(call: NotifyGenerationIncreaseCall) {
     this._call = call;
   }
 }
