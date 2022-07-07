@@ -461,6 +461,96 @@ export class CloneCall__Outputs {
   }
 }
 
+export class ConfigureCall extends ethereum.Call {
+  get inputs(): ConfigureCall__Inputs {
+    return new ConfigureCall__Inputs(this);
+  }
+
+  get outputs(): ConfigureCall__Outputs {
+    return new ConfigureCall__Outputs(this);
+  }
+}
+
+export class ConfigureCall__Inputs {
+  _call: ConfigureCall;
+
+  constructor(call: ConfigureCall) {
+    this._call = call;
+  }
+
+  get _proposal(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _cutoffBlockNumber(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class ConfigureCall__Outputs {
+  _call: ConfigureCall;
+
+  constructor(call: ConfigureCall) {
+    this._call = call;
+  }
+}
+
+export class ExecuteCall extends ethereum.Call {
+  get inputs(): ExecuteCall__Inputs {
+    return new ExecuteCall__Inputs(this);
+  }
+
+  get outputs(): ExecuteCall__Outputs {
+    return new ExecuteCall__Outputs(this);
+  }
+}
+
+export class ExecuteCall__Inputs {
+  _call: ExecuteCall;
+
+  constructor(call: ExecuteCall) {
+    this._call = call;
+  }
+}
+
+export class ExecuteCall__Outputs {
+  _call: ExecuteCall;
+
+  constructor(call: ExecuteCall) {
+    this._call = call;
+  }
+}
+
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
+  }
+
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
+  }
+}
+
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+
+  get _self(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+}
+
 export class PolicyCommandCall extends ethereum.Call {
   get inputs(): PolicyCommandCall__Inputs {
     return new PolicyCommandCall__Inputs(this);
@@ -585,96 +675,6 @@ export class VoteSplitCall__Outputs {
   _call: VoteSplitCall;
 
   constructor(call: VoteSplitCall) {
-    this._call = call;
-  }
-}
-
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
-  }
-
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
-  }
-}
-
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-
-  get _self(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-}
-
-export class ConfigureCall extends ethereum.Call {
-  get inputs(): ConfigureCall__Inputs {
-    return new ConfigureCall__Inputs(this);
-  }
-
-  get outputs(): ConfigureCall__Outputs {
-    return new ConfigureCall__Outputs(this);
-  }
-}
-
-export class ConfigureCall__Inputs {
-  _call: ConfigureCall;
-
-  constructor(call: ConfigureCall) {
-    this._call = call;
-  }
-
-  get _proposal(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get _cutoffBlockNumber(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-}
-
-export class ConfigureCall__Outputs {
-  _call: ConfigureCall;
-
-  constructor(call: ConfigureCall) {
-    this._call = call;
-  }
-}
-
-export class ExecuteCall extends ethereum.Call {
-  get inputs(): ExecuteCall__Inputs {
-    return new ExecuteCall__Inputs(this);
-  }
-
-  get outputs(): ExecuteCall__Outputs {
-    return new ExecuteCall__Outputs(this);
-  }
-}
-
-export class ExecuteCall__Inputs {
-  _call: ExecuteCall;
-
-  constructor(call: ExecuteCall) {
-    this._call = call;
-  }
-}
-
-export class ExecuteCall__Outputs {
-  _call: ExecuteCall;
-
-  constructor(call: ExecuteCall) {
     this._call = call;
   }
 }

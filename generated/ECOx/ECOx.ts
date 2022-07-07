@@ -263,6 +263,25 @@ export class ECOx extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
+  ecoValueOf(_ecoXValue: BigInt): BigInt {
+    let result = super.call("ecoValueOf", "ecoValueOf(uint256):(uint256)", [
+      ethereum.Value.fromUnsignedBigInt(_ecoXValue)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_ecoValueOf(_ecoXValue: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("ecoValueOf", "ecoValueOf(uint256):(uint256)", [
+      ethereum.Value.fromUnsignedBigInt(_ecoXValue)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   implementation(): Address {
     let result = super.call("implementation", "implementation():(address)", []);
 
@@ -452,25 +471,6 @@ export class ECOx extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
-  ecoValueOf(_ecoXValue: BigInt): BigInt {
-    let result = super.call("ecoValueOf", "ecoValueOf(uint256):(uint256)", [
-      ethereum.Value.fromUnsignedBigInt(_ecoXValue)
-    ]);
-
-    return result[0].toBigInt();
-  }
-
-  try_ecoValueOf(_ecoXValue: BigInt): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("ecoValueOf", "ecoValueOf(uint256):(uint256)", [
-      ethereum.Value.fromUnsignedBigInt(_ecoXValue)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   valueAt(_ecoXValue: BigInt, _blockNumber: BigInt): BigInt {
     let result = super.call("valueAt", "valueAt(uint256,uint256):(uint256)", [
       ethereum.Value.fromUnsignedBigInt(_ecoXValue),
@@ -648,6 +648,36 @@ export class DecreaseAllowanceCall__Outputs {
   }
 }
 
+export class ExchangeCall extends ethereum.Call {
+  get inputs(): ExchangeCall__Inputs {
+    return new ExchangeCall__Inputs(this);
+  }
+
+  get outputs(): ExchangeCall__Outputs {
+    return new ExchangeCall__Outputs(this);
+  }
+}
+
+export class ExchangeCall__Inputs {
+  _call: ExchangeCall;
+
+  constructor(call: ExchangeCall) {
+    this._call = call;
+  }
+
+  get _ecoXValue(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class ExchangeCall__Outputs {
+  _call: ExchangeCall;
+
+  constructor(call: ExchangeCall) {
+    this._call = call;
+  }
+}
+
 export class IncreaseAllowanceCall extends ethereum.Call {
   get inputs(): IncreaseAllowanceCall__Inputs {
     return new IncreaseAllowanceCall__Inputs(this);
@@ -683,6 +713,70 @@ export class IncreaseAllowanceCall__Outputs {
 
   get value0(): boolean {
     return this._call.outputValues[0].value.toBoolean();
+  }
+}
+
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
+  }
+
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
+  }
+}
+
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+
+  get _self(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+}
+
+export class MintCall extends ethereum.Call {
+  get inputs(): MintCall__Inputs {
+    return new MintCall__Inputs(this);
+  }
+
+  get outputs(): MintCall__Outputs {
+    return new MintCall__Outputs(this);
+  }
+}
+
+export class MintCall__Inputs {
+  _call: MintCall;
+
+  constructor(call: MintCall) {
+    this._call = call;
+  }
+
+  get _to(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _value(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class MintCall__Outputs {
+  _call: MintCall;
+
+  constructor(call: MintCall) {
+    this._call = call;
   }
 }
 
@@ -827,99 +921,5 @@ export class TransferFromCall__Outputs {
 
   get value0(): boolean {
     return this._call.outputValues[0].value.toBoolean();
-  }
-}
-
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
-  }
-
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
-  }
-}
-
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-
-  get _self(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-}
-
-export class ExchangeCall extends ethereum.Call {
-  get inputs(): ExchangeCall__Inputs {
-    return new ExchangeCall__Inputs(this);
-  }
-
-  get outputs(): ExchangeCall__Outputs {
-    return new ExchangeCall__Outputs(this);
-  }
-}
-
-export class ExchangeCall__Inputs {
-  _call: ExchangeCall;
-
-  constructor(call: ExchangeCall) {
-    this._call = call;
-  }
-
-  get _ecoXValue(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-}
-
-export class ExchangeCall__Outputs {
-  _call: ExchangeCall;
-
-  constructor(call: ExchangeCall) {
-    this._call = call;
-  }
-}
-
-export class MintCall extends ethereum.Call {
-  get inputs(): MintCall__Inputs {
-    return new MintCall__Inputs(this);
-  }
-
-  get outputs(): MintCall__Outputs {
-    return new MintCall__Outputs(this);
-  }
-}
-
-export class MintCall__Inputs {
-  _call: MintCall;
-
-  constructor(call: MintCall) {
-    this._call = call;
-  }
-
-  get _to(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-
-  get _value(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-}
-
-export class MintCall__Outputs {
-  _call: MintCall;
-
-  constructor(call: MintCall) {
-    this._call = call;
   }
 }
