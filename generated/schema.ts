@@ -597,6 +597,15 @@ export class CommunityProposalVote extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get voter(): Bytes {
+    let value = this.get("voter");
+    return value!.toBytes();
+  }
+
+  set voter(value: Bytes) {
+    this.set("voter", Value.fromBytes(value));
+  }
+
   get policyVote(): string {
     let value = this.get("policyVote");
     return value!.toString();

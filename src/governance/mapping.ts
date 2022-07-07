@@ -184,7 +184,9 @@ export function handleVotingStarted(event: VotingStarted): void {
 
 // PolicyVotes.PolicyVoteCast(address indexed voter, bool vote, uint256 amount)
 export function handlePolicyVoteCast(event: PolicyVoteCast): void {
-    let vote = CommunityProposalVote.load(event.params.voter.toHexString());
+    let id = event.params.voter.toHexString() + "-" + event.address.toHexString();
+
+    let vote = CommunityProposalVote.load(id);
     let policyVote = PolicyVote.load(event.address.toHexString());
 
     let voteAmount = event.params.amount;
@@ -204,7 +206,8 @@ export function handlePolicyVoteCast(event: PolicyVoteCast): void {
 
     if (!vote) {
         // new vote
-        vote = new CommunityProposalVote(event.params.voter.toHexString());
+        vote = new CommunityProposalVote(id);
+        vote.voter = event.params.voter;
         vote.policyVote = event.address.toHexString();
     }
 
