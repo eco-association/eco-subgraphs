@@ -3,10 +3,32 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
+    name: TrustedNodes
+    network: mainnet
+    source:
+      address: "0xA2B64743b2e0865CF7948d58006E99C01C8e7a64"
+      abi: TrustedNodes
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Trustee
+      abis:
+        - name: TrustedNodes
+          file: ./abis/TrustedNodes.json
+      eventHandlers:
+        - event: TrustedNodeAdded(indexed address)
+          handler: handleTrustedNodeAdded
+        - event: TrustedNodeRemoved(indexed address)
+          handler: handleTrustedNodeRemoved
+      file: ./src/governance/TrustedNodes.ts
+  - kind: ethereum
     name: CurrencyTimer
     network: mainnet
     source:
-      address: "0x29Cf0179569d95F963929d45654e50a324542d44"
+      address: "0x6812824Bd7966438580E45C2C1cd7f7c88deDf40"
       abi: CurrencyTimer
       startBlock: 0
     mapping:
@@ -32,7 +54,7 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0xCdb46af23737dB407bF9aC16591eDfB1d5dDfA3C"
+      address: "0xEce4dd91a5043F9fc33d74c68B5BBB1107dfBdA5"
       abi: TimedPolicies
       startBlock: 0
     mapping:
@@ -56,7 +78,7 @@ dataSources:
     name: ECO
     network: mainnet
     source:
-      address: "0x2072D978bc36D45A3de181F57E545d2617a0Bd29"
+      address: "0x5BA1985797E1681AA923CA3be5e44f45895b9B88"
       abi: ECO
       startBlock: 0
     mapping:
@@ -82,7 +104,7 @@ dataSources:
     name: ECOx
     network: mainnet
     source:
-      address: "0xf4d87aa912830469A3C9c40A2bB1d058dA3FFe06"
+      address: "0x4e76406d97A83e7068da720934baecD4D1FaCd26"
       abi: ECOx
       startBlock: 0
     mapping:
@@ -102,7 +124,7 @@ dataSources:
     name: ECOxLockup
     network: mainnet
     source:
-      address: "0x7302B84C60F87e9166Be013d113dF3Ea3E418A8f"
+      address: "0xE5314A720F4f5be39Bd77D35D4DC1991fd23f651"
       abi: ECOxLockup
       startBlock: 0
     mapping:

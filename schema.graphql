@@ -12,6 +12,7 @@ type ContractAddresses @entity {
     policyVotes: String!
     eco: String!
     ecox: String!
+    trustedNodes: String!
 }
 
 
@@ -41,7 +42,7 @@ type CurrencyGovernance @entity {
 type MonetaryProposal @entity {
     id: String!
     generation: Generation!
-    trustee: String!
+    trustee: Trustee!
     enacted: Boolean!
     numberOfRecipients: BigInt!
     randomInflationReward: BigInt!
@@ -49,6 +50,15 @@ type MonetaryProposal @entity {
     lockupInterest: BigInt!
     inflationMultiplier: BigInt!
 }
+
+type Trustee @entity {
+    """
+    id: address
+    """
+    id: String!
+    proposals: [MonetaryProposal!]! @derivedFrom(field: "trustee")
+}
+
 
 """
 Community Support entities

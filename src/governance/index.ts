@@ -2,7 +2,7 @@ import { Policy } from "../../generated/CurrencyTimer/Policy";
 
 import { ContractAddresses } from "../../generated/schema";
 
-import { ID_ECO, ID_ECOX, ID_TIMED_POLICIES, ID_CURRENCY_TIMER } from "../constants";
+import { ID_ECO, ID_ECOX, ID_TIMED_POLICIES, ID_CURRENCY_TIMER, ID_TRUSTED_NODES } from "../constants";
 
 
 export function loadContractAddresses(): ContractAddresses | null {
@@ -18,6 +18,7 @@ export function loadOrCreateContractAddresses(policy: Policy): ContractAddresses
         contracts.timedPolicies = policy.policyFor(ID_TIMED_POLICIES).toHexString();
         contracts.eco = policy.policyFor(ID_ECO).toHexString();
         contracts.ecox = policy.policyFor(ID_ECOX).toHexString();
+        contracts.trustedNodes = policy.policyFor(ID_TRUSTED_NODES).toHexString();
     }
     return contracts;
 }

@@ -115,6 +115,15 @@ export class ContractAddresses extends Entity {
   set ecox(value: string) {
     this.set("ecox", Value.fromString(value));
   }
+
+  get trustedNodes(): string {
+    let value = this.get("trustedNodes");
+    return value!.toString();
+  }
+
+  set trustedNodes(value: string) {
+    this.set("trustedNodes", Value.fromString(value));
+  }
 }
 
 export class Generation extends Entity {
@@ -374,6 +383,47 @@ export class MonetaryProposal extends Entity {
 
   set inflationMultiplier(value: BigInt) {
     this.set("inflationMultiplier", Value.fromBigInt(value));
+  }
+}
+
+export class Trustee extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Trustee entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Trustee must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Trustee", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Trustee | null {
+    return changetype<Trustee | null>(store.get("Trustee", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get proposals(): Array<string> {
+    let value = this.get("proposals");
+    return value!.toStringArray();
+  }
+
+  set proposals(value: Array<string>) {
+    this.set("proposals", Value.fromStringArray(value));
   }
 }
 
