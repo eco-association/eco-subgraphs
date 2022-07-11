@@ -1,8 +1,38 @@
 {
     "kovan": {
-        "TimedPolicies": "0x45827a55D1B0F4327D0c37df44B7845350df43e9"
+        "TimedPolicies": {
+            "address": "0x45827a55D1B0F4327D0c37df44B7845350df43e9",
+            "startBlock": 0
+        },
+        "ECO": {
+            "address": "",
+            "startBlock": 0
+        },
+        "ECOx": {
+            "address": "",
+            "startBlock": 0
+        },
+        "ECOxLockup": {
+            "address": "",
+            "startBlock": 0
+        }
     },
     "localhost": {
-        "TimedPolicies": "0x3222dF4898A3f19a3422CB79bC970E86A9dEe4F6"
+        "TimedPolicies": {
+            "address": "0x1dF30B75fB5D942DA5574F0128bd876d4740B01F",
+            "startBlock": 0
+        },
+        "ECO": {
+            "address": "0xd49017754Cfe7fb2Aee15Ac00aCa3C73198E3F2a",
+            "startBlock": 0
+        },
+        "ECOx": {
+            "address": "0x0aB5eE2C3C9aA19180a712914272d4DB541A247c",
+            "startBlock": 0
+        },
+        "ECOxLockup": {
+            "address": "0xfa618fe0dA54E2dFC7e45e8e4B19644fbe36679E",
+            "startBlock": 0
+        }
     }
 }

@@ -1,47 +1,165 @@
+"""
+ECO contract addresses
+only even one entity of this type, with id: "0" which returns the current contract addresses of each attribute
+"""
+type ContractAddresses @entity {
+    id: String!
+    policy: String!
+    timedPolicies: String!
+    policyProposals: String!
+    policyVotes: String!
+    eco: String!
+    ecox: String!
+}
 
-"entity for an ECO generation"
-type Generation @entity(immutable: true) {
-    id: Bytes!
-    num: BigInt!
+
+"""
+ECO generation
+"""
+type Generation @entity {
+    id: String! "generation number"
     policyProposal: PolicyProposal! @derivedFrom(field: "generation")
+    policyVote: PolicyVote @derivedFrom(field: "generation")
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
 }
 
-"Community Support entities"
+
+"""
+Community Support entities
+"""
 type PolicyProposal @entity {
-    id: Bytes! "address"
+    id: String! "address"
     generation: Generation!
+    proposalEnds: BigInt!
+    totalVotingPower: BigInt!
     blockNumber: BigInt!
+    support: [CommunityProposalSupport!]! @derivedFrom(field: "policyProposal")
 }
-type CommunityProposal @entity(immutable: true) {
-    id: Bytes! "address"
+
+type CommunityProposal @entity {
+    id: String! "address"
+    generation: Generation!
     proposer: Bytes!
     name: String!
     description: String!
     url: String!
-    generation: Generation
     reachedSupportThreshold: Boolean!
+    refunded: Boolean!
+    totalSupportAmount: BigInt!
     support: [CommunityProposalSupport!]! @derivedFrom(field: "proposal")
 }
+
 type CommunityProposalSupport @entity {
-    id: Bytes!
+    id: String! "supporter + - + proposal"
     supporter: Bytes!
     proposal: CommunityProposal!
+    policyProposal: PolicyProposal!
     amount: BigInt!
 }
 
-"Community Vote entities"
-type PolicyVotes @entity(immutable: true) {
-    id: Bytes! "address"
+
+"""
+Community Vote entities
+"""
+type PolicyVote @entity {
+    """
+    id: PolicyVotes address
+    """
+    id: String! 
     generation: Generation!
+    voteEnds: BigInt!
+    ENACTION_DELAY: BigInt!
+    totalVotingPower: BigInt!
     blockNumber: BigInt!
     proposal: CommunityProposal!
+    result: VoteResult
+    yesVoteAmount: BigInt!
+    totalVoteAmount: BigInt!
     votes: [CommunityProposalVote!]! @derivedFrom(field: "policyVote")
 }
+
+enum VoteResult {
+    Accepted
+    Rejected
+    Failed
+}
+
 type CommunityProposalVote @entity {
-    id: Bytes!
-    policyVote: PolicyVotes! 
+    """
+    id: voter address + - + policyVote address
+    """
+    id: String!
     voter: Bytes!
+    policyVote: PolicyVote!
     vote: Boolean!
     amount: BigInt!
+}
+
+
+"""
+Account
+"""
+type Account @entity {
+    """
+    id: account address
+    """
+    id: String! 
+    ECO: BigInt!
+    ECOx: BigInt!
+    sECOx: BigInt!
+    approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
+    historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
+    historicalsECOxBalances: [sECOxBalance!]! @derivedFrom(field: "account")
+}
+
+
+"""
+ECO Allowance
+"""
+type ECOAllowance @entity {
+    """
+    id: owner + "-" + spender
+    """
+    id: String! 
+    owner: Account!
+    spender: String!
+    value: BigInt! 
+}
+
+
+"""
+ECO balance
+historical ECO balance at blockNumber
+"""
+type ECOBalance @entity {
+    id: String!
+    account: Account!
+    """
+    underlying value, to get the value adjusted for inflation/deflation, 
+    divide the value by the inflationmultiplier value whose blocknumber is nearest to and less than this balance (or 1e18 if none exists)
+    """
+    value: BigInt! 
+    blockNumber: BigInt!
+}
+
+
+"""
+historical linear inflation multipliers
+"""
+type InflationMultiplier @entity {
+    id: Bytes!
+    value: BigInt!
+    blockNumber: BigInt!
+}
+
+
+"""
+sECOx balance
+historical sECOx balance at blockNumber (representing a part of voting power)
+"""
+type sECOxBalance @entity {
+    id: Bytes!
+    account: Account!
+    value: BigInt! 
+    blockNumber: BigInt!
 }

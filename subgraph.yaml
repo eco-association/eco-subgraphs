@@ -6,13 +6,15 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x3222dF4898A3f19a3422CB79bC970E86A9dEe4F6"
+      address: "0x1dF30B75fB5D942DA5574F0128bd876d4740B01F"
       abi: TimedPolicies
+      startBlock: 0
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
+        - ContractAddresses
         - Generation
         - PolicyProposals
       abis:
@@ -20,10 +22,78 @@ dataSources:
           file: ./abis/TimedPolicies.json
         - name: PolicyProposals
           file: ./abis/PolicyProposals.json
+        - name: Policy
+          file: ./abis/Policy.json
       eventHandlers:
         - event: PolicyDecisionStarted(address)
           handler: handlePolicyDesicionStarted
       file: ./src/governance/mapping.ts
+  - kind: ethereum
+    name: ECO
+    network: mainnet
+    source:
+      address: "0xd49017754Cfe7fb2Aee15Ac00aCa3C73198E3F2a"
+      abi: ECO
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Account
+        - ECOBalance
+        - InflationMultiplier
+      abis:
+        - name: ECO
+          file: ./abis/ECO.json
+      eventHandlers:
+        - event: NewInflationMultiplier(uint256)
+          handler: handleNewInflationMultiplier
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: BaseValueTransfer(indexed address,indexed address,uint256)
+          handler: handleBaseValueTransfer
+      file: ./src/currency/mapping.ts
+  - kind: ethereum
+    name: ECOx
+    network: mainnet
+    source:
+      address: "0x0aB5eE2C3C9aA19180a712914272d4DB541A247c"
+      abi: ECOx
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Generation
+      abis:
+        - name: ECOx
+          file: ./abis/ECOx.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/currency/mapping.ts
+  - kind: ethereum
+    name: ECOxLockup
+    network: mainnet
+    source:
+      address: "0xfa618fe0dA54E2dFC7e45e8e4B19644fbe36679E"
+      abi: ECOxLockup
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Generation
+      abis:
+        - name: ECOxLockup
+          file: ./abis/ECOxLockup.json
+      eventHandlers:
+        - event: ChangeDelegateVotes(indexed address,uint256)
+          handler: handleChangeDelegateVotes
+      file: ./src/currency/mapping.ts
 templates:
   - kind: ethereum
     name: PolicyProposals
@@ -41,13 +111,21 @@ templates:
       abis:
         - name: PolicyProposals
           file: ./abis/PolicyProposals.json
+        - name: PolicyVotes
+          file: ./abis/PolicyVotes.json
         - name: Proposal
           file: ./abis/Proposal.json
       eventHandlers:
         - event: ProposalAdded(address,address)
           handler: handleProposalAdded
+        - event: ProposalSupported(address,address)
+          handler: handleProposalSupported
+        - event: ProposalUnsupported(address,address)
+          handler: handleProposalUnsupported
         - event: SupportThresholdReached(address)
           handler: handleSupportThresholdReached
+        - event: ProposalRefunded(address,address)
+          handler: handleProposalRefunded
         - event: VotingStarted(address)
           handler: handleVotingStarted
       file: ./src/governance/mapping.ts
@@ -61,6 +139,7 @@ templates:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
+        - PolicyVote
         - CommunityProposal
         - CommunityProposalVote
       abis:

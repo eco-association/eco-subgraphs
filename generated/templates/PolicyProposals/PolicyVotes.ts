@@ -10,62 +10,65 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class PolicyDecisionStarted extends ethereum.Event {
-  get params(): PolicyDecisionStarted__Params {
-    return new PolicyDecisionStarted__Params(this);
+export class PolicyVoteCast extends ethereum.Event {
+  get params(): PolicyVoteCast__Params {
+    return new PolicyVoteCast__Params(this);
   }
 }
 
-export class PolicyDecisionStarted__Params {
-  _event: PolicyDecisionStarted;
+export class PolicyVoteCast__Params {
+  _event: PolicyVoteCast;
 
-  constructor(event: PolicyDecisionStarted) {
+  constructor(event: PolicyVoteCast) {
     this._event = event;
   }
 
-  get contractAddress(): Address {
+  get voter(): Address {
     return this._event.parameters[0].value.toAddress();
+  }
+
+  get vote(): boolean {
+    return this._event.parameters[1].value.toBoolean();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
   }
 }
 
-export class TimedPolicies extends ethereum.SmartContract {
-  static bind(address: Address): TimedPolicies {
-    return new TimedPolicies("TimedPolicies", address);
+export class VoteCompleted extends ethereum.Event {
+  get params(): VoteCompleted__Params {
+    return new VoteCompleted__Params(this);
+  }
+}
+
+export class VoteCompleted__Params {
+  _event: VoteCompleted;
+
+  constructor(event: VoteCompleted) {
+    this._event = event;
   }
 
-  CURRENCY_TIME(): BigInt {
-    let result = super.call("CURRENCY_TIME", "CURRENCY_TIME():(uint256)", []);
+  get result(): i32 {
+    return this._event.parameters[0].value.toI32();
+  }
+}
+
+export class PolicyVotes extends ethereum.SmartContract {
+  static bind(address: Address): PolicyVotes {
+    return new PolicyVotes("PolicyVotes", address);
+  }
+
+  ENACTION_DELAY(): BigInt {
+    let result = super.call("ENACTION_DELAY", "ENACTION_DELAY():(uint256)", []);
 
     return result[0].toBigInt();
   }
 
-  try_CURRENCY_TIME(): ethereum.CallResult<BigInt> {
+  try_ENACTION_DELAY(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "CURRENCY_TIME",
-      "CURRENCY_TIME():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  GENERATION_DURATION(): BigInt {
-    let result = super.call(
-      "GENERATION_DURATION",
-      "GENERATION_DURATION():(uint256)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_GENERATION_DURATION(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "GENERATION_DURATION",
-      "GENERATION_DURATION():(uint256)",
+      "ENACTION_DELAY",
+      "ENACTION_DELAY():(uint256)",
       []
     );
     if (result.reverted) {
@@ -307,6 +310,36 @@ export class TimedPolicies extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
+  VOTE_TIME(): BigInt {
+    let result = super.call("VOTE_TIME", "VOTE_TIME():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_VOTE_TIME(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("VOTE_TIME", "VOTE_TIME():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  blockNumber(): BigInt {
+    let result = super.call("blockNumber", "blockNumber():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_blockNumber(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("blockNumber", "blockNumber():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   canImplementInterfaceForAddress(param0: Bytes, _addr: Address): Bytes {
     let result = super.call(
       "canImplementInterfaceForAddress",
@@ -367,75 +400,6 @@ export class TimedPolicies extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  internalGeneration(): BigInt {
-    let result = super.call(
-      "internalGeneration",
-      "internalGeneration():(uint256)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_internalGeneration(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "internalGeneration",
-      "internalGeneration():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  nextGenerationStart(): BigInt {
-    let result = super.call(
-      "nextGenerationStart",
-      "nextGenerationStart():(uint256)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_nextGenerationStart(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "nextGenerationStart",
-      "nextGenerationStart():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  notificationHashes(param0: BigInt): Bytes {
-    let result = super.call(
-      "notificationHashes",
-      "notificationHashes(uint256):(bytes32)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_notificationHashes(param0: BigInt): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "notificationHashes",
-      "notificationHashes(uint256):(bytes32)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
   policy(): Address {
     let result = super.call("policy", "policy():(address)", []);
 
@@ -451,22 +415,14 @@ export class TimedPolicies extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  policyProposalImpl(): Address {
-    let result = super.call(
-      "policyProposalImpl",
-      "policyProposalImpl():(address)",
-      []
-    );
+  proposal(): Address {
+    let result = super.call("proposal", "proposal():(address)", []);
 
     return result[0].toAddress();
   }
 
-  try_policyProposalImpl(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "policyProposalImpl",
-      "policyProposalImpl():(address)",
-      []
-    );
+  try_proposal(): ethereum.CallResult<Address> {
+    let result = super.tryCall("proposal", "proposal():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -474,44 +430,55 @@ export class TimedPolicies extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  simplePolicyImpl(): Address {
-    let result = super.call(
-      "simplePolicyImpl",
-      "simplePolicyImpl():(address)",
-      []
-    );
+  stake(param0: Address): BigInt {
+    let result = super.call("stake", "stake(address):(uint256)", [
+      ethereum.Value.fromAddress(param0)
+    ]);
 
-    return result[0].toAddress();
+    return result[0].toBigInt();
   }
 
-  try_simplePolicyImpl(): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "simplePolicyImpl",
-      "simplePolicyImpl():(address)",
-      []
-    );
+  try_stake(param0: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("stake", "stake(address):(uint256)", [
+      ethereum.Value.fromAddress(param0)
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getNotificationHashesLength(): BigInt {
+  totalStake(): BigInt {
+    let result = super.call("totalStake", "totalStake():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_totalStake(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("totalStake", "totalStake():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  totalVotingPower(_blockNumber: BigInt): BigInt {
     let result = super.call(
-      "getNotificationHashesLength",
-      "getNotificationHashesLength():(uint256)",
-      []
+      "totalVotingPower",
+      "totalVotingPower(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_blockNumber)]
     );
 
     return result[0].toBigInt();
   }
 
-  try_getNotificationHashesLength(): ethereum.CallResult<BigInt> {
+  try_totalVotingPower(_blockNumber: BigInt): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "getNotificationHashesLength",
-      "getNotificationHashesLength():(uint256)",
-      []
+      "totalVotingPower",
+      "totalVotingPower(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_blockNumber)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
@@ -520,19 +487,85 @@ export class TimedPolicies extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  generation(): BigInt {
-    let result = super.call("generation", "generation():(uint256)", []);
+  voteEnds(): BigInt {
+    let result = super.call("voteEnds", "voteEnds():(uint256)", []);
 
     return result[0].toBigInt();
   }
 
-  try_generation(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("generation", "generation():(uint256)", []);
+  try_voteEnds(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("voteEnds", "voteEnds():(uint256)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  votingPower(_who: Address, _blockNumber: BigInt): BigInt {
+    let result = super.call(
+      "votingPower",
+      "votingPower(address,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(_who),
+        ethereum.Value.fromUnsignedBigInt(_blockNumber)
+      ]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_votingPower(
+    _who: Address,
+    _blockNumber: BigInt
+  ): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "votingPower",
+      "votingPower(address,uint256):(uint256)",
+      [
+        ethereum.Value.fromAddress(_who),
+        ethereum.Value.fromUnsignedBigInt(_blockNumber)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  yesStake(): BigInt {
+    let result = super.call("yesStake", "yesStake():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_yesStake(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("yesStake", "yesStake():(uint256)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  yesVote(param0: Address): boolean {
+    let result = super.call("yesVote", "yesVote(address):(bool)", [
+      ethereum.Value.fromAddress(param0)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_yesVote(param0: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall("yesVote", "yesVote(address):(bool)", [
+      ethereum.Value.fromAddress(param0)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 }
 
@@ -555,18 +588,6 @@ export class ConstructorCall__Inputs {
 
   get _policy(): Address {
     return this._call.inputValues[0].value.toAddress();
-  }
-
-  get _policyproposal(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-
-  get _simplepolicy(): Address {
-    return this._call.inputValues[2].value.toAddress();
-  }
-
-  get _notificationHashes(): Array<Bytes> {
-    return this._call.inputValues[3].value.toBytesArray();
   }
 }
 
@@ -672,6 +693,36 @@ export class SetExpectedInterfaceSetCall__Outputs {
   }
 }
 
+export class VoteCall extends ethereum.Call {
+  get inputs(): VoteCall__Inputs {
+    return new VoteCall__Inputs(this);
+  }
+
+  get outputs(): VoteCall__Outputs {
+    return new VoteCall__Outputs(this);
+  }
+}
+
+export class VoteCall__Inputs {
+  _call: VoteCall;
+
+  constructor(call: VoteCall) {
+    this._call = call;
+  }
+
+  get _vote(): boolean {
+    return this._call.inputValues[0].value.toBoolean();
+  }
+}
+
+export class VoteCall__Outputs {
+  _call: VoteCall;
+
+  constructor(call: VoteCall) {
+    this._call = call;
+  }
+}
+
 export class InitializeCall extends ethereum.Call {
   get inputs(): InitializeCall__Inputs {
     return new InitializeCall__Inputs(this);
@@ -702,28 +753,58 @@ export class InitializeCall__Outputs {
   }
 }
 
-export class IncrementGenerationCall extends ethereum.Call {
-  get inputs(): IncrementGenerationCall__Inputs {
-    return new IncrementGenerationCall__Inputs(this);
+export class ConfigureCall extends ethereum.Call {
+  get inputs(): ConfigureCall__Inputs {
+    return new ConfigureCall__Inputs(this);
   }
 
-  get outputs(): IncrementGenerationCall__Outputs {
-    return new IncrementGenerationCall__Outputs(this);
+  get outputs(): ConfigureCall__Outputs {
+    return new ConfigureCall__Outputs(this);
   }
 }
 
-export class IncrementGenerationCall__Inputs {
-  _call: IncrementGenerationCall;
+export class ConfigureCall__Inputs {
+  _call: ConfigureCall;
 
-  constructor(call: IncrementGenerationCall) {
+  constructor(call: ConfigureCall) {
+    this._call = call;
+  }
+
+  get _proposal(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class ConfigureCall__Outputs {
+  _call: ConfigureCall;
+
+  constructor(call: ConfigureCall) {
     this._call = call;
   }
 }
 
-export class IncrementGenerationCall__Outputs {
-  _call: IncrementGenerationCall;
+export class ExecuteCall extends ethereum.Call {
+  get inputs(): ExecuteCall__Inputs {
+    return new ExecuteCall__Inputs(this);
+  }
 
-  constructor(call: IncrementGenerationCall) {
+  get outputs(): ExecuteCall__Outputs {
+    return new ExecuteCall__Outputs(this);
+  }
+}
+
+export class ExecuteCall__Inputs {
+  _call: ExecuteCall;
+
+  constructor(call: ExecuteCall) {
+    this._call = call;
+  }
+}
+
+export class ExecuteCall__Outputs {
+  _call: ExecuteCall;
+
+  constructor(call: ExecuteCall) {
     this._call = call;
   }
 }

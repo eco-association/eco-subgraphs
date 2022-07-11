@@ -54,12 +54,14 @@ function setupNetwork() {
     let dataSource;
     for (var i = 0; i < subgraphManifest.dataSources.length; i++) {
         dataSource = subgraphManifest.dataSources[i];
-        if (!addresses[dataSource.name]) {
-            throw new Error(`Data source from Manifest does not have an address in networks.json for the network: ${networkName}`);
+        if (!addresses[dataSource.name] || !addresses[dataSource.name].address) {
+            throw new Error(`Data source from Manifest: ${dataSource.name} does not have an address in networks.json for the network: ${networkName}`);
         } else {
             // dataSource exists, set address
-            let newAddress = addresses[dataSource.name];
+            let newAddress = addresses[dataSource.name].address;
+            let newStartBlock = addresses[dataSource.name].startBlock || 0;
             subgraphManifest.dataSources[i].source.address = newAddress;
+            subgraphManifest.dataSources[i].source.startBlock = newStartBlock;
         }
     }
 
