@@ -221,7 +221,7 @@ export function handlePolicyVoteCast(event: PolicyVoteCast): void {
 }
 
 // PolicyVotes.PolicySplitVoteCast(address indexed voter, uint256 votesYes, uint256 votesNo)
-export function handleSplitPolicyVoteCast(event: PolicySplitVoteCast): void {
+export function handlePolicySplitVoteCast(event: PolicySplitVoteCast): void {
     let id = event.params.voter.toHexString() + "-" + event.address.toHexString();
 
     let vote = CommunityProposalVote.load(id);
