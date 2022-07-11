@@ -10,20 +10,6 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class Initialized extends ethereum.Event {
-  get params(): Initialized__Params {
-    return new Initialized__Params(this);
-  }
-}
-
-export class Initialized__Params {
-  _event: Initialized;
-
-  constructor(event: Initialized) {
-    this._event = event;
-  }
-}
-
 export class Policy extends ethereum.SmartContract {
   static bind(address: Address): Policy {
     return new Policy("Policy", address);
@@ -41,6 +27,25 @@ export class Policy extends ethereum.SmartContract {
       "implementation():(address)",
       []
     );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  policyFor(_interfaceIdentifierHash: Bytes): Address {
+    let result = super.call("policyFor", "policyFor(bytes32):(address)", [
+      ethereum.Value.fromFixedBytes(_interfaceIdentifierHash)
+    ]);
+
+    return result[0].toAddress();
+  }
+
+  try_policyFor(_interfaceIdentifierHash: Bytes): ethereum.CallResult<Address> {
+    let result = super.tryCall("policyFor", "policyFor(bytes32):(address)", [
+      ethereum.Value.fromFixedBytes(_interfaceIdentifierHash)
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -66,53 +71,34 @@ export class Policy extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
+}
 
-  policyFor(_interfaceIdentifierHash: Bytes): Address {
-    let result = super.call("policyFor", "policyFor(bytes32):(address)", [
-      ethereum.Value.fromFixedBytes(_interfaceIdentifierHash)
-    ]);
-
-    return result[0].toAddress();
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
   }
 
-  try_policyFor(_interfaceIdentifierHash: Bytes): ethereum.CallResult<Address> {
-    let result = super.tryCall("policyFor", "policyFor(bytes32):(address)", [
-      ethereum.Value.fromFixedBytes(_interfaceIdentifierHash)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
   }
 }
 
-export class RemoveSelfCall extends ethereum.Call {
-  get inputs(): RemoveSelfCall__Inputs {
-    return new RemoveSelfCall__Inputs(this);
-  }
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
 
-  get outputs(): RemoveSelfCall__Outputs {
-    return new RemoveSelfCall__Outputs(this);
-  }
-}
-
-export class RemoveSelfCall__Inputs {
-  _call: RemoveSelfCall;
-
-  constructor(call: RemoveSelfCall) {
+  constructor(call: InitializeCall) {
     this._call = call;
   }
 
-  get _interfaceIdentifierHash(): Bytes {
-    return this._call.inputValues[0].value.toBytes();
+  get _self(): Address {
+    return this._call.inputValues[0].value.toAddress();
   }
 }
 
-export class RemoveSelfCall__Outputs {
-  _call: RemoveSelfCall;
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
 
-  constructor(call: RemoveSelfCall) {
+  constructor(call: InitializeCall) {
     this._call = call;
   }
 }
@@ -147,32 +133,66 @@ export class InternalCommandCall__Outputs {
   }
 }
 
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
+export class RemoveSelfCall extends ethereum.Call {
+  get inputs(): RemoveSelfCall__Inputs {
+    return new RemoveSelfCall__Inputs(this);
   }
 
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
+  get outputs(): RemoveSelfCall__Outputs {
+    return new RemoveSelfCall__Outputs(this);
   }
 }
 
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
+export class RemoveSelfCall__Inputs {
+  _call: RemoveSelfCall;
 
-  constructor(call: InitializeCall) {
+  constructor(call: RemoveSelfCall) {
     this._call = call;
   }
 
-  get _self(): Address {
-    return this._call.inputValues[0].value.toAddress();
+  get _interfaceIdentifierHash(): Bytes {
+    return this._call.inputValues[0].value.toBytes();
   }
 }
 
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
+export class RemoveSelfCall__Outputs {
+  _call: RemoveSelfCall;
 
-  constructor(call: InitializeCall) {
+  constructor(call: RemoveSelfCall) {
+    this._call = call;
+  }
+}
+
+export class SetPolicyCall extends ethereum.Call {
+  get inputs(): SetPolicyCall__Inputs {
+    return new SetPolicyCall__Inputs(this);
+  }
+
+  get outputs(): SetPolicyCall__Outputs {
+    return new SetPolicyCall__Outputs(this);
+  }
+}
+
+export class SetPolicyCall__Inputs {
+  _call: SetPolicyCall;
+
+  constructor(call: SetPolicyCall) {
+    this._call = call;
+  }
+
+  get _key(): Bytes {
+    return this._call.inputValues[0].value.toBytes();
+  }
+
+  get _implementer(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class SetPolicyCall__Outputs {
+  _call: SetPolicyCall;
+
+  constructor(call: SetPolicyCall) {
     this._call = call;
   }
 }

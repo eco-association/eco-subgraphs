@@ -615,22 +615,22 @@ export class CommunityProposalVote extends Entity {
     this.set("policyVote", Value.fromString(value));
   }
 
-  get vote(): boolean {
-    let value = this.get("vote");
-    return value!.toBoolean();
-  }
-
-  set vote(value: boolean) {
-    this.set("vote", Value.fromBoolean(value));
-  }
-
-  get amount(): BigInt {
-    let value = this.get("amount");
+  get yesAmount(): BigInt {
+    let value = this.get("yesAmount");
     return value!.toBigInt();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set yesAmount(value: BigInt) {
+    this.set("yesAmount", Value.fromBigInt(value));
+  }
+
+  get totalAmount(): BigInt {
+    let value = this.get("totalAmount");
+    return value!.toBigInt();
+  }
+
+  set totalAmount(value: BigInt) {
+    this.set("totalAmount", Value.fromBigInt(value));
   }
 }
 

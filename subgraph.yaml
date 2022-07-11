@@ -6,7 +6,7 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x1dF30B75fB5D942DA5574F0128bd876d4740B01F"
+      address: "0x6911b9667DCaa4E4844e5878F0162B0ff3B80Ad6"
       abi: TimedPolicies
       startBlock: 0
     mapping:
@@ -25,14 +25,14 @@ dataSources:
         - name: Policy
           file: ./abis/Policy.json
       eventHandlers:
-        - event: PolicyDecisionStarted(address)
+        - event: PolicyDecisionStart(address)
           handler: handlePolicyDesicionStarted
       file: ./src/governance/mapping.ts
   - kind: ethereum
     name: ECO
     network: mainnet
     source:
-      address: "0xd49017754Cfe7fb2Aee15Ac00aCa3C73198E3F2a"
+      address: "0x889E8Ee3101710f9adf61079abd451F8F0c3C2DF"
       abi: ECO
       startBlock: 0
     mapping:
@@ -58,7 +58,7 @@ dataSources:
     name: ECOx
     network: mainnet
     source:
-      address: "0x0aB5eE2C3C9aA19180a712914272d4DB541A247c"
+      address: "0x0baf1eeD93F8e9a452c8B5dE2cAB74Dc0A78f491"
       abi: ECOx
       startBlock: 0
     mapping:
@@ -78,7 +78,7 @@ dataSources:
     name: ECOxLockup
     network: mainnet
     source:
-      address: "0xfa618fe0dA54E2dFC7e45e8e4B19644fbe36679E"
+      address: "0x4f877599705B121B24Afc4738dcB772C4475c2ef"
       abi: ECOxLockup
       startBlock: 0
     mapping:
@@ -91,8 +91,8 @@ dataSources:
         - name: ECOxLockup
           file: ./abis/ECOxLockup.json
       eventHandlers:
-        - event: ChangeDelegateVotes(indexed address,uint256)
-          handler: handleChangeDelegateVotes
+        - event: UpdatedVotes(indexed address,uint256)
+          handler: handleUpdatedVotes
       file: ./src/currency/mapping.ts
 templates:
   - kind: ethereum
@@ -116,18 +116,18 @@ templates:
         - name: Proposal
           file: ./abis/Proposal.json
       eventHandlers:
-        - event: ProposalAdded(address,address)
-          handler: handleProposalAdded
-        - event: ProposalSupported(address,address)
-          handler: handleProposalSupported
-        - event: ProposalUnsupported(address,address)
-          handler: handleProposalUnsupported
-        - event: SupportThresholdReached(address)
+        - event: Register(indexed address,indexed address)
+          handler: handleRegister
+        - event: Support(indexed address,indexed address)
+          handler: handleSupport
+        - event: Unsupport(indexed address,indexed address)
+          handler: handleUnsupport
+        - event: SupportThresholdReached(indexed address)
           handler: handleSupportThresholdReached
-        - event: ProposalRefunded(address,address)
-          handler: handleProposalRefunded
-        - event: VotingStarted(address)
-          handler: handleVotingStarted
+        - event: ProposalRefund(indexed address,indexed address)
+          handler: handleProposalRefund
+        - event: VoteStart(indexed address)
+          handler: handleVoteStart
       file: ./src/governance/mapping.ts
   - kind: ethereum
     name: PolicyVotes
@@ -152,6 +152,8 @@ templates:
       eventHandlers:
         - event: PolicyVoteCast(indexed address,bool,uint256)
           handler: handlePolicyVoteCast
+        - event: PolicySplitVoteCast(indexed address,uint256,uint256)
+          handler: handleSplitPolicyVoteCast
         - event: VoteCompleted(uint8)
           handler: handleVoteCompleted
       file: ./src/governance/mapping.ts

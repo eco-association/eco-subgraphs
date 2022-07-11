@@ -7,14 +7,29 @@
           "type": "address"
         },
         {
-          "internalType": "contract PolicyProposals",
-          "name": "_policyproposal",
+          "internalType": "contract CurrencyGovernance",
+          "name": "_borda",
           "type": "address"
         },
         {
-          "internalType": "bytes32[]",
-          "name": "_notificationHashes",
-          "type": "bytes32[]"
+          "internalType": "contract RandomInflation",
+          "name": "_inflation",
+          "type": "address"
+        },
+        {
+          "internalType": "contract Lockup",
+          "name": "_lockup",
+          "type": "address"
+        },
+        {
+          "internalType": "contract InflationRootHashProposal",
+          "name": "_inflationRootHashProposal",
+          "type": "address"
+        },
+        {
+          "internalType": "contract ECO",
+          "name": "_ecoAddr",
+          "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
@@ -24,36 +39,68 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
-          "internalType": "address",
-          "name": "contractAddress",
+          "indexed": true,
+          "internalType": "contract CurrencyGovernance",
+          "name": "addr",
           "type": "address"
         }
       ],
-      "name": "PolicyDecisionStart",
+      "name": "NewCurrencyGovernance",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract RandomInflation",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "NewInflation",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract InflationRootHashProposal",
+          "name": "inflationRootHashProposalContract",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "generation",
+          "type": "uint256"
+        }
+      ],
+      "name": "NewInflationRootHashProposal",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract Lockup",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "NewLockup",
       "type": "event"
     },
     {
       "inputs": [],
-      "name": "CURRENCY_TIME",
+      "name": "bordaImpl",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "contract CurrencyGovernance",
           "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "GENERATION_DURATION",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -98,7 +145,7 @@
     },
     {
       "inputs": [],
-      "name": "generation",
+      "name": "currentGeneration",
       "outputs": [
         {
           "internalType": "uint256",
@@ -111,12 +158,12 @@
     },
     {
       "inputs": [],
-      "name": "getNotificationHashes",
+      "name": "ecoToken",
       "outputs": [
         {
-          "internalType": "bytes32[]",
+          "internalType": "contract ECO",
           "name": "",
-          "type": "bytes32[]"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -137,9 +184,28 @@
     },
     {
       "inputs": [],
-      "name": "incrementGeneration",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "name": "inflationImpl",
+      "outputs": [
+        {
+          "internalType": "contract RandomInflation",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "inflationRootHashProposalImpl",
+      "outputs": [
+        {
+          "internalType": "contract InflationRootHashProposal",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -156,16 +222,58 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "nextGenerationStart",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "isLockup",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "bool",
           "name": "",
-          "type": "uint256"
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "lockupImpl",
+      "outputs": [
+        {
+          "internalType": "contract Lockup",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_withdrawer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "_penalty",
+          "type": "bool"
+        }
+      ],
+      "name": "lockupWithdrawal",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -176,15 +284,22 @@
           "type": "uint256"
         }
       ],
-      "name": "notificationHashes",
+      "name": "lockups",
       "outputs": [
         {
-          "internalType": "bytes32",
+          "internalType": "contract Lockup",
           "name": "",
-          "type": "bytes32"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "notifyGenerationIncrease",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -219,11 +334,17 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "policyProposalImpl",
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "rootHashAddressPerGeneration",
       "outputs": [
         {
-          "internalType": "contract PolicyProposals",
+          "internalType": "contract InflationRootHashProposal",
           "name": "",
           "type": "address"
         }

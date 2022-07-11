@@ -10,6 +10,32 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class PolicySplitVoteCast extends ethereum.Event {
+  get params(): PolicySplitVoteCast__Params {
+    return new PolicySplitVoteCast__Params(this);
+  }
+}
+
+export class PolicySplitVoteCast__Params {
+  _event: PolicySplitVoteCast;
+
+  constructor(event: PolicySplitVoteCast) {
+    this._event = event;
+  }
+
+  get voter(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get votesYes(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get votesNo(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+}
+
 export class PolicyVoteCast extends ethereum.Event {
   get params(): PolicyVoteCast__Params {
     return new PolicyVoteCast__Params(this);
@@ -78,238 +104,6 @@ export class PolicyVotes extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  ID_CLEANUP(): Bytes {
-    let result = super.call("ID_CLEANUP", "ID_CLEANUP():(bytes32)", []);
-
-    return result[0].toBytes();
-  }
-
-  try_ID_CLEANUP(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall("ID_CLEANUP", "ID_CLEANUP():(bytes32)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_CURRENCY_GOVERNANCE(): Bytes {
-    let result = super.call(
-      "ID_CURRENCY_GOVERNANCE",
-      "ID_CURRENCY_GOVERNANCE():(bytes32)",
-      []
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_ID_CURRENCY_GOVERNANCE(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "ID_CURRENCY_GOVERNANCE",
-      "ID_CURRENCY_GOVERNANCE():(bytes32)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_CURRENCY_TIMER(): Bytes {
-    let result = super.call(
-      "ID_CURRENCY_TIMER",
-      "ID_CURRENCY_TIMER():(bytes32)",
-      []
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_ID_CURRENCY_TIMER(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "ID_CURRENCY_TIMER",
-      "ID_CURRENCY_TIMER():(bytes32)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_ECO(): Bytes {
-    let result = super.call("ID_ECO", "ID_ECO():(bytes32)", []);
-
-    return result[0].toBytes();
-  }
-
-  try_ID_ECO(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall("ID_ECO", "ID_ECO():(bytes32)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_ECOX(): Bytes {
-    let result = super.call("ID_ECOX", "ID_ECOX():(bytes32)", []);
-
-    return result[0].toBytes();
-  }
-
-  try_ID_ECOX(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall("ID_ECOX", "ID_ECOX():(bytes32)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_ECOXLOCKUP(): Bytes {
-    let result = super.call("ID_ECOXLOCKUP", "ID_ECOXLOCKUP():(bytes32)", []);
-
-    return result[0].toBytes();
-  }
-
-  try_ID_ECOXLOCKUP(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "ID_ECOXLOCKUP",
-      "ID_ECOXLOCKUP():(bytes32)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_ECO_LABS(): Bytes {
-    let result = super.call("ID_ECO_LABS", "ID_ECO_LABS():(bytes32)", []);
-
-    return result[0].toBytes();
-  }
-
-  try_ID_ECO_LABS(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall("ID_ECO_LABS", "ID_ECO_LABS():(bytes32)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_FAUCET(): Bytes {
-    let result = super.call("ID_FAUCET", "ID_FAUCET():(bytes32)", []);
-
-    return result[0].toBytes();
-  }
-
-  try_ID_FAUCET(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall("ID_FAUCET", "ID_FAUCET():(bytes32)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_POLICY_PROPOSALS(): Bytes {
-    let result = super.call(
-      "ID_POLICY_PROPOSALS",
-      "ID_POLICY_PROPOSALS():(bytes32)",
-      []
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_ID_POLICY_PROPOSALS(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "ID_POLICY_PROPOSALS",
-      "ID_POLICY_PROPOSALS():(bytes32)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_POLICY_VOTES(): Bytes {
-    let result = super.call(
-      "ID_POLICY_VOTES",
-      "ID_POLICY_VOTES():(bytes32)",
-      []
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_ID_POLICY_VOTES(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "ID_POLICY_VOTES",
-      "ID_POLICY_VOTES():(bytes32)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_TIMED_POLICIES(): Bytes {
-    let result = super.call(
-      "ID_TIMED_POLICIES",
-      "ID_TIMED_POLICIES():(bytes32)",
-      []
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_ID_TIMED_POLICIES(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "ID_TIMED_POLICIES",
-      "ID_TIMED_POLICIES():(bytes32)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  ID_TRUSTED_NODES(): Bytes {
-    let result = super.call(
-      "ID_TRUSTED_NODES",
-      "ID_TRUSTED_NODES():(bytes32)",
-      []
-    );
-
-    return result[0].toBytes();
-  }
-
-  try_ID_TRUSTED_NODES(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall(
-      "ID_TRUSTED_NODES",
-      "ID_TRUSTED_NODES():(bytes32)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
   VOTE_TIME(): BigInt {
     let result = super.call("VOTE_TIME", "VOTE_TIME():(uint256)", []);
 
@@ -374,6 +168,36 @@ export class PolicyVotes extends ethereum.SmartContract {
 
   try_clone(): ethereum.CallResult<Address> {
     let result = super.tryCall("clone", "clone():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  ecoToken(): Address {
+    let result = super.call("ecoToken", "ecoToken():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_ecoToken(): ethereum.CallResult<Address> {
+    let result = super.tryCall("ecoToken", "ecoToken():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  ecoXToken(): Address {
+    let result = super.call("ecoXToken", "ecoXToken():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_ecoXToken(): ethereum.CallResult<Address> {
+    let result = super.tryCall("ecoXToken", "ecoXToken():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -549,23 +373,23 @@ export class PolicyVotes extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  yesVote(param0: Address): boolean {
-    let result = super.call("yesVote", "yesVote(address):(bool)", [
+  yesVotes(param0: Address): BigInt {
+    let result = super.call("yesVotes", "yesVotes(address):(uint256)", [
       ethereum.Value.fromAddress(param0)
     ]);
 
-    return result[0].toBoolean();
+    return result[0].toBigInt();
   }
 
-  try_yesVote(param0: Address): ethereum.CallResult<boolean> {
-    let result = super.tryCall("yesVote", "yesVote(address):(bool)", [
+  try_yesVotes(param0: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("yesVotes", "yesVotes(address):(uint256)", [
       ethereum.Value.fromAddress(param0)
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 }
 
@@ -588,6 +412,14 @@ export class ConstructorCall__Inputs {
 
   get _policy(): Address {
     return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _ecoAddr(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _ecoXAddr(): Address {
+    return this._call.inputValues[2].value.toAddress();
   }
 }
 
@@ -626,6 +458,96 @@ export class CloneCall__Outputs {
 
   get value0(): Address {
     return this._call.outputValues[0].value.toAddress();
+  }
+}
+
+export class ConfigureCall extends ethereum.Call {
+  get inputs(): ConfigureCall__Inputs {
+    return new ConfigureCall__Inputs(this);
+  }
+
+  get outputs(): ConfigureCall__Outputs {
+    return new ConfigureCall__Outputs(this);
+  }
+}
+
+export class ConfigureCall__Inputs {
+  _call: ConfigureCall;
+
+  constructor(call: ConfigureCall) {
+    this._call = call;
+  }
+
+  get _proposal(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _cutoffBlockNumber(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class ConfigureCall__Outputs {
+  _call: ConfigureCall;
+
+  constructor(call: ConfigureCall) {
+    this._call = call;
+  }
+}
+
+export class ExecuteCall extends ethereum.Call {
+  get inputs(): ExecuteCall__Inputs {
+    return new ExecuteCall__Inputs(this);
+  }
+
+  get outputs(): ExecuteCall__Outputs {
+    return new ExecuteCall__Outputs(this);
+  }
+}
+
+export class ExecuteCall__Inputs {
+  _call: ExecuteCall;
+
+  constructor(call: ExecuteCall) {
+    this._call = call;
+  }
+}
+
+export class ExecuteCall__Outputs {
+  _call: ExecuteCall;
+
+  constructor(call: ExecuteCall) {
+    this._call = call;
+  }
+}
+
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
+  }
+
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
+  }
+}
+
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+
+  get _self(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
   }
 }
 
@@ -723,88 +645,36 @@ export class VoteCall__Outputs {
   }
 }
 
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
+export class VoteSplitCall extends ethereum.Call {
+  get inputs(): VoteSplitCall__Inputs {
+    return new VoteSplitCall__Inputs(this);
   }
 
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
+  get outputs(): VoteSplitCall__Outputs {
+    return new VoteSplitCall__Outputs(this);
   }
 }
 
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
+export class VoteSplitCall__Inputs {
+  _call: VoteSplitCall;
 
-  constructor(call: InitializeCall) {
+  constructor(call: VoteSplitCall) {
     this._call = call;
   }
 
-  get _self(): Address {
-    return this._call.inputValues[0].value.toAddress();
+  get _votesYes(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _votesNo(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
   }
 }
 
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
+export class VoteSplitCall__Outputs {
+  _call: VoteSplitCall;
 
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-}
-
-export class ConfigureCall extends ethereum.Call {
-  get inputs(): ConfigureCall__Inputs {
-    return new ConfigureCall__Inputs(this);
-  }
-
-  get outputs(): ConfigureCall__Outputs {
-    return new ConfigureCall__Outputs(this);
-  }
-}
-
-export class ConfigureCall__Inputs {
-  _call: ConfigureCall;
-
-  constructor(call: ConfigureCall) {
-    this._call = call;
-  }
-
-  get _proposal(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class ConfigureCall__Outputs {
-  _call: ConfigureCall;
-
-  constructor(call: ConfigureCall) {
-    this._call = call;
-  }
-}
-
-export class ExecuteCall extends ethereum.Call {
-  get inputs(): ExecuteCall__Inputs {
-    return new ExecuteCall__Inputs(this);
-  }
-
-  get outputs(): ExecuteCall__Outputs {
-    return new ExecuteCall__Outputs(this);
-  }
-}
-
-export class ExecuteCall__Inputs {
-  _call: ExecuteCall;
-
-  constructor(call: ExecuteCall) {
-    this._call = call;
-  }
-}
-
-export class ExecuteCall__Outputs {
-  _call: ExecuteCall;
-
-  constructor(call: ExecuteCall) {
+  constructor(call: VoteSplitCall) {
     this._call = call;
   }
 }

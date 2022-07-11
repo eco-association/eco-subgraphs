@@ -15,21 +15,6 @@ export class Proposal extends ethereum.SmartContract {
     return new Proposal("Proposal", address);
   }
 
-  name(): string {
-    let result = super.call("name", "name():(string)", []);
-
-    return result[0].toString();
-  }
-
-  try_name(): ethereum.CallResult<string> {
-    let result = super.tryCall("name", "name():(string)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toString());
-  }
-
   description(): string {
     let result = super.call("description", "description():(string)", []);
 
@@ -38,6 +23,21 @@ export class Proposal extends ethereum.SmartContract {
 
   try_description(): ethereum.CallResult<string> {
     let result = super.tryCall("description", "description():(string)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  name(): string {
+    let result = super.call("name", "name():(string)", []);
+
+    return result[0].toString();
+  }
+
+  try_name(): ethereum.CallResult<string> {
+    let result = super.tryCall("name", "name():(string)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
