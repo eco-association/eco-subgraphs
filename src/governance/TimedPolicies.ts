@@ -1,5 +1,5 @@
 
-import { PolicyDecisionStarted, TimedPolicies } from "../../generated/TimedPolicies/TimedPolicies";
+import { PolicyDecisionStart, TimedPolicies } from "../../generated/TimedPolicies/TimedPolicies";
 
 import { PolicyProposals } from "../../generated/templates/PolicyProposals/PolicyProposals";
 
@@ -11,14 +11,14 @@ import { loadContractAddresses } from "./";
 
 
 // TimedPolicies.PolicyDesicionStarted(address contractAddress)
-export function handlePolicyDesicionStarted(event: PolicyDecisionStarted): void {
+export function handlePolicyDesicionStarted(event: PolicyDecisionStart): void {
     // get the new address
     let timedPoliciesContract = TimedPolicies.bind(event.address);
 
     let policyProposalsAddress = event.params.contractAddress;
 
     // get generation
-    let generationNum = timedPoliciesContract.internalGeneration();
+    let generationNum = timedPoliciesContract.generation();
 
     // subscribe to events from this generation's PolicyProposals contract
     PolicyProposalsTemplate.create(policyProposalsAddress);

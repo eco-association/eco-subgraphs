@@ -1,24 +1,24 @@
 {
     "kovan": {
         "CurrencyTimer": {
-            "address": "",
-            "startBlock": 0
+            "address": "0xEa645E2229b40178f02Cb67275Dd04864F589595",
+            "startBlock": 32619500
         },
         "TimedPolicies": {
-            "address": "0x45827a55D1B0F4327D0c37df44B7845350df43e9",
-            "startBlock": 0
+            "address": "0xCa781211a19109018F258227848a0A4cec1F934B",
+            "startBlock": 32619500
         },
         "ECO": {
-            "address": "",
-            "startBlock": 0
+            "address": "0xc1E47c8b8d2F7b1F1ACCA6Cc3a0a65C0789D6129",
+            "startBlock": 32619500
         },
         "ECOx": {
-            "address": "",
-            "startBlock": 0
+            "address": "0x7008B836ead7B603095c6cB9f5f8368A3ec91D53",
+            "startBlock": 32619500
         },
         "ECOxLockup": {
-            "address": "",
-            "startBlock": 0
+            "address": "0xe4dDdA0D65af08E0B91b4E6fb39834C74A26bB40",
+            "startBlock": 32619500
         }
     },
     "localhost": {

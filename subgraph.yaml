@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: CurrencyTimer
-    network: mainnet
+    network: kovan
     source:
-      address: "0x1dF30B75fB5D942DA5574F0128bd876d4740B01F"
+      address: "0xEa645E2229b40178f02Cb67275Dd04864F589595"
       abi: CurrencyTimer
-      startBlock: 0
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -30,11 +30,11 @@ dataSources:
       file: ./src/governance/CurrencyTimer.ts
   - kind: ethereum
     name: TimedPolicies
-    network: mainnet
+    network: kovan
     source:
-      address: "0x6911b9667DCaa4E4844e5878F0162B0ff3B80Ad6"
+      address: "0xCa781211a19109018F258227848a0A4cec1F934B"
       abi: TimedPolicies
-      startBlock: 0
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -54,11 +54,11 @@ dataSources:
       file: ./src/governance/TimedPolicies.ts
   - kind: ethereum
     name: ECO
-    network: mainnet
+    network: kovan
     source:
-      address: "0x889E8Ee3101710f9adf61079abd451F8F0c3C2DF"
+      address: "0xc1E47c8b8d2F7b1F1ACCA6Cc3a0a65C0789D6129"
       abi: ECO
-      startBlock: 0
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -80,11 +80,11 @@ dataSources:
       file: ./src/currency/ECO.ts
   - kind: ethereum
     name: ECOx
-    network: mainnet
+    network: kovan
     source:
-      address: "0x0baf1eeD93F8e9a452c8B5dE2cAB74Dc0A78f491"
+      address: "0x7008B836ead7B603095c6cB9f5f8368A3ec91D53"
       abi: ECOx
-      startBlock: 0
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -100,11 +100,11 @@ dataSources:
       file: ./src/currency/ECOx.ts
   - kind: ethereum
     name: ECOxLockup
-    network: mainnet
+    network: kovan
     source:
-      address: "0x4f877599705B121B24Afc4738dcB772C4475c2ef"
+      address: "0xe4dDdA0D65af08E0B91b4E6fb39834C74A26bB40"
       abi: ECOxLockup
-      startBlock: 0
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -121,7 +121,7 @@ dataSources:
 templates:
   - kind: ethereum
     name: PolicyProposals
-    network: mainnet
+    network: kovan
     source:
       abi: PolicyProposals
     mapping:
@@ -155,7 +155,7 @@ templates:
       file: ./src/governance/PolicyProposals.ts
   - kind: ethereum
     name: PolicyVotes
-    network: mainnet
+    network: kovan
     source:
       abi: PolicyVotes
     mapping:
@@ -177,7 +177,7 @@ templates:
         - event: PolicyVoteCast(indexed address,bool,uint256)
           handler: handlePolicyVoteCast
         - event: PolicySplitVoteCast(indexed address,uint256,uint256)
-          handler: handleSplitPolicyVoteCast
+          handler: handlePolicySplitVoteCast
         - event: VoteCompleted(uint8)
           handler: handleVoteCompleted
       file: ./src/governance/PolicyVotes.ts
