@@ -33,8 +33,22 @@ Currency Governance entities
 type CurrencyGovernance @entity {
     id: String! "address"
     generation: Generation!
+    proposalEnds: BigInt!
+    votingEnds: BigInt!
+    revealEnds: BigInt!
 }
 
+type MonetaryProposal @entity {
+    id: String!
+    generation: Generation!
+    trustee: String!
+    enacted: Boolean!
+    numberOfRecipients: BigInt!
+    randomInflationReward: BigInt!
+    lockupDuration: BigInt!
+    lockupInterest: BigInt!
+    inflationMultiplier: BigInt!
+}
 
 """
 Community Support entities

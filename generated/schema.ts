@@ -242,6 +242,139 @@ export class CurrencyGovernance extends Entity {
   set generation(value: string) {
     this.set("generation", Value.fromString(value));
   }
+
+  get proposalEnds(): BigInt {
+    let value = this.get("proposalEnds");
+    return value!.toBigInt();
+  }
+
+  set proposalEnds(value: BigInt) {
+    this.set("proposalEnds", Value.fromBigInt(value));
+  }
+
+  get votingEnds(): BigInt {
+    let value = this.get("votingEnds");
+    return value!.toBigInt();
+  }
+
+  set votingEnds(value: BigInt) {
+    this.set("votingEnds", Value.fromBigInt(value));
+  }
+
+  get revealEnds(): BigInt {
+    let value = this.get("revealEnds");
+    return value!.toBigInt();
+  }
+
+  set revealEnds(value: BigInt) {
+    this.set("revealEnds", Value.fromBigInt(value));
+  }
+}
+
+export class MonetaryProposal extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save MonetaryProposal entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type MonetaryProposal must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("MonetaryProposal", id.toString(), this);
+    }
+  }
+
+  static load(id: string): MonetaryProposal | null {
+    return changetype<MonetaryProposal | null>(
+      store.get("MonetaryProposal", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get generation(): string {
+    let value = this.get("generation");
+    return value!.toString();
+  }
+
+  set generation(value: string) {
+    this.set("generation", Value.fromString(value));
+  }
+
+  get trustee(): string {
+    let value = this.get("trustee");
+    return value!.toString();
+  }
+
+  set trustee(value: string) {
+    this.set("trustee", Value.fromString(value));
+  }
+
+  get enacted(): boolean {
+    let value = this.get("enacted");
+    return value!.toBoolean();
+  }
+
+  set enacted(value: boolean) {
+    this.set("enacted", Value.fromBoolean(value));
+  }
+
+  get numberOfRecipients(): BigInt {
+    let value = this.get("numberOfRecipients");
+    return value!.toBigInt();
+  }
+
+  set numberOfRecipients(value: BigInt) {
+    this.set("numberOfRecipients", Value.fromBigInt(value));
+  }
+
+  get randomInflationReward(): BigInt {
+    let value = this.get("randomInflationReward");
+    return value!.toBigInt();
+  }
+
+  set randomInflationReward(value: BigInt) {
+    this.set("randomInflationReward", Value.fromBigInt(value));
+  }
+
+  get lockupDuration(): BigInt {
+    let value = this.get("lockupDuration");
+    return value!.toBigInt();
+  }
+
+  set lockupDuration(value: BigInt) {
+    this.set("lockupDuration", Value.fromBigInt(value));
+  }
+
+  get lockupInterest(): BigInt {
+    let value = this.get("lockupInterest");
+    return value!.toBigInt();
+  }
+
+  set lockupInterest(value: BigInt) {
+    this.set("lockupInterest", Value.fromBigInt(value));
+  }
+
+  get inflationMultiplier(): BigInt {
+    let value = this.get("inflationMultiplier");
+    return value!.toBigInt();
+  }
+
+  set inflationMultiplier(value: BigInt) {
+    this.set("inflationMultiplier", Value.fromBigInt(value));
+  }
 }
 
 export class PolicyProposal extends Entity {

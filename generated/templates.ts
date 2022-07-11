@@ -33,3 +33,17 @@ export class PolicyVotes extends DataSourceTemplate {
     );
   }
 }
+
+export class CurrencyGovernance extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("CurrencyGovernance", [address.toHex()]);
+  }
+
+  static createWithContext(address: Address, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext(
+      "CurrencyGovernance",
+      [address.toHex()],
+      context
+    );
+  }
+}

@@ -1,4 +1,8 @@
-[
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Proposal",
+  "sourceName": "contracts/governance/community/Proposal.sol",
+  "abi": [
     {
       "inputs": [],
       "name": "description",
@@ -51,4 +55,9 @@
       "stateMutability": "view",
       "type": "function"
     }
-]
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
