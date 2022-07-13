@@ -222,4 +222,10 @@ templates:
           handler: handleProposalCreation
         - event: ProposalRetraction(indexed address)
           handler: handleProposalRetraction
+        - event: VoteCast(indexed address)
+          handler: handleVoteCast
+        - event: VoteReveal(indexed address,address[])
+          handler: handleVoteReveal
+        - event: VoteResult(indexed address)
+          handler: handleVoteResult
       file: ./src/governance/CurrencyGovernance.ts

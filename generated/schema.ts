@@ -208,6 +208,15 @@ export class Generation extends Entity {
   set communityProposals(value: Array<string>) {
     this.set("communityProposals", Value.fromStringArray(value));
   }
+
+  get monetaryProposals(): Array<string> {
+    let value = this.get("monetaryProposals");
+    return value!.toStringArray();
+  }
+
+  set monetaryProposals(value: Array<string>) {
+    this.set("monetaryProposals", Value.fromStringArray(value));
+  }
 }
 
 export class CurrencyGovernance extends Entity {
@@ -277,6 +286,15 @@ export class CurrencyGovernance extends Entity {
 
   set revealEnds(value: BigInt) {
     this.set("revealEnds", Value.fromBigInt(value));
+  }
+
+  get commits(): Array<string> {
+    let value = this.get("commits");
+    return value!.toStringArray();
+  }
+
+  set commits(value: Array<string>) {
+    this.set("commits", Value.fromStringArray(value));
   }
 }
 
@@ -383,6 +401,65 @@ export class MonetaryProposal extends Entity {
 
   set inflationMultiplier(value: BigInt) {
     this.set("inflationMultiplier", Value.fromBigInt(value));
+  }
+}
+
+export class MonetaryCommit extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save MonetaryCommit entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type MonetaryCommit must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("MonetaryCommit", id.toString(), this);
+    }
+  }
+
+  static load(id: string): MonetaryCommit | null {
+    return changetype<MonetaryCommit | null>(store.get("MonetaryCommit", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get hash(): Bytes {
+    let value = this.get("hash");
+    return value!.toBytes();
+  }
+
+  set hash(value: Bytes) {
+    this.set("hash", Value.fromBytes(value));
+  }
+
+  get currencyGovernance(): string {
+    let value = this.get("currencyGovernance");
+    return value!.toString();
+  }
+
+  set currencyGovernance(value: string) {
+    this.set("currencyGovernance", Value.fromString(value));
+  }
+
+  get trustee(): string {
+    let value = this.get("trustee");
+    return value!.toString();
+  }
+
+  set trustee(value: string) {
+    this.set("trustee", Value.fromString(value));
   }
 }
 

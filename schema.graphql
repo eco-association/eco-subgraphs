@@ -1,6 +1,6 @@
 """
 ECO contract addresses
-only even one entity of this type, with id: "0" which returns the current contract addresses of each attribute
+only ever one entity of this type, with id: "0" which returns the current contract addresses of each attribute
 """
 type ContractAddresses @entity {
     id: String!
@@ -25,6 +25,7 @@ type Generation @entity {
     policyProposal: PolicyProposal @derivedFrom(field: "generation")
     policyVote: PolicyVote @derivedFrom(field: "generation")
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
+    monetaryProposals: [MonetaryProposal!]! @derivedFrom(field: "generation")
 }
 
 
@@ -37,9 +38,13 @@ type CurrencyGovernance @entity {
     proposalEnds: BigInt!
     votingEnds: BigInt!
     revealEnds: BigInt!
+    commits: [MonetaryCommit!]! @derivedFrom(field: "currencyGovernance")
 }
 
 type MonetaryProposal @entity {
+    """
+    id: currencyGovernance + "-" + trustee
+    """
     id: String!
     generation: Generation!
     trustee: Trustee!
@@ -49,6 +54,16 @@ type MonetaryProposal @entity {
     lockupDuration: BigInt!
     lockupInterest: BigInt!
     inflationMultiplier: BigInt!
+}
+
+type MonetaryCommit @entity {
+    """
+    id: currencyGovernance + "-" + trustee
+    """
+    id: String!
+    hash: Bytes!
+    currencyGovernance: CurrencyGovernance!
+    trustee: Trustee!
 }
 
 type Trustee @entity {
