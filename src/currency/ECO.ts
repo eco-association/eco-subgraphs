@@ -4,7 +4,7 @@ import { ECOAllowance, ECOBalance, InflationMultiplier } from "../../generated/s
 import { NULL_ADDRESS } from "../constants";
 import { BigInt, store } from "@graphprotocol/graph-ts";
 
-import { loadOrCreateAccount } from "./";
+import { loadOrCreateAccount, loadOrCreateToken } from "./";
 
 // ECO.NewInflationMultiplier(uint256)
 export function handleNewInflationMultiplier(event: NewInflationMultiplier): void {
@@ -61,6 +61,12 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         newBalance.blockNumber = event.block.number;
         newBalance.save();
     }
+    else {
+        // is a mint, increment total supply
+        let ecoToken = loadOrCreateToken("eco", event.address);
+        ecoToken.totalSupply = ecoToken.totalSupply.plus(event.params.value);
+        ecoToken.save();
+    }
 
     if (to.id != NULL_ADDRESS) {
         // not a burn
@@ -72,5 +78,11 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         newBalance.value = to.ECO;
         newBalance.blockNumber = event.block.number;
         newBalance.save();
+    }
+    else {
+        // is a burn, decrement total supply
+        let ecoToken = loadOrCreateToken("eco", event.address);
+        ecoToken.totalSupply = ecoToken.totalSupply.minus(event.params.value);
+        ecoToken.save();
     }
 }

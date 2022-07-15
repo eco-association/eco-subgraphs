@@ -204,6 +204,18 @@ type ECOAllowance @entity {
 
 
 """
+Token
+"""
+type Token @entity {
+    id: String!
+    name: String!
+    symbol: String!
+    decimals: Int!
+    totalSupply: BigInt!
+}
+
+
+"""
 ECO balance
 historical ECO balance at blockNumber
 """
