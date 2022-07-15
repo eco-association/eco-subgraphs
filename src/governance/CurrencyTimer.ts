@@ -9,6 +9,8 @@ import { NULL_ADDRESS } from "../constants";
 
 import { loadOrCreateContractAddresses } from "./";
 
+import { Address } from "@graphprotocol/graph-ts";
+
 // CurrencyTimer.NewCurrencyGovernance(addr)
 export function handleNewCurrencyGovernance(event: NewCurrencyGovernance): void {
     // get the new address
@@ -36,7 +38,10 @@ export function handleNewCurrencyGovernance(event: NewCurrencyGovernance): void 
     newCurrencyGovernance.proposalEnds = currencyGovernanceContract.proposalEnds();
     newCurrencyGovernance.votingEnds = currencyGovernanceContract.votingEnds();
     newCurrencyGovernance.revealEnds = currencyGovernanceContract.revealEnds();
-    
+
+    newCurrencyGovernance.defaultProposalMultiplier = currencyGovernanceContract.IDEMPOTENT_INFLATION_MULTIPLIER();
+    newCurrencyGovernance.defaultProposalScore = currencyGovernanceContract.score(Address.fromString(NULL_ADDRESS));
+
     newCurrencyGovernance.save();
     
     // get contracts

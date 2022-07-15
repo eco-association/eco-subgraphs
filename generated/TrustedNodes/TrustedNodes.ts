@@ -10,52 +10,60 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
-export class TrustedNodeAdded extends ethereum.Event {
-  get params(): TrustedNodeAdded__Params {
-    return new TrustedNodeAdded__Params(this);
+export class TrustedNodeAddition extends ethereum.Event {
+  get params(): TrustedNodeAddition__Params {
+    return new TrustedNodeAddition__Params(this);
   }
 }
 
-export class TrustedNodeAdded__Params {
-  _event: TrustedNodeAdded;
+export class TrustedNodeAddition__Params {
+  _event: TrustedNodeAddition;
 
-  constructor(event: TrustedNodeAdded) {
+  constructor(event: TrustedNodeAddition) {
     this._event = event;
   }
 
   get node(): Address {
     return this._event.parameters[0].value.toAddress();
   }
-}
 
-export class TrustedNodeRemoved extends ethereum.Event {
-  get params(): TrustedNodeRemoved__Params {
-    return new TrustedNodeRemoved__Params(this);
+  get cohort(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 }
 
-export class TrustedNodeRemoved__Params {
-  _event: TrustedNodeRemoved;
+export class TrustedNodeRemoval extends ethereum.Event {
+  get params(): TrustedNodeRemoval__Params {
+    return new TrustedNodeRemoval__Params(this);
+  }
+}
 
-  constructor(event: TrustedNodeRemoved) {
+export class TrustedNodeRemoval__Params {
+  _event: TrustedNodeRemoval;
+
+  constructor(event: TrustedNodeRemoval) {
     this._event = event;
   }
 
   get node(): Address {
     return this._event.parameters[0].value.toAddress();
   }
-}
 
-export class VotingRewardRedeemed extends ethereum.Event {
-  get params(): VotingRewardRedeemed__Params {
-    return new VotingRewardRedeemed__Params(this);
+  get cohort(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
   }
 }
 
-export class VotingRewardRedeemed__Params {
-  _event: VotingRewardRedeemed;
+export class VotingRewardRedemption extends ethereum.Event {
+  get params(): VotingRewardRedemption__Params {
+    return new VotingRewardRedemption__Params(this);
+  }
+}
 
-  constructor(event: VotingRewardRedeemed) {
+export class VotingRewardRedemption__Params {
+  _event: VotingRewardRedemption;
+
+  constructor(event: VotingRewardRedemption) {
     this._event = event;
   }
 
@@ -129,6 +137,38 @@ export class TrustedNodes extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  getTrustedNodeFromCohort(_cohort: BigInt, _trusteeNumber: BigInt): Address {
+    let result = super.call(
+      "getTrustedNodeFromCohort",
+      "getTrustedNodeFromCohort(uint256,uint256):(address)",
+      [
+        ethereum.Value.fromUnsignedBigInt(_cohort),
+        ethereum.Value.fromUnsignedBigInt(_trusteeNumber)
+      ]
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_getTrustedNodeFromCohort(
+    _cohort: BigInt,
+    _trusteeNumber: BigInt
+  ): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "getTrustedNodeFromCohort",
+      "getTrustedNodeFromCohort(uint256,uint256):(address)",
+      [
+        ethereum.Value.fromUnsignedBigInt(_cohort),
+        ethereum.Value.fromUnsignedBigInt(_trusteeNumber)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   implementation(): Address {
     let result = super.call("implementation", "implementation():(address)", []);
 
@@ -197,70 +237,6 @@ export class TrustedNodes extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  trustedNodes(param0: BigInt, param1: BigInt): Address {
-    let result = super.call(
-      "trustedNodes",
-      "trustedNodes(uint256,uint256):(address)",
-      [
-        ethereum.Value.fromUnsignedBigInt(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
-
-    return result[0].toAddress();
-  }
-
-  try_trustedNodes(
-    param0: BigInt,
-    param1: BigInt
-  ): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "trustedNodes",
-      "trustedNodes(uint256,uint256):(address)",
-      [
-        ethereum.Value.fromUnsignedBigInt(param0),
-        ethereum.Value.fromUnsignedBigInt(param1)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  trusteeNumber(param0: BigInt, param1: Address): BigInt {
-    let result = super.call(
-      "trusteeNumber",
-      "trusteeNumber(uint256,address):(uint256)",
-      [
-        ethereum.Value.fromUnsignedBigInt(param0),
-        ethereum.Value.fromAddress(param1)
-      ]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_trusteeNumber(
-    param0: BigInt,
-    param1: Address
-  ): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "trusteeNumber",
-      "trusteeNumber(uint256,address):(uint256)",
-      [
-        ethereum.Value.fromUnsignedBigInt(param0),
-        ethereum.Value.fromAddress(param1)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   voteReward(): BigInt {
     let result = super.call("voteReward", "voteReward():(uint256)", []);
 
@@ -319,7 +295,7 @@ export class ConstructorCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get _initial(): Array<Address> {
+  get _initialTrustedNodes(): Array<Address> {
     return this._call.inputValues[1].value.toAddressArray();
   }
 

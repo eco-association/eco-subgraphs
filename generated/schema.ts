@@ -116,6 +116,15 @@ export class ContractAddresses extends Entity {
     this.set("ecox", Value.fromString(value));
   }
 
+  get ecoxStaking(): string {
+    let value = this.get("ecoxStaking");
+    return value!.toString();
+  }
+
+  set ecoxStaking(value: string) {
+    this.set("ecoxStaking", Value.fromString(value));
+  }
+
   get trustedNodes(): string {
     let value = this.get("trustedNodes");
     return value!.toString();
@@ -288,6 +297,24 @@ export class CurrencyGovernance extends Entity {
     this.set("revealEnds", Value.fromBigInt(value));
   }
 
+  get defaultProposalMultiplier(): BigInt {
+    let value = this.get("defaultProposalMultiplier");
+    return value!.toBigInt();
+  }
+
+  set defaultProposalMultiplier(value: BigInt) {
+    this.set("defaultProposalMultiplier", Value.fromBigInt(value));
+  }
+
+  get defaultProposalScore(): BigInt {
+    let value = this.get("defaultProposalScore");
+    return value!.toBigInt();
+  }
+
+  set defaultProposalScore(value: BigInt) {
+    this.set("defaultProposalScore", Value.fromBigInt(value));
+  }
+
   get commits(): Array<string> {
     let value = this.get("commits");
     return value!.toStringArray();
@@ -295,6 +322,15 @@ export class CurrencyGovernance extends Entity {
 
   set commits(value: Array<string>) {
     this.set("commits", Value.fromStringArray(value));
+  }
+
+  get votes(): Array<string> {
+    let value = this.get("votes");
+    return value!.toStringArray();
+  }
+
+  set votes(value: Array<string>) {
+    this.set("votes", Value.fromStringArray(value));
   }
 }
 
@@ -402,6 +438,15 @@ export class MonetaryProposal extends Entity {
   set inflationMultiplier(value: BigInt) {
     this.set("inflationMultiplier", Value.fromBigInt(value));
   }
+
+  get score(): BigInt {
+    let value = this.get("score");
+    return value!.toBigInt();
+  }
+
+  set score(value: BigInt) {
+    this.set("score", Value.fromBigInt(value));
+  }
 }
 
 export class MonetaryCommit extends Entity {
@@ -463,6 +508,115 @@ export class MonetaryCommit extends Entity {
   }
 }
 
+export class MonetaryVote extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save MonetaryVote entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type MonetaryVote must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("MonetaryVote", id.toString(), this);
+    }
+  }
+
+  static load(id: string): MonetaryVote | null {
+    return changetype<MonetaryVote | null>(store.get("MonetaryVote", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get rankedProposals(): Array<string> {
+    let value = this.get("rankedProposals");
+    return value!.toStringArray();
+  }
+
+  set rankedProposals(value: Array<string>) {
+    this.set("rankedProposals", Value.fromStringArray(value));
+  }
+
+  get currencyGovernance(): string {
+    let value = this.get("currencyGovernance");
+    return value!.toString();
+  }
+
+  set currencyGovernance(value: string) {
+    this.set("currencyGovernance", Value.fromString(value));
+  }
+
+  get trustee(): string {
+    let value = this.get("trustee");
+    return value!.toString();
+  }
+
+  set trustee(value: string) {
+    this.set("trustee", Value.fromString(value));
+  }
+}
+
+export class TrusteeCohort extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TrusteeCohort entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type TrusteeCohort must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("TrusteeCohort", id.toString(), this);
+    }
+  }
+
+  static load(id: string): TrusteeCohort | null {
+    return changetype<TrusteeCohort | null>(store.get("TrusteeCohort", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get number(): BigInt {
+    let value = this.get("number");
+    return value!.toBigInt();
+  }
+
+  set number(value: BigInt) {
+    this.set("number", Value.fromBigInt(value));
+  }
+
+  get trustees(): Array<string> {
+    let value = this.get("trustees");
+    return value!.toStringArray();
+  }
+
+  set trustees(value: Array<string>) {
+    this.set("trustees", Value.fromStringArray(value));
+  }
+}
+
 export class Trustee extends Entity {
   constructor(id: string) {
     super();
@@ -492,6 +646,15 @@ export class Trustee extends Entity {
 
   set id(value: string) {
     this.set("id", Value.fromString(value));
+  }
+
+  get cohorts(): Array<string> {
+    let value = this.get("cohorts");
+    return value!.toStringArray();
+  }
+
+  set cohorts(value: Array<string>) {
+    this.set("cohorts", Value.fromStringArray(value));
   }
 
   get proposals(): Array<string> {

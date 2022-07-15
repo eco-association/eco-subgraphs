@@ -12,6 +12,7 @@ type ContractAddresses @entity {
     policyVotes: String!
     eco: String!
     ecox: String!
+    ecoxStaking: String!
     trustedNodes: String!
 }
 
@@ -38,7 +39,10 @@ type CurrencyGovernance @entity {
     proposalEnds: BigInt!
     votingEnds: BigInt!
     revealEnds: BigInt!
+    defaultProposalMultiplier: BigInt!
+    defaultProposalScore: BigInt!
     commits: [MonetaryCommit!]! @derivedFrom(field: "currencyGovernance")
+    votes: [MonetaryVote!]! @derivedFrom(field: "currencyGovernance")
 }
 
 type MonetaryProposal @entity {
@@ -54,6 +58,7 @@ type MonetaryProposal @entity {
     lockupDuration: BigInt!
     lockupInterest: BigInt!
     inflationMultiplier: BigInt!
+    score: BigInt!
 }
 
 type MonetaryCommit @entity {
@@ -66,11 +71,31 @@ type MonetaryCommit @entity {
     trustee: Trustee!
 }
 
+type MonetaryVote @entity {
+    """
+    id: currencyGovernance + "-" + trustee
+    """
+    id: String!
+    """
+    rankedProposals: ordered array of addresses of trustees (or null address) from vote
+    """
+    rankedProposals: [String!]!
+    currencyGovernance: CurrencyGovernance!
+    trustee: String!
+}
+
+type TrusteeCohort @entity {
+    id: String!
+    number: BigInt!
+    trustees: [Trustee!]! @derivedFrom(field: "cohorts")
+}
+
 type Trustee @entity {
     """
     id: address
     """
     id: String!
+    cohorts: [TrusteeCohort!]!
     proposals: [MonetaryProposal!]! @derivedFrom(field: "trustee")
 }
 

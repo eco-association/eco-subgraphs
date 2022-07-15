@@ -1,7 +1,8 @@
 import { CurrencyGovernance as CurrencyGovernanceContract, ProposalCreation, ProposalRetraction, VoteCast, VoteResult, VoteReveal } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
 
-import { store } from "@graphprotocol/graph-ts";
-import { MonetaryProposal, CurrencyGovernance, MonetaryCommit } from "../../generated/schema";
+import { Address, BigInt, store } from "@graphprotocol/graph-ts";
+import { MonetaryProposal, CurrencyGovernance, MonetaryCommit, MonetaryVote } from "../../generated/schema";
+import { NULL_ADDRESS } from "../constants";
 
 
 // ProposalCreation(address indexed trusteeAddress, 
@@ -24,16 +25,19 @@ export function handleProposalCreation(event: ProposalCreation): void {
         if (currencyGovernance) {
             monetaryProposal.generation = currencyGovernance.generation;
         }
+
+        monetaryProposal.trustee = event.params.trusteeAddress.toHexString();
+        monetaryProposal.enacted = false;
+        monetaryProposal.score = BigInt.fromString('0');
+        
     }
     
     // set attributes
-    monetaryProposal.trustee = event.params.trusteeAddress.toHexString();
     monetaryProposal.inflationMultiplier = event.params._inflationMultiplier;
     monetaryProposal.numberOfRecipients = event.params._numberOfRecipients;
     monetaryProposal.randomInflationReward = event.params._randomInflationReward;
     monetaryProposal.lockupDuration = event.params._lockupDuration;
     monetaryProposal.lockupInterest = event.params._lockupInterest;
-    monetaryProposal.enacted = false;
     
     monetaryProposal.save();
 }
@@ -73,11 +77,52 @@ export function handleVoteCast(event: VoteCast): void {
 
 // CurrencyGovernance.VoteReveal(address indexed voter, address[] votes)
 export function handleVoteReveal(event: VoteReveal): void {
-    // TODO
+    // create new monetary vote entity
+    let newMonetaryVote = new MonetaryVote(event.address.toHexString() + "-" + event.params.voter.toHexString());
+
+    // bind contract
+    let currencyGovernanceContract = CurrencyGovernanceContract.bind(event.address);
+
+    newMonetaryVote.currencyGovernance = event.address.toHexString();
+    newMonetaryVote.trustee = event.params.voter.toHexString();
+
+    let votes: string[] = [];
+    for (var i = 0; i < event.params.votes.length; i++) {
+        votes.push(event.params.votes[i].toHexString());
+
+        // if not default proposal
+        if (event.params.votes[i].toHexString() != NULL_ADDRESS) {
+            let id = event.address.toHexString() + "-" + event.params.votes[i].toHexString();
+            // update score of monetary proposal
+            let proposal = MonetaryProposal.load(id);
+            if (proposal) {
+                proposal.score = currencyGovernanceContract.score(event.params.votes[i]);
+                proposal.save();
+            }
+        }
+
+    }
+    newMonetaryVote.rankedProposals = votes;
+
+    newMonetaryVote.save();
+
+    // update the default proposal score
+    // load currency governance entity
+    let currencyGovernance = CurrencyGovernance.load(event.address.toHexString());
+    if (currencyGovernance) {
+        currencyGovernance.defaultProposalScore = currencyGovernanceContract.score(Address.fromString(NULL_ADDRESS));
+        currencyGovernance.save();
+    }
+    
 }
 
 
 // CurrencyGovernance.VoteResult(address indexed winner)
 export function handleVoteResult(event: VoteResult): void {
-    // TODO
+    let winningProposal = MonetaryProposal.load(event.address.toHexString() + "-" + event.params.winner.toHexString());
+
+    if (winningProposal) {
+        winningProposal.enacted = true;
+        winningProposal.save();
+    }
 }

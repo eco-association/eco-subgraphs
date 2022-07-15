@@ -6,7 +6,7 @@ dataSources:
     name: TrustedNodes
     network: mainnet
     source:
-      address: "0xA2B64743b2e0865CF7948d58006E99C01C8e7a64"
+      address: "0xF9af7890b7D911057355499F465b5f3E49a8a348"
       abi: TrustedNodes
       startBlock: 0
     mapping:
@@ -15,20 +15,21 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Trustee
+        - TrusteeCohort
       abis:
         - name: TrustedNodes
           file: ./abis/TrustedNodes.json
       eventHandlers:
-        - event: TrustedNodeAdded(indexed address)
+        - event: TrustedNodeAddition(indexed address,uint256)
           handler: handleTrustedNodeAdded
-        - event: TrustedNodeRemoved(indexed address)
+        - event: TrustedNodeRemoval(indexed address,uint256)
           handler: handleTrustedNodeRemoved
       file: ./src/governance/TrustedNodes.ts
   - kind: ethereum
     name: CurrencyTimer
     network: mainnet
     source:
-      address: "0x6812824Bd7966438580E45C2C1cd7f7c88deDf40"
+      address: "0xee9315c7cb6A06e255ca2302d9f43C0d16Fa1148"
       abi: CurrencyTimer
       startBlock: 0
     mapping:
@@ -54,7 +55,7 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0xEce4dd91a5043F9fc33d74c68B5BBB1107dfBdA5"
+      address: "0x7505B49d2db637D2d3dF83bB92D0C754168B96a3"
       abi: TimedPolicies
       startBlock: 0
     mapping:
@@ -78,7 +79,7 @@ dataSources:
     name: ECO
     network: mainnet
     source:
-      address: "0x5BA1985797E1681AA923CA3be5e44f45895b9B88"
+      address: "0xEa1667D58f6CB45A94Ab0443337DF5D3A1D537A4"
       abi: ECO
       startBlock: 0
     mapping:
@@ -104,7 +105,7 @@ dataSources:
     name: ECOx
     network: mainnet
     source:
-      address: "0x4e76406d97A83e7068da720934baecD4D1FaCd26"
+      address: "0xEc458ACd26c103E5670F8D4637aD05FA776f2a3c"
       abi: ECOx
       startBlock: 0
     mapping:
@@ -121,11 +122,11 @@ dataSources:
           handler: handleTransfer
       file: ./src/currency/ECOx.ts
   - kind: ethereum
-    name: ECOxLockup
+    name: ECOxStaking
     network: mainnet
     source:
-      address: "0xE5314A720F4f5be39Bd77D35D4DC1991fd23f651"
-      abi: ECOxLockup
+      address: "0xeeb5BE8Cd781d266713c8d28C0137dabdEbFE07a"
+      abi: ECOxStaking
       startBlock: 0
     mapping:
       kind: ethereum/events
@@ -134,12 +135,12 @@ dataSources:
       entities:
         - Generation
       abis:
-        - name: ECOxLockup
-          file: ./abis/ECOxLockup.json
+        - name: ECOxStaking
+          file: ./abis/ECOxStaking.json
       eventHandlers:
         - event: UpdatedVotes(indexed address,uint256)
           handler: handleUpdatedVotes
-      file: ./src/currency/ECOxLockup.ts
+      file: ./src/currency/ECOxStaking.ts
 templates:
   - kind: ethereum
     name: PolicyProposals
@@ -214,6 +215,9 @@ templates:
       language: wasm/assemblyscript
       entities:
         - CurrencyGovernance
+        - MonetaryProposal
+        - MonetaryCommit
+        - MonetaryVote
       abis:
         - name: CurrencyGovernance
           file: ./abis/CurrencyGovernance.json
