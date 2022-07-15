@@ -12,7 +12,7 @@ Running the subgraph in development is a task on it's own, in order to run the s
 - TimedPolicies
 - ECO
 - ECOx
-- ECOxLockup
+- ECOxStaking
 
 Once you have the addresses, paste them into [networks.json](./networks.json) under 'localhost', then run `yarn network` to sync the `subgraph.yaml` file.
 

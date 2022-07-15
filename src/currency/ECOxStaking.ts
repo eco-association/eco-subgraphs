@@ -1,9 +1,9 @@
-import { UpdatedVotes } from "../../generated/ECOxLockup/ECOxLockup";
+import { UpdatedVotes } from "../../generated/ECOxStaking/ECOxStaking";
 import { sECOxBalance } from "../../generated/schema";
 
-import { loadOrCreateAccount } from "./";
+import { loadOrCreateAccount } from ".";
 
-// ECOxLockup.UpdatedVotes(address delegate, uint256 newBalance)
+// ECOxStaking.UpdatedVotes(address delegate, uint256 newBalance)
 export function handleUpdatedVotes(event: UpdatedVotes): void {
     const delegate = loadOrCreateAccount(event.params.voter.toHexString());
 

@@ -8,5 +8,6 @@ export const ID_CURRENCY_TIMER = Bytes.fromHexString("0xe01e721169f17f30d0c13078
 export const ID_TIMED_POLICIES = Bytes.fromHexString("0xae30bfb87dec2bd0c16be9790f95842d84f58dc70b0a8f6ed22e9556176a7b19");
 export const ID_ECOX = Bytes.fromHexString("0xe10ab6c94f1da69921a0ca1c1b96b4fc339699153931c9bfd565e91f44c19b0b");
 export const ID_TRUSTED_NODES = Bytes.fromHexString("0x0e3d3f2b74f96e5fd24f23acf8b4b352d4e1d0d0ed45271f4e44aa64f98b2284");
+export const ID_ECOXSTAKING = Bytes.fromHexString("0x3776fba25fb0e7d0848ec503ec48569754f9d46736d6ace08b6eed818399d8e1");
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
