@@ -41,6 +41,7 @@ type CurrencyGovernance @entity {
     revealEnds: BigInt!
     defaultProposalMultiplier: BigInt!
     defaultProposalScore: BigInt!
+    defaultProposalEnacted: Boolean!
     commits: [MonetaryCommit!]! @derivedFrom(field: "currencyGovernance")
     votes: [MonetaryVote!]! @derivedFrom(field: "currencyGovernance")
 }
@@ -81,7 +82,7 @@ type MonetaryVote @entity {
     """
     rankedProposals: [String!]!
     currencyGovernance: CurrencyGovernance!
-    trustee: String!
+    trustee: Trustee!
 }
 
 type TrusteeCohort @entity {

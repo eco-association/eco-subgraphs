@@ -41,6 +41,7 @@ export function handleNewCurrencyGovernance(event: NewCurrencyGovernance): void 
 
     newCurrencyGovernance.defaultProposalMultiplier = currencyGovernanceContract.IDEMPOTENT_INFLATION_MULTIPLIER();
     newCurrencyGovernance.defaultProposalScore = currencyGovernanceContract.score(Address.fromString(NULL_ADDRESS));
+    newCurrencyGovernance.defaultProposalEnacted = false;
 
     newCurrencyGovernance.save();
     

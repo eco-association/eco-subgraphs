@@ -6,7 +6,7 @@ dataSources:
     name: TrustedNodes
     network: mainnet
     source:
-      address: "0xF9af7890b7D911057355499F465b5f3E49a8a348"
+      address: "0xCa7E5322374D1e0FC21DfF837c15BDF748d90117"
       abi: TrustedNodes
       startBlock: 0
     mapping:
@@ -29,7 +29,7 @@ dataSources:
     name: CurrencyTimer
     network: mainnet
     source:
-      address: "0xee9315c7cb6A06e255ca2302d9f43C0d16Fa1148"
+      address: "0x5495a9Ddd1766c8E3c4FA7999ee25E7473f8062b"
       abi: CurrencyTimer
       startBlock: 0
     mapping:
@@ -55,7 +55,7 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x7505B49d2db637D2d3dF83bB92D0C754168B96a3"
+      address: "0xA22f3A34484ad5C97C8A95B47Cd17c2BEDaB8766"
       abi: TimedPolicies
       startBlock: 0
     mapping:
@@ -79,7 +79,7 @@ dataSources:
     name: ECO
     network: mainnet
     source:
-      address: "0xEa1667D58f6CB45A94Ab0443337DF5D3A1D537A4"
+      address: "0xcb76D2BD16722298eAb0F1aE8DF9E190a7409044"
       abi: ECO
       startBlock: 0
     mapping:
@@ -109,7 +109,7 @@ dataSources:
     name: ECOx
     network: mainnet
     source:
-      address: "0xEc458ACd26c103E5670F8D4637aD05FA776f2a3c"
+      address: "0x102688db6DE948fEDbC5F781A35C197801B8400F"
       abi: ECOx
       startBlock: 0
     mapping:
@@ -133,7 +133,7 @@ dataSources:
     name: ECOxStaking
     network: mainnet
     source:
-      address: "0xeeb5BE8Cd781d266713c8d28C0137dabdEbFE07a"
+      address: "0xDcEbA79254d71F11d4BcB43F204a601EC1C7c5DB"
       abi: ECOxStaking
       startBlock: 0
     mapping:

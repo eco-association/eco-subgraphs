@@ -315,6 +315,15 @@ export class CurrencyGovernance extends Entity {
     this.set("defaultProposalScore", Value.fromBigInt(value));
   }
 
+  get defaultProposalEnacted(): boolean {
+    let value = this.get("defaultProposalEnacted");
+    return value!.toBoolean();
+  }
+
+  set defaultProposalEnacted(value: boolean) {
+    this.set("defaultProposalEnacted", Value.fromBoolean(value));
+  }
+
   get commits(): Array<string> {
     let value = this.get("commits");
     return value!.toStringArray();

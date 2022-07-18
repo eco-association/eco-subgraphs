@@ -116,13 +116,25 @@ export function handleVoteReveal(event: VoteReveal): void {
     
 }
 
-
 // CurrencyGovernance.VoteResult(address indexed winner)
 export function handleVoteResult(event: VoteResult): void {
-    let winningProposal = MonetaryProposal.load(event.address.toHexString() + "-" + event.params.winner.toHexString());
 
-    if (winningProposal) {
-        winningProposal.enacted = true;
-        winningProposal.save();
+    if (event.params.winner.toHexString() != NULL_ADDRESS) {
+        let winningProposal = MonetaryProposal.load(event.address.toHexString() + "-" + event.params.winner.toHexString());
+
+        if (winningProposal) {
+            winningProposal.enacted = true;
+            winningProposal.save();
+        }
     }
+    else {
+        // default proposal won
+        let currencyGovernance = CurrencyGovernance.load(event.address.toHexString());
+
+        if (currencyGovernance) {
+            currencyGovernance.defaultProposalEnacted = true;
+            currencyGovernance.save();
+        }
+    }
+    
 }
