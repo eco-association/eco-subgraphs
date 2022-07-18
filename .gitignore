@@ -3,4 +3,7 @@ node_modules/
 
 build/
 
+generated/
+
 .vscode/
+yarn.lock

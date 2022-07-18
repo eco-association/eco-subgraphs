@@ -1,15 +1,19 @@
 """
 ECO contract addresses
-only even one entity of this type, with id: "0" which returns the current contract addresses of each attribute
+only ever one entity of this type, with id: "0" which returns the current contract addresses of each attribute
 """
 type ContractAddresses @entity {
     id: String!
     policy: String!
+    currencyTimer: String!
     timedPolicies: String!
+    currencyGovernance: String!
     policyProposals: String!
     policyVotes: String!
     eco: String!
     ecox: String!
+    ecoxStaking: String!
+    trustedNodes: String!
 }
 
 
@@ -18,9 +22,83 @@ ECO generation
 """
 type Generation @entity {
     id: String! "generation number"
-    policyProposal: PolicyProposal! @derivedFrom(field: "generation")
+    number: BigInt!
+    currencyGovernance: CurrencyGovernance! @derivedFrom(field: "generation")
+    policyProposal: PolicyProposal @derivedFrom(field: "generation")
     policyVote: PolicyVote @derivedFrom(field: "generation")
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
+    monetaryProposals: [MonetaryProposal!]! @derivedFrom(field: "generation")
+}
+
+
+"""
+Currency Governance entities
+"""
+type CurrencyGovernance @entity {
+    id: String! "address"
+    generation: Generation!
+    proposalEnds: BigInt!
+    votingEnds: BigInt!
+    revealEnds: BigInt!
+    defaultProposalMultiplier: BigInt!
+    defaultProposalScore: BigInt!
+    defaultProposalEnacted: Boolean!
+    commits: [MonetaryCommit!]! @derivedFrom(field: "currencyGovernance")
+    votes: [MonetaryVote!]! @derivedFrom(field: "currencyGovernance")
+}
+
+type MonetaryProposal @entity {
+    """
+    id: currencyGovernance + "-" + trustee
+    """
+    id: String!
+    generation: Generation!
+    trustee: Trustee!
+    enacted: Boolean!
+    numberOfRecipients: BigInt!
+    randomInflationReward: BigInt!
+    lockupDuration: BigInt!
+    lockupInterest: BigInt!
+    inflationMultiplier: BigInt!
+    score: BigInt!
+}
+
+type MonetaryCommit @entity {
+    """
+    id: currencyGovernance + "-" + trustee
+    """
+    id: String!
+    hash: Bytes!
+    currencyGovernance: CurrencyGovernance!
+    trustee: Trustee!
+}
+
+type MonetaryVote @entity {
+    """
+    id: currencyGovernance + "-" + trustee
+    """
+    id: String!
+    """
+    rankedProposals: ordered array of addresses of trustees (or null address) from vote
+    """
+    rankedProposals: [String!]!
+    currencyGovernance: CurrencyGovernance!
+    trustee: Trustee!
+}
+
+type TrusteeCohort @entity {
+    id: String!
+    number: BigInt!
+    trustees: [Trustee!]! @derivedFrom(field: "cohorts")
+}
+
+type Trustee @entity {
+    """
+    id: address
+    """
+    id: String!
+    cohorts: [TrusteeCohort!]!
+    proposals: [MonetaryProposal!]! @derivedFrom(field: "trustee")
 }
 
 
@@ -124,6 +202,18 @@ type ECOAllowance @entity {
     owner: Account!
     spender: String!
     value: BigInt! 
+}
+
+
+"""
+Token
+"""
+type Token @entity {
+    id: String!
+    name: String!
+    symbol: String!
+    decimals: Int!
+    totalSupply: BigInt!
 }
 
 

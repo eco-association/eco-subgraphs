@@ -7,10 +7,12 @@
 
 Running the subgraph in development is a task on it's own, in order to run the subgraph in conjunction with the [local ganache chain](https://github.com/eco/currency), you must first start the blockchain, and fetch the following addresses:
 
+- TrustedNodes
+- CurrencyTimer
 - TimedPolicies
 - ECO
 - ECOx
-- ECOxLockup
+- ECOxStaking
 
 Once you have the addresses, paste them into [networks.json](./networks.json) under 'localhost', then run `yarn network` to sync the `subgraph.yaml` file.
 
