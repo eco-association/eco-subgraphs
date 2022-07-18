@@ -166,6 +166,15 @@ export class Generation extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get number(): BigInt {
+    let value = this.get("number");
+    return value!.toBigInt();
+  }
+
+  set number(value: BigInt) {
+    this.set("number", Value.fromBigInt(value));
+  }
+
   get currencyGovernance(): string {
     let value = this.get("currencyGovernance");
     return value!.toString();

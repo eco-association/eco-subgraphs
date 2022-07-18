@@ -23,6 +23,7 @@ export function handleNewCurrencyGovernance(event: NewCurrencyGovernance): void 
     let generationNum = currencyTimerContract.currentGeneration();
 
     let currentGeneration = new Generation(generationNum.toString());
+    currentGeneration.number = generationNum;
     currentGeneration.save();
     
     // subscribe to events from this generation's currencyGovernance contract
