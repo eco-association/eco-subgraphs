@@ -1,11 +1,12 @@
 import { Transfer } from "../../generated/ECOx/ECOx";
 import { NULL_ADDRESS } from "../constants";
-import { loadOrCreateAccount, loadOrCreateToken } from ".";
+import { loadOrCreateTokenHolder } from ".";
+import { Token } from "./entity/Token";
 
 // ECOx.Transfer(address from, address to, uint256 value)
 export function handleTransfer(event: Transfer): void {
-    const from = loadOrCreateAccount(event.params.from.toHexString());
-    const to = loadOrCreateAccount(event.params.to.toHexString());
+    const from = loadOrCreateTokenHolder(event.params.from.toHexString());
+    const to = loadOrCreateTokenHolder(event.params.to.toHexString());
 
     if (from.id !== NULL_ADDRESS) {
         // not a mint
@@ -13,9 +14,7 @@ export function handleTransfer(event: Transfer): void {
         from.save();
     } else {
         // is a mint, increment total supply
-        const ecoxToken = loadOrCreateToken("ecox", event.address);
-        ecoxToken.totalSupply = ecoxToken.totalSupply.plus(event.params.value);
-        ecoxToken.save();
+        Token.load("ecox", event.address).increaseSupply(event.params.value);
     }
 
     if (to.id !== NULL_ADDRESS) {
@@ -24,8 +23,6 @@ export function handleTransfer(event: Transfer): void {
         to.save();
     } else {
         // is a burn, decrement total supply
-        const ecoxToken = loadOrCreateToken("ecox", event.address);
-        ecoxToken.totalSupply = ecoxToken.totalSupply.minus(event.params.value);
-        ecoxToken.save();
+        Token.load("ecox", event.address).decreaseSupply(event.params.value);
     }
 }

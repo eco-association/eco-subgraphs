@@ -120,6 +120,7 @@ dataSources:
         - Generation
         - Account
         - Token
+        - LockupVault
       abis:
         - name: ECOx
           file: ./abis/ECOx.json
@@ -144,12 +145,15 @@ dataSources:
         - Generation
         - Account
         - sECOxBalance
+        - LockupVault
       abis:
         - name: ECOxStaking
           file: ./abis/ECOxStaking.json
       eventHandlers:
         - event: UpdatedVotes(indexed address,uint256)
           handler: handleUpdatedVotes
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
       file: ./src/currency/ECOxStaking.ts
 templates:
   - kind: ethereum
@@ -243,3 +247,47 @@ templates:
         - event: VoteResult(indexed address)
           handler: handleVoteResult
       file: ./src/governance/CurrencyGovernance.ts
+  - kind: ethereum
+    name: LockupVault
+    network: mainnet
+    source:
+      abi: LockupVault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - LockupVault
+      abis:
+        - name: LockupVault
+          file: ./abis/LockupVault.json
+      eventHandlers:
+        - event: Claimed(address,address,uint256)
+          handler: handleClaimed
+#        - event: Clawback(uint256)
+#          handler: handleClawback
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+#        - event: Staked(uint256)
+#          handler: handleStaked
+#        - event: Unstaked(uint256)
+#          handler: handleUnstaked
+      file: ./src/governance/LockupVault.ts
+  - kind: ethereum
+    name: LockupVaultFactory
+    network: mainnet
+    source:
+      abi: LockupVaultFactory
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - LockupVault
+      abis:
+        - name: LockupVaultFactory
+          file: ./abis/LockupVaultFactory.json
+      eventHandlers:
+        - event: VaultCreated(address,address,address)
+          handler: handleVaultCreated
+      file: ./src/governance/LockupVaultFactory.ts
