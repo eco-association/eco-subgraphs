@@ -1,8 +1,6 @@
-import { Account, Token } from "../../generated/schema";
-
-import { ERC20 } from "../../generated/ECO/ERC20";
-
 import { Address, BigInt } from "@graphprotocol/graph-ts";
+import { Account, Token } from "../../generated/schema";
+import { ERC20 } from "../../generated/ECO/ERC20";
 
 export function loadOrCreateAccount(address: string): Account {
     let account = Account.load(address);
@@ -19,12 +17,12 @@ export function loadOrCreateAccount(address: string): Account {
 export function loadOrCreateToken(id: string, address: Address): Token {
     let token = Token.load(id);
     if (!token) {
-        let tokenContract = ERC20.bind(address);
+        const tokenContract = ERC20.bind(address);
         token = new Token(id);
         token.name = tokenContract.name();
         token.symbol = tokenContract.symbol();
         token.decimals = tokenContract.decimals();
-        token.totalSupply = BigInt.fromString('0');
+        token.totalSupply = BigInt.fromString("0");
     }
     return token;
 }
