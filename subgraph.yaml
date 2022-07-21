@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 schema:
   file: ./schema.graphql
 dataSources:
@@ -11,7 +11,7 @@ dataSources:
       startBlock: 0
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - Trustee
@@ -34,7 +34,7 @@ dataSources:
       startBlock: 0
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - ContractAddresses
@@ -60,7 +60,7 @@ dataSources:
       startBlock: 0
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - ContractAddresses
@@ -84,7 +84,7 @@ dataSources:
       startBlock: 0
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - Account
@@ -114,7 +114,7 @@ dataSources:
       startBlock: 0
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - Generation
@@ -139,7 +139,7 @@ dataSources:
       startBlock: 0
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - Generation
@@ -155,6 +155,28 @@ dataSources:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: ./src/currency/ECOxStaking.ts
+  - kind: ethereum
+    name: LockupVaultFactory
+    network: mainnet
+    source:
+      address: "0xccfb5b8c9768b81d4c8967c7ddfd513d5bf2bebe"
+      startBlock: 0
+      abi: LockupVaultFactory
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - LockupVault
+      abis:
+        - name: LockupVaultFactory
+          file: ./abis/LockupVaultFactory.json
+        - name: LockupVault
+          file: ./abis/LockupVault.json
+      eventHandlers:
+        - event: VaultCreated(address,address,address)
+          handler: handleVaultCreated
+      file: ./src/governance/LockupVaultFactory.ts
 templates:
   - kind: ethereum
     name: PolicyProposals
@@ -163,7 +185,7 @@ templates:
       abi: PolicyProposals
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - CommunityProposal
@@ -197,7 +219,7 @@ templates:
       abi: PolicyVotes
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - PolicyVote
@@ -225,7 +247,7 @@ templates:
       abi: CurrencyGovernance
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.5
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - CurrencyGovernance
@@ -273,21 +295,3 @@ templates:
 #        - event: Unstaked(uint256)
 #          handler: handleUnstaked
       file: ./src/governance/LockupVault.ts
-  - kind: ethereum
-    name: LockupVaultFactory
-    network: mainnet
-    source:
-      abi: LockupVaultFactory
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - LockupVault
-      abis:
-        - name: LockupVaultFactory
-          file: ./abis/LockupVaultFactory.json
-      eventHandlers:
-        - event: VaultCreated(address,address,address)
-          handler: handleVaultCreated
-      file: ./src/governance/LockupVaultFactory.ts
