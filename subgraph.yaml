@@ -50,6 +50,8 @@ dataSources:
       eventHandlers:
         - event: NewCurrencyGovernance(indexed address)
           handler: handleNewCurrencyGovernance
+        - event: NewLockup(indexed address)
+          handler: handleNewLockup
       file: ./src/governance/CurrencyTimer.ts
   - kind: ethereum
     name: TimedPolicies
@@ -243,3 +245,25 @@ templates:
         - event: VoteResult(indexed address)
           handler: handleVoteResult
       file: ./src/governance/CurrencyGovernance.ts
+  - kind: ethereum
+    name: Lockup
+    network: mainnet
+    source:
+      abi: Lockup
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - FundsLockup
+        - Generation
+        - Account
+      abis:
+        - name: Lockup
+          file: ./abis/Lockup.json
+      eventHandlers:
+        - event: Deposit(indexed address,uint256)
+          handler: handleDeposit
+        - event: Withdrawal(indexed address,uint256)
+          handler: handleWithdrawal
+      file: ./src/governance/Lockup.ts

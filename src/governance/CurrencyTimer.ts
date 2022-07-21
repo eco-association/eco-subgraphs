@@ -1,9 +1,9 @@
-import { NewCurrencyGovernance, CurrencyTimer } from "../../generated/CurrencyTimer/CurrencyTimer";
+import { NewCurrencyGovernance, CurrencyTimer, NewLockup } from "../../generated/CurrencyTimer/CurrencyTimer";
 import { Policy } from "../../generated/CurrencyTimer/Policy";
 
 import { CurrencyGovernance as CurrencyGovernanceContract } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
-import { CurrencyGovernance as CurrencyGovernanceTemplate } from "../../generated/templates";
-import { CurrencyGovernance, Generation } from "../../generated/schema";
+import { CurrencyGovernance as CurrencyGovernanceTemplate, Lockup as LockupTemplate } from "../../generated/templates";
+import { CurrencyGovernance, Generation, FundsLockup } from "../../generated/schema";
 
 import { NULL_ADDRESS } from "../constants";
 
@@ -56,4 +56,13 @@ export function handleNewCurrencyGovernance(event: NewCurrencyGovernance): void 
     contracts.policyVotes = NULL_ADDRESS;
     contracts.save();
 
+}
+
+export function handleNewLockup(event: NewLockup): void {
+    // create new lockup entity
+    let newLockup = new FundsLockup(event.params.addr.toHexString());
+    newLockup.save();
+
+    // listen for new lockup's events
+    LockupTemplate.create(event.params.addr);
 }
