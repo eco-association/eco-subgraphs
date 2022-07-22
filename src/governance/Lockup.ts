@@ -1,13 +1,17 @@
-import { Deposit, Withdrawal, Lockup as LockupContract } from "../../generated/templates/Lockup/Lockup";
+import { store } from "@graphprotocol/graph-ts";
+
+import {
+    Deposit,
+    Withdrawal,
+    Lockup as LockupContract
+} from "../../generated/templates/Lockup/Lockup";
 
 import { FundsLockupDeposit } from "../../generated/schema";
 import { loadOrCreateAccount } from "../currency";
 
-import { store } from "@graphprotocol/graph-ts";
-
 // Lockup.Deposit(address indexed to, uint256 amount)
 export function handleDeposit(event: Deposit): void {
-    const id = event.address.toHexString() + "-" + event.params.to.toHexString();
+    const id = `${event.address.toHexString()}-${event.params.to.toHexString()}`;
     let deposit = FundsLockupDeposit.load(id);
 
     if (!deposit) {
@@ -29,7 +33,9 @@ export function handleDeposit(event: Deposit): void {
     // lockupEnd
     deposit.lockupEndsAt = contractDeposit.value2;
     // delegate
-    const delegateAccount = loadOrCreateAccount(contractDeposit.value3.toHexString());
+    const delegateAccount = loadOrCreateAccount(
+        contractDeposit.value3.toHexString()
+    );
     deposit.delegate = delegateAccount.id;
 
     deposit.save();
@@ -37,7 +43,7 @@ export function handleDeposit(event: Deposit): void {
 
 // Lockup.Withdrawal(address indexed to, uint256 amount)
 export function handleWithdrawal(event: Withdrawal): void {
-    const id = event.address.toHexString() + "-" + event.params.to.toHexString();
+    const id = `${event.address.toHexString()}-${event.params.to.toHexString()}`;
 
     // withdrawal => delete the deposit
     store.remove("FundsLockupDeposit", id);
