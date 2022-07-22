@@ -3,6 +3,8 @@ import { Deposit, Withdrawal, Lockup as LockupContract } from "../../generated/t
 import { FundsLockupDeposit } from "../../generated/schema";
 import { loadOrCreateAccount } from "../currency";
 
+import { store } from "@graphprotocol/graph-ts";
+
 // Lockup.Deposit(address indexed to, uint256 amount)
 export function handleDeposit(event: Deposit): void {
     const id = event.address.toHexString() + "-" + event.params.to.toHexString();
@@ -35,5 +37,8 @@ export function handleDeposit(event: Deposit): void {
 
 // Lockup.Withdrawal(address indexed to, uint256 amount)
 export function handleWithdrawal(event: Withdrawal): void {
-    // TODO
+    const id = event.address.toHexString() + "-" + event.params.to.toHexString();
+
+    // withdrawal => delete the deposit
+    store.remove("FundsLockupDeposit", id);
 }

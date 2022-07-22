@@ -281,7 +281,7 @@ type FundsLockupDeposit @entity {
     account: Account!
     lockup: FundsLockup!
     """
-    amount: underlying value of eco
+    amount/reward: underlying value of eco
     """
     amount: BigInt!
     reward: BigInt!
