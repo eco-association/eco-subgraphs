@@ -1,12 +1,12 @@
 import { Transfer } from "../../generated/ECOx/ECOx";
 import { NULL_ADDRESS } from "../constants";
-import { loadOrCreateTokenHolder } from ".";
+import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
 
 // ECOx.Transfer(address from, address to, uint256 value)
 export function handleTransfer(event: Transfer): void {
-    const from = loadOrCreateTokenHolder(event.params.from.toHexString());
-    const to = loadOrCreateTokenHolder(event.params.to.toHexString());
+    const from = loadOrCreateAccount(event.params.from.toHexString());
+    const to = loadOrCreateAccount(event.params.to.toHexString());
 
     if (from.id !== NULL_ADDRESS) {
         // not a mint

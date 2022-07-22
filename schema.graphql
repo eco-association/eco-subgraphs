@@ -174,13 +174,7 @@ type CommunityProposalVote @entity {
 """
 Account
 """
-interface TokenHolder {
-    ECO: BigInt!
-    ECOx: BigInt!
-    sECOx: BigInt!
-}
-
-type Account implements TokenHolder @entity {
+type Account @entity {
     """
     id: account address
     """
@@ -188,6 +182,7 @@ type Account implements TokenHolder @entity {
     ECO: BigInt!
     ECOx: BigInt!
     sECOx: BigInt!
+    ECOxDelegator: Bytes "ECOx delegator"
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
     historicalsECOxBalances: [sECOxBalance!]! @derivedFrom(field: "account")
@@ -261,28 +256,21 @@ type sECOxBalance @entity {
 """
 ECO Lockup Vault
 """
-type LockupVault implements TokenHolder @entity {
+type LockupVault @entity {
     """
     id: lockup vault contract address
     """
-    id: String!
-    "address"
+    id: String! "address"
     beneficiary: Account!
+    account: Account!
     admin: Bytes! # admin address
     token: Bytes! # token address
     claimed: BigInt! # uint256
     vestingChunks: [VestingChunk!]! @derivedFrom(field: "vault")
-
-    """
-    Token Balances
-    """
-    ECO: BigInt!
-    ECOx: BigInt!
-    sECOx: BigInt!
 }
 
 type VestingChunk @entity(immutable: true) {
-    id: ID!
+    id: String!
     vault: LockupVault!
     amount: BigInt!
     timestamp: BigInt!

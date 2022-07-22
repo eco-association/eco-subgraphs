@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: TrustedNodes
-    network: mainnet
+    network: kovan
     source:
-      address: "0xCa7E5322374D1e0FC21DfF837c15BDF748d90117"
       abi: TrustedNodes
-      startBlock: 0
+      address: "0x46bFAb2f849C706eeeE78588CF57f6f6dEc21f02"
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -27,11 +27,11 @@ dataSources:
       file: ./src/governance/TrustedNodes.ts
   - kind: ethereum
     name: CurrencyTimer
-    network: mainnet
+    network: kovan
     source:
-      address: "0x5495a9Ddd1766c8E3c4FA7999ee25E7473f8062b"
       abi: CurrencyTimer
-      startBlock: 0
+      address: "0xEa645E2229b40178f02Cb67275Dd04864F589595"
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -53,11 +53,11 @@ dataSources:
       file: ./src/governance/CurrencyTimer.ts
   - kind: ethereum
     name: TimedPolicies
-    network: mainnet
+    network: kovan
     source:
-      address: "0xA22f3A34484ad5C97C8A95B47Cd17c2BEDaB8766"
       abi: TimedPolicies
-      startBlock: 0
+      address: "0xCa781211a19109018F258227848a0A4cec1F934B"
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -77,11 +77,11 @@ dataSources:
       file: ./src/governance/TimedPolicies.ts
   - kind: ethereum
     name: ECO
-    network: mainnet
+    network: kovan
     source:
-      address: "0xcb76D2BD16722298eAb0F1aE8DF9E190a7409044"
       abi: ECO
-      startBlock: 0
+      address: "0xc1E47c8b8d2F7b1F1ACCA6Cc3a0a65C0789D6129"
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -107,11 +107,11 @@ dataSources:
       file: ./src/currency/ECO.ts
   - kind: ethereum
     name: ECOx
-    network: mainnet
+    network: kovan
     source:
-      address: "0x102688db6DE948fEDbC5F781A35C197801B8400F"
       abi: ECOx
-      startBlock: 0
+      address: "0x7008B836ead7B603095c6cB9f5f8368A3ec91D53"
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -132,11 +132,11 @@ dataSources:
       file: ./src/currency/ECOx.ts
   - kind: ethereum
     name: ECOxStaking
-    network: mainnet
+    network: kovan
     source:
-      address: "0xDcEbA79254d71F11d4BcB43F204a601EC1C7c5DB"
       abi: ECOxStaking
-      startBlock: 0
+      address: "0xe4dDdA0D65af08E0B91b4E6fb39834C74A26bB40"
+      startBlock: 32619500
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -154,14 +154,16 @@ dataSources:
           handler: handleUpdatedVotes
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
+        - event: NewPrimaryDelegate(indexed address,indexed address)
+          handler: handleDelegation
       file: ./src/currency/ECOxStaking.ts
   - kind: ethereum
     name: LockupVaultFactory
-    network: mainnet
+    network: kovan
     source:
-      address: "0xccfb5b8c9768b81d4c8967c7ddfd513d5bf2bebe"
-      startBlock: 0
       abi: LockupVaultFactory
+      address: "0xccfb5b8c9768b81d4c8967c7ddfd513d5bf2bebe"
+      startBlock: 32687142
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -180,7 +182,7 @@ dataSources:
 templates:
   - kind: ethereum
     name: PolicyProposals
-    network: mainnet
+    network: kovan
     source:
       abi: PolicyProposals
     mapping:
@@ -214,7 +216,7 @@ templates:
       file: ./src/governance/PolicyProposals.ts
   - kind: ethereum
     name: PolicyVotes
-    network: mainnet
+    network: kovan
     source:
       abi: PolicyVotes
     mapping:
@@ -242,7 +244,7 @@ templates:
       file: ./src/governance/PolicyVotes.ts
   - kind: ethereum
     name: CurrencyGovernance
-    network: mainnet
+    network: kovan
     source:
       abi: CurrencyGovernance
     mapping:
@@ -271,7 +273,7 @@ templates:
       file: ./src/governance/CurrencyGovernance.ts
   - kind: ethereum
     name: LockupVault
-    network: mainnet
+    network: kovan
     source:
       abi: LockupVault
     mapping:
@@ -286,12 +288,6 @@ templates:
       eventHandlers:
         - event: Claimed(address,address,uint256)
           handler: handleClaimed
-#        - event: Clawback(uint256)
-#          handler: handleClawback
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-#        - event: Staked(uint256)
-#          handler: handleStaked
-#        - event: Unstaked(uint256)
-#          handler: handleUnstaked
       file: ./src/governance/LockupVault.ts

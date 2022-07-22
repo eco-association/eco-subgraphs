@@ -1,12 +1,15 @@
-import { UpdatedVotes } from "../../generated/ECOxStaking/ECOxStaking";
+import {
+    UpdatedVotes as UpdatedVotesEvent,
+    Transfer as TransferEvent,
+    NewPrimaryDelegate as NewPrimaryDelegateEvent,
+} from "../../generated/ECOxStaking/ECOxStaking";
 import { sECOxBalance } from "../../generated/schema";
-import { loadOrCreateAccount, loadOrCreateTokenHolder } from ".";
-import { Transfer } from "../../generated/ECOx/ECOx";
+import { loadOrCreateAccount } from ".";
 import { NULL_ADDRESS } from "../constants";
 import { Token } from "./entity/Token";
 
 // ECOxStaking.UpdatedVotes(address delegate, uint256 newBalance)
-export function handleUpdatedVotes(event: UpdatedVotes): void {
+export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     const delegate = loadOrCreateAccount(event.params.voter.toHexString());
 
     delegate.sECOx = event.params.newVotes;
@@ -21,9 +24,9 @@ export function handleUpdatedVotes(event: UpdatedVotes): void {
 }
 
 // ECOxStaking.Transfer(address from, address to, uint256 value)
-export function handleTransfer(event: Transfer): void {
-    const from = loadOrCreateTokenHolder(event.params.from.toHexString());
-    const to = loadOrCreateTokenHolder(event.params.to.toHexString());
+export function handleTransfer(event: TransferEvent): void {
+    const from = loadOrCreateAccount(event.params.from.toHexString());
+    const to = loadOrCreateAccount(event.params.to.toHexString());
 
     if (from.id !== NULL_ADDRESS) {
         // not a mint
@@ -42,4 +45,10 @@ export function handleTransfer(event: Transfer): void {
         // is a burn, decrement total supply
         Token.load("sEcox", event.address).decreaseSupply(event.params.value);
     }
+}
+
+export function handleDelegation(event: NewPrimaryDelegateEvent): void {
+    const delegator = loadOrCreateAccount(event.params.delegator.toHexString());
+    delegator.ECOxDelegator = event.params.primaryDelegate;
+    delegator.save();
 }
