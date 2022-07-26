@@ -1,7 +1,7 @@
 import { Address } from "@graphprotocol/graph-ts";
 import {
     NewCurrencyGovernance,
-    CurrencyTimer,
+    CurrencyTimer
 } from "../../generated/CurrencyTimer/CurrencyTimer";
 import { Policy } from "../../generated/CurrencyTimer/Policy";
 import { CurrencyGovernance as CurrencyGovernanceContract } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
@@ -10,18 +10,15 @@ import { CurrencyGovernance, Generation } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateContractAddresses } from ".";
 
-// CurrencyTimer.NewCurrencyGovernance(addr)
+// CurrencyTimer.NewCurrencyGovernance(addr, generation)
 export function handleNewCurrencyGovernance(
     event: NewCurrencyGovernance
 ): void {
     // get the new address
-
-    const currencyTimerContract = CurrencyTimer.bind(event.address);
-
     const currencyGovernanceAddress = event.params.addr;
 
     // create new generation
-    const generationNum = currencyTimerContract.currentGeneration();
+    const generationNum = event.params.generation;
 
     const currentGeneration = new Generation(generationNum.toString());
     currentGeneration.number = generationNum;
@@ -54,6 +51,7 @@ export function handleNewCurrencyGovernance(
 
     newCurrencyGovernance.save();
 
+    const currencyTimerContract = CurrencyTimer.bind(event.address);
     // get contracts
     const policyContract = Policy.bind(currencyTimerContract.policy());
     const contracts = loadOrCreateContractAddresses(policyContract);
