@@ -266,6 +266,10 @@ type FundsLockup @entity {
     """
     id: String!
     generation: String!
+    depositWindowDuration: BigInt!
+    depositWindowEndsAt: BigInt!
+    duration: BigInt!
+    interest: BigInt!
     deposits: [FundsLockupDeposit!]! @derivedFrom(field: "lockup")
 }
 

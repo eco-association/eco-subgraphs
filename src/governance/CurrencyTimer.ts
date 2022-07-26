@@ -6,6 +6,7 @@ import {
 } from "../../generated/CurrencyTimer/CurrencyTimer";
 import { Policy } from "../../generated/CurrencyTimer/Policy";
 import { CurrencyGovernance as CurrencyGovernanceContract } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
+import { Lockup as LockupContract } from "../../generated/templates/Lockup/Lockup";
 import {
     CurrencyGovernance as CurrencyGovernanceTemplate,
     Lockup as LockupTemplate
@@ -77,6 +78,16 @@ export function handleNewCurrencyGovernance(
 export function handleNewLockup(event: NewLockup): void {
     // create new lockup entity
     const newLockup = new FundsLockup(event.params.addr.toHexString());
+
+    const currencyTimerContract = CurrencyTimer.bind(event.address);
+    newLockup.generation = currencyTimerContract.currentGeneration().toString();
+
+    const newLockupContract = LockupContract.bind(event.params.addr);
+    newLockup.depositWindowDuration = newLockupContract.DEPOSIT_WINDOW();
+    newLockup.depositWindowEndsAt = newLockupContract.depositWindowEnd();
+    newLockup.duration = newLockupContract.duration();
+    newLockup.interest = newLockupContract.interest();
+
     newLockup.save();
 
     // listen for new lockup's events
