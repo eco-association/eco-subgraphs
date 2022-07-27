@@ -8,6 +8,7 @@ export function loadOrCreateAccount(address: Address): Account {
         account.ECO = BigInt.fromString("0");
         account.ECOx = BigInt.fromString("0");
         account.sECOx = BigInt.fromString("0");
+        account.votes = BigInt.fromString("0");
         account.save();
     }
     return account;
