@@ -5,10 +5,10 @@ import { Token } from "./entity/Token";
 
 // ECOx.Transfer(address from, address to, uint256 value)
 export function handleTransfer(event: Transfer): void {
-    const from = loadOrCreateAccount(event.params.from.toHexString());
-    const to = loadOrCreateAccount(event.params.to.toHexString());
+    const from = loadOrCreateAccount(event.params.from);
+    const to = loadOrCreateAccount(event.params.to);
 
-    if (from.id !== NULL_ADDRESS) {
+    if (from.id.toHexString() != NULL_ADDRESS) {
         // not a mint
         from.ECOx = from.ECOx.minus(event.params.value);
         from.save();
@@ -17,7 +17,7 @@ export function handleTransfer(event: Transfer): void {
         Token.load("ecox", event.address).increaseSupply(event.params.value);
     }
 
-    if (to.id !== NULL_ADDRESS) {
+    if (to.id.toHexString() != NULL_ADDRESS) {
         // not a burn
         to.ECOx = to.ECOx.plus(event.params.value);
         to.save();

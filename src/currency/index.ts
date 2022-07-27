@@ -1,7 +1,7 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { Account } from "../../generated/schema";
 
-export function loadOrCreateAccount(address: string): Account {
+export function loadOrCreateAccount(address: Address): Account {
     let account = Account.load(address);
     if (!account) {
         account = new Account(address);

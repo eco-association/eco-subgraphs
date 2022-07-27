@@ -8,3 +8,5 @@ generated/
 .vscode/
 yarn.lock
 .idea/
+
+tests/

@@ -10,7 +10,7 @@ import { Token } from "./entity/Token";
 
 // ECOxStaking.UpdatedVotes(address delegate, uint256 newBalance)
 export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
-    const delegate = loadOrCreateAccount(event.params.voter.toHexString());
+    const delegate = loadOrCreateAccount(event.params.voter);
 
     delegate.sECOx = event.params.newVotes;
     delegate.save();
@@ -25,10 +25,10 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
 
 // ECOxStaking.Transfer(address from, address to, uint256 value)
 export function handleTransfer(event: TransferEvent): void {
-    const from = loadOrCreateAccount(event.params.from.toHexString());
-    const to = loadOrCreateAccount(event.params.to.toHexString());
+    const from = loadOrCreateAccount(event.params.from);
+    const to = loadOrCreateAccount(event.params.to);
 
-    if (from.id !== NULL_ADDRESS) {
+    if (from.id.toHexString() != NULL_ADDRESS) {
         // not a mint
         from.sECOx = from.sECOx.minus(event.params.value);
         from.save();
@@ -37,7 +37,7 @@ export function handleTransfer(event: TransferEvent): void {
         Token.load("sEcox", event.address).increaseSupply(event.params.value);
     }
 
-    if (to.id !== NULL_ADDRESS) {
+    if (to.id.toHexString() != NULL_ADDRESS) {
         // not a burn
         to.sECOx = to.sECOx.plus(event.params.value);
         to.save();
@@ -47,8 +47,9 @@ export function handleTransfer(event: TransferEvent): void {
     }
 }
 
+// ECOxStaking.NewPrimaryDelegate(address, address)
 export function handleDelegation(event: NewPrimaryDelegateEvent): void {
-    const delegator = loadOrCreateAccount(event.params.delegator.toHexString());
+    const delegator = loadOrCreateAccount(event.params.delegator);
     delegator.ECOxDelegator = event.params.primaryDelegate;
     delegator.save();
 }

@@ -178,17 +178,17 @@ type Account @entity {
     """
     id: account address
     """
-    id: String!
+    id: Bytes!
     ECO: BigInt!
     ECOx: BigInt!
     sECOx: BigInt!
+    votes: BigInt!
     ECOxDelegator: Bytes "ECOx delegator"
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
     historicalsECOxBalances: [sECOxBalance!]! @derivedFrom(field: "account")
     lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
 }
-
 
 """
 ECO Allowance
@@ -260,12 +260,13 @@ type LockupVault @entity {
     """
     id: lockup vault contract address
     """
-    id: String! "address"
+    id: Bytes! "address"
     beneficiary: Account!
     account: Account!
     admin: Bytes! # admin address
     token: Bytes! # token address
     claimed: BigInt! # uint256
+    clawbackTimestamp: BigInt
     vestingChunks: [VestingChunk!]! @derivedFrom(field: "vault")
 }
 

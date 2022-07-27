@@ -145,10 +145,11 @@ dataSources:
         - Generation
         - Account
         - sECOxBalance
-        - LockupVault
       abis:
         - name: ECOxStaking
           file: ./abis/ECOxStaking.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: UpdatedVotes(indexed address,uint256)
           handler: handleUpdatedVotes
@@ -290,4 +291,6 @@ templates:
           handler: handleClaimed
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
+        - event: Clawback(uint256)
+          handler: handleClawback
       file: ./src/governance/LockupVault.ts
