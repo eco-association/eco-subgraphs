@@ -1,7 +1,7 @@
 import {
     UpdatedVotes as UpdatedVotesEvent,
     Transfer as TransferEvent,
-    NewPrimaryDelegate as NewPrimaryDelegateEvent,
+    NewPrimaryDelegate as NewPrimaryDelegateEvent
 } from "../../generated/ECOxStaking/ECOxStaking";
 import { VoteBalance } from "../../generated/schema";
 import { loadOrCreateAccount } from ".";
@@ -27,7 +27,7 @@ export function handleTransfer(event: TransferEvent): void {
     const from = loadOrCreateAccount(event.params.from);
     const to = loadOrCreateAccount(event.params.to);
 
-    if (from.id.toHexString() != NULL_ADDRESS) {
+    if (from.id != NULL_ADDRESS) {
         // not a mint
         from.sECOx = from.sECOx.minus(event.params.value);
         from.save();
@@ -36,7 +36,7 @@ export function handleTransfer(event: TransferEvent): void {
         Token.load("sEcox", event.address).increaseSupply(event.params.value);
     }
 
-    if (to.id.toHexString() != NULL_ADDRESS) {
+    if (to.id != NULL_ADDRESS) {
         // not a burn
         to.sECOx = to.sECOx.plus(event.params.value);
         to.save();

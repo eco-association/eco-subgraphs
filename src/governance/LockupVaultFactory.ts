@@ -15,7 +15,7 @@ export function handleVaultCreated(event: VaultCreatedEvent): void {
     const beneficiary = loadOrCreateAccount(event.params.beneficiary);
 
     vault.beneficiary = beneficiary.id;
-    vault.account = event.params.vault;
+    vault.account = event.params.vault.toHexString();
     vault.admin = lockupVaultContract.owner();
     vault.token = event.params.token;
     vault.claimed = BigInt.fromString("0");

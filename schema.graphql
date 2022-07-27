@@ -181,7 +181,7 @@ type Account @entity {
     """
     id: account address
     """
-    id: Bytes!
+    id: String!
     ECO: BigInt!
     ECOx: BigInt!
     sECOx: BigInt!
