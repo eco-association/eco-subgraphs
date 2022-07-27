@@ -16,6 +16,7 @@ type ContractAddresses @entity {
     trustedNodes: String!
 }
 
+
 """
 ECO generation
 """
@@ -28,6 +29,7 @@ type Generation @entity {
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
     monetaryProposals: [MonetaryProposal!]! @derivedFrom(field: "generation")
 }
+
 
 """
 Currency Governance entities
@@ -98,6 +100,7 @@ type Trustee @entity {
     cohorts: [TrusteeCohort!]!
     proposals: [MonetaryProposal!]! @derivedFrom(field: "trustee")
 }
+
 
 """
 Community Support entities
@@ -189,6 +192,7 @@ type Account @entity {
     historicalVoteBalances: [VoteBalance!]! @derivedFrom(field: "account")
     lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
 }
+
 
 """
 ECO Allowance
