@@ -279,7 +279,7 @@ Deposits to a funds lockup (active)
 """
 type FundsLockupDeposit @entity {
     """
-    id: lockup address + "-" + 
+    id: lockup address + "-" + depositer address
     """
     id: String!
     account: Account!

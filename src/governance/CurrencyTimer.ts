@@ -20,18 +20,15 @@ import {
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateContractAddresses } from ".";
 
-// CurrencyTimer.NewCurrencyGovernance(addr)
+// CurrencyTimer.NewCurrencyGovernance(addr, generation)
 export function handleNewCurrencyGovernance(
     event: NewCurrencyGovernance
 ): void {
     // get the new address
-
-    const currencyTimerContract = CurrencyTimer.bind(event.address);
-
     const currencyGovernanceAddress = event.params.addr;
 
     // create new generation
-    const generationNum = currencyTimerContract.currentGeneration();
+    const generationNum = event.params.generation;
 
     const currentGeneration = new Generation(generationNum.toString());
     currentGeneration.number = generationNum;
@@ -64,6 +61,7 @@ export function handleNewCurrencyGovernance(
 
     newCurrencyGovernance.save();
 
+    const currencyTimerContract = CurrencyTimer.bind(event.address);
     // get contracts
     const policyContract = Policy.bind(currencyTimerContract.policy());
     const contracts = loadOrCreateContractAddresses(policyContract);
@@ -78,9 +76,7 @@ export function handleNewCurrencyGovernance(
 export function handleNewLockup(event: NewLockup): void {
     // create new lockup entity
     const newLockup = new FundsLockup(event.params.addr.toHexString());
-
-    const currencyTimerContract = CurrencyTimer.bind(event.address);
-    newLockup.generation = currencyTimerContract.currentGeneration().toString();
+    newLockup.generation = event.params.generation.toString();
 
     const newLockupContract = LockupContract.bind(event.params.addr);
     newLockup.depositWindowDuration = newLockupContract.DEPOSIT_WINDOW();

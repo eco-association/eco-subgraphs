@@ -6,7 +6,7 @@ dataSources:
     name: TrustedNodes
     network: mainnet
     source:
-      address: "0x61a12B54A566C284A0D5752B8354D940f60b4d43"
+      address: "0xC539E7a48376122D55B23E0451124d424704Eb98"
       abi: TrustedNodes
       startBlock: 0
     mapping:
@@ -29,7 +29,7 @@ dataSources:
     name: CurrencyTimer
     network: mainnet
     source:
-      address: "0xb7921eBAaeeEEAb2C1176e598aC3aD872F732264"
+      address: "0x583137617910Fa8c6BdCe7E4d1924d83051EDAC4"
       abi: CurrencyTimer
       startBlock: 0
     mapping:
@@ -40,6 +40,7 @@ dataSources:
         - ContractAddresses
         - Generation
         - CurrencyGovernance
+        - FundsLockup
       abis:
         - name: CurrencyTimer
           file: ./abis/CurrencyTimer.json
@@ -47,17 +48,19 @@ dataSources:
           file: ./abis/CurrencyGovernance.json
         - name: Policy
           file: ./abis/Policy.json
+        - name: Lockup
+          file: ./abis/Lockup.json
       eventHandlers:
-        - event: NewCurrencyGovernance(indexed address)
+        - event: NewCurrencyGovernance(indexed address,indexed uint256)
           handler: handleNewCurrencyGovernance
-        - event: NewLockup(indexed address)
+        - event: NewLockup(indexed address,indexed uint256)
           handler: handleNewLockup
       file: ./src/governance/CurrencyTimer.ts
   - kind: ethereum
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x8d7393cc51124AA9A6b0487D7b03EFF58B7025e9"
+      address: "0x9F9359FC2CE70C67E096B7a8C9Ca99f130abb352"
       abi: TimedPolicies
       startBlock: 0
     mapping:
@@ -81,7 +84,7 @@ dataSources:
     name: ECO
     network: mainnet
     source:
-      address: "0x540d80c6340aDb5f414090c7D78184c553F3B28B"
+      address: "0x8092fdD7eB19a8de0d82079FE9D22d7F889DA6D5"
       abi: ECO
       startBlock: 0
     mapping:
@@ -111,7 +114,7 @@ dataSources:
     name: ECOx
     network: mainnet
     source:
-      address: "0xc2D05bE304024e1313c345a2e1F49Aef53F4dd26"
+      address: "0x440c09114f25274986d962A43AB0030F38971Fd9"
       abi: ECOx
       startBlock: 0
     mapping:
@@ -135,7 +138,7 @@ dataSources:
     name: ECOxStaking
     network: mainnet
     source:
-      address: "0x3Ec41513756eA46F62646729edE991937738B2c4"
+      address: "0xc946d73acE209F6dEaBD2dee6C0e8514C61fD129"
       abi: ECOxStaking
       startBlock: 0
     mapping:
@@ -256,6 +259,7 @@ templates:
       language: wasm/assemblyscript
       entities:
         - FundsLockup
+        - FundsLockupDeposit
         - Generation
         - Account
       abis:
