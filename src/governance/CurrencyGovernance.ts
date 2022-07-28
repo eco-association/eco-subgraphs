@@ -105,7 +105,7 @@ export function handleVoteReveal(event: VoteReveal): void {
         votes.push(event.params.votes[i].toHexString());
 
         // if not default proposal
-        if (event.params.votes[i].toHexString() !== NULL_ADDRESS) {
+        if (event.params.votes[i].toHexString() != NULL_ADDRESS) {
             const id = `${event.address.toHexString()}-${event.params.votes[
                 i
             ].toHexString()}`;
@@ -137,7 +137,7 @@ export function handleVoteReveal(event: VoteReveal): void {
 
 // CurrencyGovernance.VoteResult(address indexed winner)
 export function handleVoteResult(event: VoteResult): void {
-    if (event.params.winner.toHexString() !== NULL_ADDRESS) {
+    if (event.params.winner.toHexString() != NULL_ADDRESS) {
         const winningProposal = MonetaryProposal.load(
             `${event.address.toHexString()}-${event.params.winner.toHexString()}`
         );

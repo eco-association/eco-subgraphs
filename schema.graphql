@@ -143,7 +143,7 @@ type PolicyVote @entity {
     """
     id: PolicyVotes address
     """
-    id: String! 
+    id: String!
     generation: Generation!
     voteEnds: BigInt!
     ENACTION_DELAY: BigInt!
@@ -181,15 +181,18 @@ type Account @entity {
     """
     id: account address
     """
-    id: String! 
+    id: String!
     ECO: BigInt!
     ECOx: BigInt!
     sECOx: BigInt!
+    votes: BigInt!
+    ECOxDelegator: Bytes "ECOx delegator"
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
-    historicalsECOxBalances: [sECOxBalance!]! @derivedFrom(field: "account")
+    historicalsECOxVotingPowers: [sECOxVotingPower!]! @derivedFrom(field: "account")
     fundsLockupDeposits: [FundsLockupDeposit!]! @derivedFrom(field: "account")
     fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]! @derivedFrom(field: "delegate")
+    lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
 }
 
 
@@ -200,10 +203,10 @@ type ECOAllowance @entity {
     """
     id: owner + "-" + spender
     """
-    id: String! 
+    id: String!
     owner: Account!
     spender: String!
-    value: BigInt! 
+    value: BigInt!
 }
 
 
@@ -227,10 +230,10 @@ type ECOBalance @entity {
     id: String!
     account: Account!
     """
-    underlying value, to get the value adjusted for inflation/deflation, 
+    underlying value, to get the value adjusted for inflation/deflation,
     divide the value by the inflationmultiplier value whose blocknumber is nearest to and less than this balance (or 1e18 if none exists)
     """
-    value: BigInt! 
+    value: BigInt!
     blockNumber: BigInt!
 }
 
@@ -246,16 +249,15 @@ type InflationMultiplier @entity {
 
 
 """
-sECOx balance
-historical sECOx balance at blockNumber (representing a part of voting power)
+Vote balance
+historical vote balance at blockNumber (representing a part of voting power)
 """
-type sECOxBalance @entity {
+type sECOxVotingPower @entity {
     id: Bytes!
     account: Account!
-    value: BigInt! 
+    value: BigInt!
     blockNumber: BigInt!
 }
-
 
 """
 Funds Lockup
@@ -277,7 +279,6 @@ type FundsLockup @entity {
     deposits: [FundsLockupDeposit!]! @derivedFrom(field: "lockup")
 }
 
-
 """
 Deposits to a funds lockup (active)
 """
@@ -295,4 +296,29 @@ type FundsLockupDeposit @entity {
     reward: BigInt!
     lockupEndsAt: BigInt!
     delegate: Account!
+}
+
+
+"""
+ECO Lockup Vault
+"""
+type LockupVault @entity {
+    """
+    id: lockup vault contract address
+    """
+    id: Bytes! "address"
+    beneficiary: Account!
+    account: Account!
+    admin: Bytes! # admin address
+    token: Bytes! # token address
+    claimed: BigInt! # uint256
+    clawbackTimestamp: BigInt
+    vestingChunks: [VestingChunk!]! @derivedFrom(field: "vault")
+}
+
+type VestingChunk @entity(immutable: true) {
+    id: String!
+    vault: LockupVault!
+    amount: BigInt!
+    timestamp: BigInt!
 }

@@ -17,7 +17,7 @@ export function handleDeposit(event: Deposit): void {
     if (!deposit) {
         deposit = new FundsLockupDeposit(id);
 
-        const account = loadOrCreateAccount(event.params.to.toHexString());
+        const account = loadOrCreateAccount(event.params.to);
         // associate account
         deposit.account = account.id;
     }
@@ -33,9 +33,7 @@ export function handleDeposit(event: Deposit): void {
     // lockupEnd
     deposit.lockupEndsAt = contractDeposit.value2;
     // delegate
-    const delegateAccount = loadOrCreateAccount(
-        contractDeposit.value3.toHexString()
-    );
+    const delegateAccount = loadOrCreateAccount(contractDeposit.value3);
     deposit.delegate = delegateAccount.id;
 
     deposit.save();

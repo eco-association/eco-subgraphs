@@ -16,6 +16,7 @@
         "import/prefer-default-export": "off",
         "no-underscore-dangle": "off",
         "new-cap": "off",
+        "eqeqeq": "off",
         "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }]
     },
     "ignorePatterns": ["generated/*", "graph-node/*", "scripts/*"]
