@@ -190,6 +190,8 @@ type Account @entity {
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
     historicalsECOxVotingPowers: [sECOxVotingPower!]! @derivedFrom(field: "account")
+    fundsLockupDeposits: [FundsLockupDeposit!]! @derivedFrom(field: "account")
+    fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]! @derivedFrom(field: "delegate")
     lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
 }
 
@@ -256,6 +258,46 @@ type sECOxVotingPower @entity {
     value: BigInt!
     blockNumber: BigInt!
 }
+
+"""
+Funds Lockup
+"""
+type FundsLockup @entity {
+    """
+    id: lockup address
+    """
+    id: String!
+    generation: String!
+    depositWindowDuration: BigInt!
+    depositWindowEndsAt: BigInt!
+    duration: BigInt!
+    interest: BigInt!
+    """
+    totalDeposited: underlying amount
+    """
+    totalLocked: BigInt!
+    deposits: [FundsLockupDeposit!]! @derivedFrom(field: "lockup")
+}
+
+"""
+Deposits to a funds lockup (active)
+"""
+type FundsLockupDeposit @entity {
+    """
+    id: lockup address + "-" + depositer address
+    """
+    id: String!
+    account: Account!
+    lockup: FundsLockup!
+    """
+    amount: underlying value of eco
+    """
+    amount: BigInt!
+    reward: BigInt!
+    lockupEndsAt: BigInt!
+    delegate: Account!
+}
+
 
 """
 ECO Lockup Vault

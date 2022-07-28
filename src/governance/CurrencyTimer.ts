@@ -1,12 +1,22 @@
-import { Address } from "@graphprotocol/graph-ts";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
     NewCurrencyGovernance,
-    CurrencyTimer
+    CurrencyTimer,
+    NewLockup
 } from "../../generated/CurrencyTimer/CurrencyTimer";
 import { Policy } from "../../generated/CurrencyTimer/Policy";
 import { CurrencyGovernance as CurrencyGovernanceContract } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
-import { CurrencyGovernance as CurrencyGovernanceTemplate } from "../../generated/templates";
-import { CurrencyGovernance, Generation } from "../../generated/schema";
+import { Lockup as LockupContract } from "../../generated/templates/Lockup/Lockup";
+import {
+    CurrencyGovernance as CurrencyGovernanceTemplate,
+    Lockup as LockupTemplate
+} from "../../generated/templates";
+import {
+    CurrencyGovernance,
+    Generation,
+    FundsLockup
+} from "../../generated/schema";
+
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateContractAddresses } from ".";
 
@@ -61,4 +71,22 @@ export function handleNewCurrencyGovernance(
     contracts.policyProposals = NULL_ADDRESS;
     contracts.policyVotes = NULL_ADDRESS;
     contracts.save();
+}
+
+export function handleNewLockup(event: NewLockup): void {
+    // create new lockup entity
+    const newLockup = new FundsLockup(event.params.addr.toHexString());
+    newLockup.generation = event.params.generation.toString();
+
+    const newLockupContract = LockupContract.bind(event.params.addr);
+    newLockup.depositWindowDuration = newLockupContract.DEPOSIT_WINDOW();
+    newLockup.depositWindowEndsAt = newLockupContract.depositWindowEnd();
+    newLockup.duration = newLockupContract.duration();
+    newLockup.interest = newLockupContract.interest();
+    newLockup.totalLocked = BigInt.fromString("0");
+
+    newLockup.save();
+
+    // listen for new lockup's events
+    LockupTemplate.create(event.params.addr);
 }

@@ -6,7 +6,7 @@ dataSources:
     name: TrustedNodes
     network: mainnet
     source:
-      address: "0x26EA4e6C5F7C7B8B6B4C19b6aBF2B829C53E6Ea3"
+      address: "0xC539E7a48376122D55B23E0451124d424704Eb98"
       abi: TrustedNodes
       startBlock: 0
     mapping:
@@ -29,7 +29,7 @@ dataSources:
     name: CurrencyTimer
     network: mainnet
     source:
-      address: "0xF86099FB0E4E09Ac58acd3bFA5CA5026A9b9B5e7"
+      address: "0x583137617910Fa8c6BdCe7E4d1924d83051EDAC4"
       abi: CurrencyTimer
       startBlock: 0
     mapping:
@@ -40,6 +40,7 @@ dataSources:
         - ContractAddresses
         - Generation
         - CurrencyGovernance
+        - FundsLockup
       abis:
         - name: CurrencyTimer
           file: ./abis/CurrencyTimer.json
@@ -47,15 +48,19 @@ dataSources:
           file: ./abis/CurrencyGovernance.json
         - name: Policy
           file: ./abis/Policy.json
+        - name: Lockup
+          file: ./abis/Lockup.json
       eventHandlers:
         - event: NewCurrencyGovernance(indexed address,indexed uint256)
           handler: handleNewCurrencyGovernance
+        - event: NewLockup(indexed address,indexed uint256)
+          handler: handleNewLockup
       file: ./src/governance/CurrencyTimer.ts
   - kind: ethereum
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x2F95E813c3d831D4A73122B0b7d6f105C125f46b"
+      address: "0x9F9359FC2CE70C67E096B7a8C9Ca99f130abb352"
       abi: TimedPolicies
       startBlock: 0
     mapping:
@@ -79,7 +84,7 @@ dataSources:
     name: ECO
     network: mainnet
     source:
-      address: "0xe226255020F5f50ae6A2cCA1e6eCBAc8658F84Ee"
+      address: "0x8092fdD7eB19a8de0d82079FE9D22d7F889DA6D5"
       abi: ECO
       startBlock: 0
     mapping:
@@ -109,7 +114,7 @@ dataSources:
     name: ECOx
     network: mainnet
     source:
-      address: "0xB3D355F0c654206C2123e85A6C38fF4B9227F724"
+      address: "0x440c09114f25274986d962A43AB0030F38971Fd9"
       abi: ECOx
       startBlock: 0
     mapping:
@@ -134,7 +139,7 @@ dataSources:
     name: ECOxStaking
     network: mainnet
     source:
-      address: "0x241893d596eF4D0bb23F68244c94B9F89FF5bF4E"
+      address: "0xc946d73acE209F6dEaBD2dee6C0e8514C61fD129"
       abi: ECOxStaking
       startBlock: 0
     mapping:
@@ -162,7 +167,7 @@ dataSources:
     name: LockupVaultFactory
     network: mainnet
     source:
-      address: "0xccfb5b8c9768b81d4c8967c7ddfd513d5bf2bebe"
+      address: "0x89c41bf50f31624db523fa45b4c8a334cfd58a28"
       abi: LockupVaultFactory
       startBlock: 0
     mapping:
@@ -272,6 +277,29 @@ templates:
         - event: VoteResult(indexed address)
           handler: handleVoteResult
       file: ./src/governance/CurrencyGovernance.ts
+  - kind: ethereum
+    name: Lockup
+    network: mainnet
+    source:
+      abi: Lockup
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - FundsLockup
+        - FundsLockupDeposit
+        - Generation
+        - Account
+      abis:
+        - name: Lockup
+          file: ./abis/Lockup.json
+      eventHandlers:
+        - event: Deposit(indexed address,uint256)
+          handler: handleDeposit
+        - event: Withdrawal(indexed address,uint256)
+          handler: handleWithdrawal
+      file: ./src/governance/Lockup.ts
   - kind: ethereum
     name: LockupVault
     network: mainnet
