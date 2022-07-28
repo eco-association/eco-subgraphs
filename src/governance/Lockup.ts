@@ -6,7 +6,7 @@ import {
     Lockup as LockupContract
 } from "../../generated/templates/Lockup/Lockup";
 
-import { FundsLockupDeposit } from "../../generated/schema";
+import { FundsLockup, FundsLockupDeposit } from "../../generated/schema";
 import { loadOrCreateAccount } from "../currency";
 
 // Lockup.Deposit(address indexed to, uint256 amount)
@@ -39,12 +39,31 @@ export function handleDeposit(event: Deposit): void {
     deposit.delegate = delegateAccount.id;
 
     deposit.save();
+
+    // update total locked
+    const fundsLockup = FundsLockup.load(event.address.toHexString());
+    if (fundsLockup) {
+        fundsLockup.totalLocked = fundsLockup.totalLocked.plus(deposit.amount);
+        fundsLockup.save();
+    }
 }
 
 // Lockup.Withdrawal(address indexed to, uint256 amount)
 export function handleWithdrawal(event: Withdrawal): void {
     const id = `${event.address.toHexString()}-${event.params.to.toHexString()}`;
 
-    // withdrawal => delete the deposit
-    store.remove("FundsLockupDeposit", id);
+    const deposit = FundsLockupDeposit.load(id);
+
+    if (deposit) {
+        // update total locked
+        const fundsLockup = FundsLockup.load(event.address.toHexString());
+        if (fundsLockup) {
+            fundsLockup.totalLocked = fundsLockup.totalLocked.minus(
+                deposit.amount
+            );
+            fundsLockup.save();
+        }
+        // withdrawal => delete the deposit
+        store.remove("FundsLockupDeposit", id);
+    }
 }

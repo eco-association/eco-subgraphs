@@ -270,6 +270,10 @@ type FundsLockup @entity {
     depositWindowEndsAt: BigInt!
     duration: BigInt!
     interest: BigInt!
+    """
+    totalDeposited: underlying amount
+    """
+    totalLocked: BigInt!
     deposits: [FundsLockupDeposit!]! @derivedFrom(field: "lockup")
 }
 

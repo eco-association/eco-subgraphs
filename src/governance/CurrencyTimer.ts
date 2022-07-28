@@ -1,4 +1,4 @@
-import { Address } from "@graphprotocol/graph-ts";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
     NewCurrencyGovernance,
     CurrencyTimer,
@@ -83,6 +83,7 @@ export function handleNewLockup(event: NewLockup): void {
     newLockup.depositWindowEndsAt = newLockupContract.depositWindowEnd();
     newLockup.duration = newLockupContract.duration();
     newLockup.interest = newLockupContract.interest();
+    newLockup.totalLocked = BigInt.fromString("0");
 
     newLockup.save();
 
