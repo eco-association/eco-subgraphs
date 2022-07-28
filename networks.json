@@ -23,6 +23,10 @@
         "ECOxStaking": {
             "address": "0xe4dDdA0D65af08E0B91b4E6fb39834C74A26bB40",
             "startBlock": 32619500
+        },
+        "LockupVaultFactory": {
+            "address": "0xccfb5b8c9768b81d4c8967c7ddfd513d5bf2bebe",
+            "startBlock": 32687142
         }
     },
     "localhost": {
@@ -48,6 +52,10 @@
         },
         "ECOxStaking": {
             "address": "0x241893d596eF4D0bb23F68244c94B9F89FF5bF4E",
+            "startBlock": 0
+        },
+        "LockupVaultFactory": {
+            "address": "0xccfb5b8c9768b81d4c8967c7ddfd513d5bf2bebe",
             "startBlock": 0
         }
     }

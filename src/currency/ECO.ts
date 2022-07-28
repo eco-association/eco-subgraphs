@@ -2,15 +2,16 @@ import { BigInt, store } from "@graphprotocol/graph-ts";
 import {
     NewInflationMultiplier,
     BaseValueTransfer,
-    Approval,
+    Approval
 } from "../../generated/ECO/ECO";
 import {
     ECOAllowance,
     ECOBalance,
-    InflationMultiplier,
+    InflationMultiplier
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
-import { loadOrCreateAccount, loadOrCreateToken } from ".";
+import { loadOrCreateAccount } from ".";
+import { Token } from "./entity/Token";
 
 // ECO.NewInflationMultiplier(uint256)
 export function handleNewInflationMultiplier(
@@ -28,10 +29,10 @@ export function handleNewInflationMultiplier(
 
 // ECO.Approval(address owner, address spender, uint256 value)
 export function handleApproval(event: Approval): void {
-    const ownerAccount = loadOrCreateAccount(event.params.owner.toHexString());
+    const ownerAccount = loadOrCreateAccount(event.params.owner);
     const spender = event.params.spender.toHexString();
 
-    const id = `${ownerAccount.id  }-${  spender}`;
+    const id = `${ownerAccount.id}-${spender}`;
 
     // load or create an allowance entity
     let allowance = ECOAllowance.load(id);
@@ -54,17 +55,17 @@ export function handleApproval(event: Approval): void {
 
 // ECO.BaseValueTransfer(address from, address to, uint256 value)
 export function handleBaseValueTransfer(event: BaseValueTransfer): void {
-    const from = loadOrCreateAccount(event.params.from.toHexString());
-    const to = loadOrCreateAccount(event.params.to.toHexString());
+    const from = loadOrCreateAccount(event.params.from);
+    const to = loadOrCreateAccount(event.params.to);
 
-    if (from.id !== NULL_ADDRESS) {
+    if (from.id != NULL_ADDRESS) {
         // not a mint
         from.ECO = from.ECO.minus(event.params.value);
         from.save();
 
         // create new historical ECO balance entry
         const newBalance = new ECOBalance(
-            `${event.transaction.hash.toHexString()  }-${  from.id}`
+            `${event.transaction.hash.toHexString()}-${from.id}`
         );
         newBalance.account = from.id;
         newBalance.value = from.ECO;
@@ -72,18 +73,16 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         newBalance.save();
     } else {
         // is a mint, increment total supply
-        const ecoToken = loadOrCreateToken("eco", event.address);
-        ecoToken.totalSupply = ecoToken.totalSupply.plus(event.params.value);
-        ecoToken.save();
+        Token.load("eco", event.address).increaseSupply(event.params.value);
     }
 
-    if (to.id !== NULL_ADDRESS) {
+    if (to.id != NULL_ADDRESS) {
         // not a burn
         to.ECO = to.ECO.plus(event.params.value);
         to.save();
 
         const newBalance = new ECOBalance(
-            `${event.transaction.hash.toHexString()  }-${  to.id}`
+            `${event.transaction.hash.toHexString()}-${to.id}`
         );
         newBalance.account = to.id;
         newBalance.value = to.ECO;
@@ -91,8 +90,6 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         newBalance.save();
     } else {
         // is a burn, decrement total supply
-        const ecoToken = loadOrCreateToken("eco", event.address);
-        ecoToken.totalSupply = ecoToken.totalSupply.minus(event.params.value);
-        ecoToken.save();
+        Token.load("eco", event.address).decreaseSupply(event.params.value);
     }
 }

@@ -18,7 +18,6 @@ import {
     PolicyVote,
 } from "../../generated/schema";
 
-
 import { loadContractAddresses } from ".";
 
 // PolicyPropsals.Register(address proposer, address proposalAddress)
@@ -49,10 +48,7 @@ export function handleRegister(event: Register): void {
 
 // PolicyProposals.Support(address supporter, address proposalAddress)
 export function handleSupport(event: Support): void {
-    const id =
-        `${event.params.supporter.toHexString() 
-        }-${ 
-        event.params.proposalAddress.toHexString()}`;
+    const id = `${event.params.supporter.toHexString()}-${event.params.proposalAddress.toHexString()}`;
     const support = new CommunityProposalSupport(id);
     support.supporter = event.params.supporter;
     support.proposal = event.params.proposalAddress.toHexString();
@@ -82,10 +78,7 @@ export function handleSupport(event: Support): void {
 
 // PolicyProposals.Unsupport(address unsupporter, address proposalAddress)
 export function handleUnsupport(event: Unsupport): void {
-    const id =
-        `${event.params.unsupporter.toHexString() 
-        }-${ 
-        event.params.proposalAddress.toHexString()}`;
+    const id = `${event.params.unsupporter.toHexString()}-${event.params.proposalAddress.toHexString()}`;
     store.remove("CommunityProposalSupport", id);
 
     // get amount
