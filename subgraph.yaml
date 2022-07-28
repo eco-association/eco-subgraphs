@@ -144,7 +144,7 @@ dataSources:
       entities:
         - Generation
         - Account
-        - VoteBalance
+        - sECOxVotingPower
       abis:
         - name: ECOxStaking
           file: ./abis/ECOxStaking.json

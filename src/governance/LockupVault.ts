@@ -1,8 +1,8 @@
 import { log } from "@graphprotocol/graph-ts";
 import {
     Claimed as ClaimedEvent,
-    OwnershipTransferred as OwnershipTransferredEvent,
     Clawback as ClawbackEvent,
+    OwnershipTransferred as OwnershipTransferredEvent,
 } from "../../generated/LockupVaultFactory/LockupVault";
 import { LockupVault } from "../../generated/schema";
 

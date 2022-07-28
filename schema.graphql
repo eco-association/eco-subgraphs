@@ -189,7 +189,7 @@ type Account @entity {
     ECOxDelegator: Bytes "ECOx delegator"
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
-    historicalVoteBalances: [VoteBalance!]! @derivedFrom(field: "account")
+    historicalsECOxVotingPowers: [sECOxVotingPower!]! @derivedFrom(field: "account")
     lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
 }
 
@@ -250,7 +250,7 @@ type InflationMultiplier @entity {
 Vote balance
 historical vote balance at blockNumber (representing a part of voting power)
 """
-type VoteBalance @entity {
+type sECOxVotingPower @entity {
     id: Bytes!
     account: Account!
     value: BigInt!
