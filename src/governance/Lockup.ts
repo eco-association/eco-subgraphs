@@ -20,6 +20,8 @@ export function handleDeposit(event: Deposit): void {
         const account = loadOrCreateAccount(event.params.to);
         // associate account
         deposit.account = account.id;
+        // associate lockup
+        deposit.lockup = event.address.toHexString();
     }
 
     // get deposit record struct
