@@ -5,13 +5,13 @@ import {
     ProposalRetraction,
     VoteCast,
     VoteResult,
-    VoteReveal,
+    VoteReveal
 } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
 import {
     MonetaryProposal,
     CurrencyGovernance,
     MonetaryCommit,
-    MonetaryVote,
+    MonetaryVote
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 
@@ -20,7 +20,8 @@ import { NULL_ADDRESS } from "../constants";
 //  uint256 _randomInflationReward,
 //  uint256 _lockupDuration,
 //  uint256 _lockupInterest,
-//  uint256 _inflationMultiplier)
+//  uint256 _inflationMultiplier
+//  string  _description)
 export function handleProposalCreation(event: ProposalCreation): void {
     const id = `${event.address.toHexString()}-${event.params.trusteeAddress.toHexString()}`;
     // load or create a new proposal
@@ -49,6 +50,7 @@ export function handleProposalCreation(event: ProposalCreation): void {
         event.params._randomInflationReward;
     monetaryProposal.lockupDuration = event.params._lockupDuration;
     monetaryProposal.lockupInterest = event.params._lockupInterest;
+    monetaryProposal.description = event.params._description;
 
     monetaryProposal.save();
 }

@@ -6,7 +6,7 @@ dataSources:
     name: TrustedNodes
     network: mainnet
     source:
-      address: "0xC539E7a48376122D55B23E0451124d424704Eb98"
+      address: "0xd668f7E47AAa21ee7A387B02E41785D212E1Bde7"
       abi: TrustedNodes
       startBlock: 0
     mapping:
@@ -29,7 +29,7 @@ dataSources:
     name: CurrencyTimer
     network: mainnet
     source:
-      address: "0x583137617910Fa8c6BdCe7E4d1924d83051EDAC4"
+      address: "0x408e38e39Bb14b57154C6bA3d82a496B3cC77ecE"
       abi: CurrencyTimer
       startBlock: 0
     mapping:
@@ -60,7 +60,7 @@ dataSources:
     name: TimedPolicies
     network: mainnet
     source:
-      address: "0x9F9359FC2CE70C67E096B7a8C9Ca99f130abb352"
+      address: "0xA8FC4156d16a1962368B6517D7eB437894526635"
       abi: TimedPolicies
       startBlock: 0
     mapping:
@@ -84,7 +84,7 @@ dataSources:
     name: ECO
     network: mainnet
     source:
-      address: "0x8092fdD7eB19a8de0d82079FE9D22d7F889DA6D5"
+      address: "0x54c374161825160DE1451498420cA969f2b1A07F"
       abi: ECO
       startBlock: 0
     mapping:
@@ -114,7 +114,7 @@ dataSources:
     name: ECOx
     network: mainnet
     source:
-      address: "0x440c09114f25274986d962A43AB0030F38971Fd9"
+      address: "0x167517951c4f7ddD1B5baa3c99EE50A7Cc6D45B5"
       abi: ECOx
       startBlock: 0
     mapping:
@@ -139,7 +139,7 @@ dataSources:
     name: ECOxStaking
     network: mainnet
     source:
-      address: "0xc946d73acE209F6dEaBD2dee6C0e8514C61fD129"
+      address: "0x83C5d569d90295407063434061dd3D1fdc14c9EF"
       abi: ECOxStaking
       startBlock: 0
     mapping:
@@ -266,7 +266,8 @@ templates:
         - name: CurrencyGovernance
           file: ./abis/CurrencyGovernance.json
       eventHandlers:
-        - event: ProposalCreation(indexed address,uint256,uint256,uint256,uint256,uint256)
+        - event: ProposalCreation(indexed
+            address,uint256,uint256,uint256,uint256,uint256,string)
           handler: handleProposalCreation
         - event: ProposalRetraction(indexed address)
           handler: handleProposalRetraction

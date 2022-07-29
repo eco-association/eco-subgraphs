@@ -60,6 +60,7 @@ type MonetaryProposal @entity {
     lockupDuration: BigInt!
     lockupInterest: BigInt!
     inflationMultiplier: BigInt!
+    description: String!
     score: BigInt!
 }
 
