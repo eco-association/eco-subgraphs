@@ -2,12 +2,13 @@ import { BigInt, store } from "@graphprotocol/graph-ts";
 import {
     NewInflationMultiplier,
     BaseValueTransfer,
-    Approval
+    Approval,
+    ECO,
 } from "../../generated/ECO/ECO";
 import {
     ECOAllowance,
     ECOBalance,
-    InflationMultiplier
+    InflationMultiplier,
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
@@ -22,7 +23,11 @@ export function handleNewInflationMultiplier(
         event.transaction.hash
     );
 
-    newInflationMultiplier.value = event.params.inflationMultiplier;
+    const eco = ECO.bind(event.address);
+    newInflationMultiplier.value = eco.getPastLinearInflation(
+        event.block.number
+    );
+
     newInflationMultiplier.blockNumber = event.block.number;
     newInflationMultiplier.save();
 }

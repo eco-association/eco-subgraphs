@@ -12,6 +12,7 @@ type ContractAddresses @entity {
     policyVotes: String!
     eco: String!
     ecox: String!
+    weco: String!
     ecoxStaking: String!
     trustedNodes: String!
 }
@@ -186,6 +187,7 @@ type Account @entity {
     ECO: BigInt!
     ECOx: BigInt!
     sECOx: BigInt!
+    wECO: BigInt!
     votes: BigInt!
     ECOxDelegator: Bytes "ECOx delegator"
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")

@@ -27,6 +27,10 @@
         "LockupVaultFactory": {
             "address": "0xf6d82882b9ae041760ffa8c879a4e9ce10710b5a",
             "startBlock": 32983000
+        },
+        "ECOWrapped": {
+            "address": "0xd33a3a175941e65726dA698D08f265Cbde329399",
+            "startBlock": 33182900
         }
     },
     "localhost": {
@@ -56,6 +60,10 @@
         },
         "LockupVaultFactory": {
             "address": "0x89c41bf50f31624db523fa45b4c8a334cfd58a28",
+            "startBlock": 0
+        },
+        "ECOWrapped": {
+            "address": "0xd33a3a175941e65726dA698D08f265Cbde329399",
             "startBlock": 0
         }
     }

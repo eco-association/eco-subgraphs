@@ -7,6 +7,7 @@ import {
     ID_CURRENCY_TIMER,
     ID_TRUSTED_NODES,
     ID_ECOXSTAKING,
+    NULL_ADDRESS,
 } from "../constants";
 
 export function loadContractAddresses(): ContractAddresses | null {
@@ -32,6 +33,7 @@ export function loadOrCreateContractAddresses(
         contracts.trustedNodes = policy
             .policyFor(ID_TRUSTED_NODES)
             .toHexString();
+        contracts.weco = NULL_ADDRESS;
     }
     return contracts;
 }
