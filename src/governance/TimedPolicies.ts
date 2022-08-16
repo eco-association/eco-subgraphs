@@ -1,14 +1,15 @@
 import {
+    NewGeneration as NewGenerationEvent,
     PolicyDecisionStart,
     TimedPolicies,
 } from "../../generated/TimedPolicies/TimedPolicies";
 import { PolicyProposals } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyProposals as PolicyProposalsTemplate } from "../../generated/templates";
-import { PolicyProposal } from "../../generated/schema";
+import { Generation, PolicyProposal } from "../../generated/schema";
 import { loadContractAddresses } from ".";
 
-// TimedPolicies.PolicyDesicionStarted(address contractAddress)
-export function handlePolicyDesicionStarted(event: PolicyDecisionStart): void {
+// TimedPolicies.PolicyDecisionStarted(address contractAddress)
+export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
     // get the new address
     const timedPoliciesContract = TimedPolicies.bind(event.address);
 
@@ -41,4 +42,10 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStart): void {
         contracts.policyProposals = event.params.contractAddress.toHexString();
         contracts.save();
     }
+}
+
+export function handleNewGeneration(event: NewGenerationEvent): void {
+    const generation = new Generation(event.params.generation.toString());
+    generation.number = event.params.generation;
+    generation.save();
 }

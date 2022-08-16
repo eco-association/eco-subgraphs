@@ -88,9 +88,20 @@ type MonetaryVote @entity {
     trustee: Trustee!
 }
 
+type TrustedNodes @entity {
+    id: String!
+    hoard: Bytes!
+    yearStartGen: BigInt!
+    yearEnd: BigInt!
+    voteReward: BigInt!
+    unallocatedRewardsCount: BigInt!
+    cohorts: [TrusteeCohort!]! @derivedFrom(field: "node")
+}
+
 type TrusteeCohort @entity {
     id: String!
     number: BigInt!
+    node: TrustedNodes!
     trustees: [Trustee!]! @derivedFrom(field: "cohorts")
 }
 
@@ -99,6 +110,9 @@ type Trustee @entity {
     id: address
     """
     id: String!
+    votingRecord: BigInt!
+    lastYearVotingRecord: BigInt!
+    fullyVestedRewards: BigInt!
     cohorts: [TrusteeCohort!]!
     proposals: [MonetaryProposal!]! @derivedFrom(field: "trustee")
 }

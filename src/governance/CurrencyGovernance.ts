@@ -5,15 +5,16 @@ import {
     ProposalRetraction,
     VoteCast,
     VoteResult,
-    VoteReveal
+    VoteReveal,
 } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
 import {
     MonetaryProposal,
     CurrencyGovernance,
     MonetaryCommit,
-    MonetaryVote
+    MonetaryVote,
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
+import { loadOrCreateTrustee } from "./TrustedNodes";
 
 // ProposalCreation(address indexed trusteeAddress,
 //  uint256 _numberOfRecipients,
@@ -135,6 +136,11 @@ export function handleVoteReveal(event: VoteReveal): void {
             currencyGovernanceContract.score(Address.fromString(NULL_ADDRESS));
         currencyGovernance.save();
     }
+
+    // Increase vote rewards for trustee
+    const trustee = loadOrCreateTrustee(event.params.voter);
+    trustee.votingRecord = trustee.votingRecord.plus(BigInt.fromString("1"));
+    trustee.save();
 }
 
 // CurrencyGovernance.VoteResult(address indexed winner)

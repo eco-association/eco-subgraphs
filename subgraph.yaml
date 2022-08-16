@@ -24,6 +24,8 @@ dataSources:
           handler: handleTrustedNodeAdded
         - event: TrustedNodeRemoval(indexed address,uint256)
           handler: handleTrustedNodeRemoved
+        - event: RewardsTrackingUpdate(uint256,uint256)
+          handler: handleRewardsTrackingUpdate
       file: ./src/governance/TrustedNodes.ts
   - kind: ethereum
     name: CurrencyTimer
@@ -78,15 +80,17 @@ dataSources:
           file: ./abis/PolicyProposals.json
       eventHandlers:
         - event: PolicyDecisionStart(address)
-          handler: handlePolicyDesicionStarted
+          handler: handlePolicyDecisionStarted
+        - event: NewGeneration(indexed uint256)
+          handler: handleNewGeneration
       file: ./src/governance/TimedPolicies.ts
   - kind: ethereum
     name: ECO
     network: kovan
     source:
       abi: ECO
-      address: "0x83bd31b5B129781a28c37106C100f299A98872Df"
-      startBlock: 32983000
+      address: "0x95f00Eb9EC8d2525878F090CF823BB974930dFD4"
+      startBlock: 33058256
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
