@@ -20,30 +20,39 @@ import {
 
 import { loadContractAddresses } from ".";
 
-// PolicyPropsals.Register(address proposer, address proposalAddress)
+// PolicyProposals.Register(address proposer, address proposalAddress)
 export function handleRegister(event: Register): void {
-    // create a new proposal entity
-    const proposal = new CommunityProposal(
-        event.params.proposalAddress.toHexString()
-    );
-    proposal.proposer = event.params.proposer;
-
-    // get the policyProposals entity for the generation
-    const policyProposal = PolicyProposal.load(event.address.toHexString());
-    if (policyProposal) {
-        proposal.generation = policyProposal.generation;
-    }
-
-    // get additional data from the proposal contract itself
+    // get data from the proposal contract itself
     const proposalContract = Proposal.bind(event.params.proposalAddress);
-    proposal.name = proposalContract.name();
-    proposal.description = proposalContract.description();
-    proposal.url = proposalContract.url();
-    proposal.reachedSupportThreshold = false;
-    proposal.refunded = false;
-    proposal.totalSupportAmount = BigInt.fromString("0");
+    const nameRequest = proposalContract.try_name();
+    const descriptionRequest = proposalContract.try_description();
+    const urlRequest = proposalContract.try_url();
 
-    proposal.save();
+    // Skip proposal if it's not valid
+    if (
+        !nameRequest.reverted &&
+        !descriptionRequest.reverted &&
+        !urlRequest.reverted
+    ) {
+        // create a new proposal entity
+        const proposal = new CommunityProposal(
+            event.params.proposalAddress.toHexString()
+        );
+        proposal.proposer = event.params.proposer;
+
+        // get the policyProposals entity for the generation
+        const policyProposal = PolicyProposal.load(event.address.toHexString());
+        if (policyProposal) {
+            proposal.generation = policyProposal.generation;
+        }
+        proposal.name = nameRequest.value;
+        proposal.description = descriptionRequest.value;
+        proposal.url = urlRequest.value;
+        proposal.reachedSupportThreshold = false;
+        proposal.refunded = false;
+        proposal.totalSupportAmount = BigInt.fromString("0");
+        proposal.save();
+    }
 }
 
 // PolicyProposals.Support(address supporter, address proposalAddress)
