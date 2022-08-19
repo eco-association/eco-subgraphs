@@ -1,36 +1,36 @@
 {
-    "kovan": {
+    "goerli": {
         "TrustedNodes": {
-            "address": "0xc6C77E59252A11572b809e444F753991Bf316302",
-            "startBlock": 32983000
+            "address": "0xB418b67B7C467AfFF5F75729D417F4B5371c47Df",
+            "startBlock": 7382650
         },
         "CurrencyTimer": {
-            "address": "0x58cdaeEad5508d7DC8C3c0659d916A3B5f3273b0",
-            "startBlock": 32983000
+            "address": "0xD19C36A9b30ed8C133082e62195Dd14baF337720",
+            "startBlock": 7382650
         },
         "TimedPolicies": {
-            "address": "0x02bc641b912f31524b901679d5885c3F267F548e",
-            "startBlock": 32983000
+            "address": "0xA3424Dc17C0678126dbce10dc3C108c7dD10b06d",
+            "startBlock": 7382650
         },
         "ECO": {
-            "address": "0x83bd31b5B129781a28c37106C100f299A98872Df",
-            "startBlock": 32983000
+            "address": "0xA6A1ffc01Bea2fe465b5e0B316a4b10fEa045cD0",
+            "startBlock": 7382650
         },
         "ECOx": {
-            "address": "0xD392678beaF12b24991949e3544A7d80557e0e32",
-            "startBlock": 32983000
+            "address": "0x1aF18D9d9E29710D9642578fD3d6cD3686B23128",
+            "startBlock": 7382650
         },
         "ECOxStaking": {
-            "address": "0xE91dAB0306634aeDC163229099997b3311F4A72F",
-            "startBlock": 32983000
+            "address": "0x9d6FF62F8430a34B5E8b8A7EDfDE2494D483c8e6",
+            "startBlock": 7382650
         },
         "LockupVaultFactory": {
-            "address": "0xf6d82882b9ae041760ffa8c879a4e9ce10710b5a",
-            "startBlock": 32983000
+            "address": "0xA489eCFdd6E2D1827A300C7f91383e80D56dA268",
+            "startBlock": 7434150
         },
         "ECOWrapped": {
-            "address": "0xd33a3a175941e65726dA698D08f265Cbde329399",
-            "startBlock": 33182900
+            "address": "0xD8694a147CF07a2c2747e91B0Ad1195a2EbF3ca4",
+            "startBlock": 7434450
         }
     },
     "localhost": {

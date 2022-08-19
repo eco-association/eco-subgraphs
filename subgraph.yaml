@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: TrustedNodes
-    network: kovan
+    network: goerli
     source:
-      address: "0xc6C77E59252A11572b809e444F753991Bf316302"
+      address: "0xB418b67B7C467AfFF5F75729D417F4B5371c47Df"
       abi: TrustedNodes
-      startBlock: 32983000
+      startBlock: 7382650
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -27,11 +27,11 @@ dataSources:
       file: ./src/governance/TrustedNodes.ts
   - kind: ethereum
     name: CurrencyTimer
-    network: kovan
+    network: goerli
     source:
-      address: "0x58cdaeEad5508d7DC8C3c0659d916A3B5f3273b0"
+      address: "0xD19C36A9b30ed8C133082e62195Dd14baF337720"
       abi: CurrencyTimer
-      startBlock: 32983000
+      startBlock: 7382650
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -58,11 +58,11 @@ dataSources:
       file: ./src/governance/CurrencyTimer.ts
   - kind: ethereum
     name: TimedPolicies
-    network: kovan
+    network: goerli
     source:
-      address: "0x02bc641b912f31524b901679d5885c3F267F548e"
+      address: "0xA3424Dc17C0678126dbce10dc3C108c7dD10b06d"
       abi: TimedPolicies
-      startBlock: 32983000
+      startBlock: 7382650
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -82,11 +82,11 @@ dataSources:
       file: ./src/governance/TimedPolicies.ts
   - kind: ethereum
     name: ECO
-    network: kovan
+    network: goerli
     source:
       abi: ECO
-      address: "0x83bd31b5B129781a28c37106C100f299A98872Df"
-      startBlock: 32983000
+      address: "0xA6A1ffc01Bea2fe465b5e0B316a4b10fEa045cD0"
+      startBlock: 7382650
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -112,11 +112,11 @@ dataSources:
       file: ./src/currency/ECO.ts
   - kind: ethereum
     name: ECOx
-    network: kovan
+    network: goerli
     source:
-      address: "0xD392678beaF12b24991949e3544A7d80557e0e32"
+      address: "0x1aF18D9d9E29710D9642578fD3d6cD3686B23128"
       abi: ECOx
-      startBlock: 32983000
+      startBlock: 7382650
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -135,11 +135,11 @@ dataSources:
       file: ./src/currency/ECOx.ts
   - kind: ethereum
     name: ECOxStaking
-    network: kovan
+    network: goerli
     source:
-      address: "0xE91dAB0306634aeDC163229099997b3311F4A72F"
+      address: "0x9d6FF62F8430a34B5E8b8A7EDfDE2494D483c8e6"
       abi: ECOxStaking
-      startBlock: 32983000
+      startBlock: 7382650
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -163,11 +163,11 @@ dataSources:
       file: ./src/currency/ECOxStaking.ts
   - kind: ethereum
     name: LockupVaultFactory
-    network: kovan
+    network: goerli
     source:
-      address: "0xf6d82882b9ae041760ffa8c879a4e9ce10710b5a"
+      address: "0xA489eCFdd6E2D1827A300C7f91383e80D56dA268"
       abi: LockupVaultFactory
-      startBlock: 32983000
+      startBlock: 7434150
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -185,11 +185,11 @@ dataSources:
       file: ./src/governance/LockupVaultFactory.ts
   - kind: ethereum
     name: ECOWrapped
-    network: kovan
+    network: goerli
     source:
-      address: "0xd33a3a175941e65726dA698D08f265Cbde329399"
+      address: "0xD8694a147CF07a2c2747e91B0Ad1195a2EbF3ca4"
       abi: ECOWrapped
-      startBlock: 33182900
+      startBlock: 7434450
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -210,7 +210,7 @@ dataSources:
 templates:
   - kind: ethereum
     name: PolicyProposals
-    network: kovan
+    network: goerli
     source:
       abi: PolicyProposals
     mapping:
@@ -244,7 +244,7 @@ templates:
       file: ./src/governance/PolicyProposals.ts
   - kind: ethereum
     name: PolicyVotes
-    network: kovan
+    network: goerli
     source:
       abi: PolicyVotes
     mapping:
@@ -272,7 +272,7 @@ templates:
       file: ./src/governance/PolicyVotes.ts
   - kind: ethereum
     name: CurrencyGovernance
-    network: kovan
+    network: goerli
     source:
       abi: CurrencyGovernance
     mapping:
@@ -302,7 +302,7 @@ templates:
       file: ./src/governance/CurrencyGovernance.ts
   - kind: ethereum
     name: Lockup
-    network: kovan
+    network: goerli
     source:
       abi: Lockup
     mapping:
@@ -325,7 +325,7 @@ templates:
       file: ./src/governance/Lockup.ts
   - kind: ethereum
     name: LockupVault
-    network: kovan
+    network: goerli
     source:
       abi: LockupVault
     mapping:
