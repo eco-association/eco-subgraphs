@@ -263,12 +263,12 @@ templates:
         - name: Proposal
           file: ./abis/Proposal.json
       eventHandlers:
-        - event: PolicyVoteCast(indexed address,bool,uint256)
-          handler: handlePolicyVoteCast
+        - event: PolicyVote(indexed address,indexed bool,uint256)
+          handler: handlePolicyVote
         - event: PolicySplitVoteCast(indexed address,uint256,uint256)
           handler: handlePolicySplitVoteCast
-        - event: VoteCompleted(uint8)
-          handler: handleVoteCompleted
+        - event: VoteCompletion(indexed uint8)
+          handler: handleVoteCompletion
       file: ./src/governance/PolicyVotes.ts
   - kind: ethereum
     name: CurrencyGovernance
