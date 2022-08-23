@@ -288,6 +288,7 @@ templates:
         - MonetaryProposal
         - MonetaryCommit
         - MonetaryVote
+        - TrustedNodes
       abis:
         - name: CurrencyGovernance
           file: ./abis/CurrencyGovernance.json

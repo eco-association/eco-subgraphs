@@ -5,13 +5,14 @@ import {
     ProposalRetraction,
     VoteCast,
     VoteResult,
-    VoteReveal,
+    VoteReveal
 } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
 import {
     MonetaryProposal,
     CurrencyGovernance,
     MonetaryCommit,
     MonetaryVote,
+    TrustedNodes
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateTrustee } from "./TrustedNodes";
@@ -141,6 +142,17 @@ export function handleVoteReveal(event: VoteReveal): void {
     const trustee = loadOrCreateTrustee(event.params.voter);
     trustee.votingRecord = trustee.votingRecord.plus(BigInt.fromString("1"));
     trustee.save();
+
+    // decrease the unallocated rewards
+    const trustedNodes = TrustedNodes.load("0");
+    if (
+        trustedNodes &&
+        trustedNodes.unallocatedRewardsCount.gt(BigInt.fromString("0"))
+    ) {
+        trustedNodes.unallocatedRewardsCount =
+            trustedNodes.unallocatedRewardsCount.minus(BigInt.fromString("1"));
+        trustedNodes.save();
+    }
 }
 
 // CurrencyGovernance.VoteResult(address indexed winner)
