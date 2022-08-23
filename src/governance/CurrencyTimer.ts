@@ -2,20 +2,16 @@ import { Address, BigInt } from "@graphprotocol/graph-ts";
 import {
     NewCurrencyGovernance,
     CurrencyTimer,
-    NewLockup
+    NewLockup,
 } from "../../generated/CurrencyTimer/CurrencyTimer";
 import { Policy } from "../../generated/CurrencyTimer/Policy";
 import { CurrencyGovernance as CurrencyGovernanceContract } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
 import { Lockup as LockupContract } from "../../generated/templates/Lockup/Lockup";
 import {
     CurrencyGovernance as CurrencyGovernanceTemplate,
-    Lockup as LockupTemplate
+    Lockup as LockupTemplate,
 } from "../../generated/templates";
-import {
-    CurrencyGovernance,
-    Generation,
-    FundsLockup
-} from "../../generated/schema";
+import { CurrencyGovernance, FundsLockup } from "../../generated/schema";
 
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateContractAddresses } from ".";
@@ -27,13 +23,6 @@ export function handleNewCurrencyGovernance(
     // get the new address
     const currencyGovernanceAddress = event.params.addr;
 
-    // create new generation
-    const generationNum = event.params.generation;
-
-    const currentGeneration = new Generation(generationNum.toString());
-    currentGeneration.number = generationNum;
-    currentGeneration.save();
-
     // subscribe to events from this generation's currencyGovernance contract
     CurrencyGovernanceTemplate.create(currencyGovernanceAddress);
 
@@ -41,7 +30,7 @@ export function handleNewCurrencyGovernance(
     const newCurrencyGovernance = new CurrencyGovernance(
         currencyGovernanceAddress.toHexString()
     );
-    newCurrencyGovernance.generation = generationNum.toString();
+    newCurrencyGovernance.generation = event.params.generation.toString();
 
     // get currency governance contract and set initial values
     const currencyGovernanceContract = CurrencyGovernanceContract.bind(

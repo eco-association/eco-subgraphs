@@ -1,4 +1,5 @@
 import {
+    NewGeneration as NewGenerationEvent,
     PolicyDecisionStart,
     TimedPolicies
 } from "../../generated/TimedPolicies/TimedPolicies";
@@ -7,22 +8,12 @@ import { PolicyProposals as PolicyProposalsTemplate } from "../../generated/temp
 import { Generation, PolicyProposal } from "../../generated/schema";
 import { loadContractAddresses } from ".";
 
-// TimedPolicies.PolicyDesicionStarted(address contractAddress)
-export function handlePolicyDesicionStarted(event: PolicyDecisionStart): void {
+// TimedPolicies.PolicyDecisionStarted(address contractAddress)
+export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
     // get the new address
     const timedPoliciesContract = TimedPolicies.bind(event.address);
 
     const policyProposalsAddress = event.params.contractAddress;
-
-    // get generation
-    const generationNum = timedPoliciesContract.generation();
-    const nextGenerationStart = timedPoliciesContract.nextGenerationStart();
-
-    const generation = Generation.load(generationNum.toString());
-    if (generation) {
-        generation.nextGenerationStart = nextGenerationStart;
-        generation.save();
-    }
 
     // subscribe to events from this generation's PolicyProposals contract
     PolicyProposalsTemplate.create(policyProposalsAddress);
@@ -34,7 +25,9 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStart): void {
     const newPolicyProposals = new PolicyProposal(
         policyProposalsAddress.toHexString()
     );
-    newPolicyProposals.generation = generationNum.toString();
+    newPolicyProposals.generation = timedPoliciesContract
+        .generation()
+        .toString();
     newPolicyProposals.proposalEnds = policyProposalsContract.proposalEnds();
     const blockNumber = policyProposalsContract.blockNumber();
     newPolicyProposals.blockNumber = blockNumber;
@@ -48,4 +41,15 @@ export function handlePolicyDesicionStarted(event: PolicyDecisionStart): void {
         contracts.policyProposals = event.params.contractAddress.toHexString();
         contracts.save();
     }
+}
+
+export function handleNewGeneration(event: NewGenerationEvent): void {
+    const generation = new Generation(event.params.generation.toString());
+    generation.number = event.params.generation;
+
+    const timedPoliciesContract = TimedPolicies.bind(event.address);
+    generation.nextGenerationStart =
+        timedPoliciesContract.nextGenerationStart();
+
+    generation.save();
 }

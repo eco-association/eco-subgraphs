@@ -24,6 +24,8 @@ dataSources:
           handler: handleTrustedNodeAdded
         - event: TrustedNodeRemoval(indexed address,uint256)
           handler: handleTrustedNodeRemoved
+        - event: RewardsTrackingUpdate(uint256,uint256)
+          handler: handleRewardsTrackingUpdate
       file: ./src/governance/TrustedNodes.ts
   - kind: ethereum
     name: CurrencyTimer
@@ -78,7 +80,9 @@ dataSources:
           file: ./abis/PolicyProposals.json
       eventHandlers:
         - event: PolicyDecisionStart(address)
-          handler: handlePolicyDesicionStarted
+          handler: handlePolicyDecisionStarted
+        - event: NewGeneration(indexed uint256)
+          handler: handleNewGeneration
       file: ./src/governance/TimedPolicies.ts
   - kind: ethereum
     name: ECO
@@ -284,6 +288,7 @@ templates:
         - MonetaryProposal
         - MonetaryCommit
         - MonetaryVote
+        - TrustedNodes
       abis:
         - name: CurrencyGovernance
           file: ./abis/CurrencyGovernance.json

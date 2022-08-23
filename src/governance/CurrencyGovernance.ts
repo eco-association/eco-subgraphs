@@ -11,9 +11,11 @@ import {
     MonetaryProposal,
     CurrencyGovernance,
     MonetaryCommit,
-    MonetaryVote
+    MonetaryVote,
+    TrustedNodes
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
+import { loadOrCreateTrustee } from "./TrustedNodes";
 
 // ProposalCreation(address indexed trusteeAddress,
 //  uint256 _numberOfRecipients,
@@ -134,6 +136,22 @@ export function handleVoteReveal(event: VoteReveal): void {
         currencyGovernance.defaultProposalScore =
             currencyGovernanceContract.score(Address.fromString(NULL_ADDRESS));
         currencyGovernance.save();
+    }
+
+    // Increase vote rewards for trustee
+    const trustee = loadOrCreateTrustee(event.params.voter);
+    trustee.votingRecord = trustee.votingRecord.plus(BigInt.fromString("1"));
+    trustee.save();
+
+    // decrease the unallocated rewards
+    const trustedNodes = TrustedNodes.load("0");
+    if (
+        trustedNodes &&
+        trustedNodes.unallocatedRewardsCount.gt(BigInt.fromString("0"))
+    ) {
+        trustedNodes.unallocatedRewardsCount =
+            trustedNodes.unallocatedRewardsCount.minus(BigInt.fromString("1"));
+        trustedNodes.save();
     }
 }
 
