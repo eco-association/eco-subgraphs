@@ -1,7 +1,7 @@
 import {
     NewGeneration as NewGenerationEvent,
     PolicyDecisionStart,
-    TimedPolicies,
+    TimedPolicies
 } from "../../generated/TimedPolicies/TimedPolicies";
 import { PolicyProposals } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyProposals as PolicyProposalsTemplate } from "../../generated/templates";
@@ -15,9 +15,6 @@ export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
 
     const policyProposalsAddress = event.params.contractAddress;
 
-    // get generation
-    const generationNum = timedPoliciesContract.generation();
-
     // subscribe to events from this generation's PolicyProposals contract
     PolicyProposalsTemplate.create(policyProposalsAddress);
     const policyProposalsContract = PolicyProposals.bind(
@@ -28,7 +25,9 @@ export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
     const newPolicyProposals = new PolicyProposal(
         policyProposalsAddress.toHexString()
     );
-    newPolicyProposals.generation = generationNum.toString();
+    newPolicyProposals.generation = timedPoliciesContract
+        .generation()
+        .toString();
     newPolicyProposals.proposalEnds = policyProposalsContract.proposalEnds();
     const blockNumber = policyProposalsContract.blockNumber();
     newPolicyProposals.blockNumber = blockNumber;
@@ -47,5 +46,10 @@ export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
 export function handleNewGeneration(event: NewGenerationEvent): void {
     const generation = new Generation(event.params.generation.toString());
     generation.number = event.params.generation;
+
+    const timedPoliciesContract = TimedPolicies.bind(event.address);
+    generation.nextGenerationStart =
+        timedPoliciesContract.nextGenerationStart();
+
     generation.save();
 }

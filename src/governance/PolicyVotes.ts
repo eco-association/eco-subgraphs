@@ -1,13 +1,13 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import {
-    PolicyVoteCast,
+    PolicyVote as PolicyVoteEvent,
     PolicySplitVoteCast,
-    VoteCompleted
+    VoteCompletion
 } from "../../generated/templates/PolicyVotes/PolicyVotes";
 import { CommunityProposalVote, PolicyVote } from "../../generated/schema";
 
 // PolicyVotes.PolicyVoteCast(address voter, bool vote, uint256 amount)
-export function handlePolicyVoteCast(event: PolicyVoteCast): void {
+export function handlePolicyVote(event: PolicyVoteEvent): void {
     const id = `${event.params.voter.toHexString()}-${event.address.toHexString()}`;
 
     let vote = CommunityProposalVote.load(id);
@@ -89,7 +89,7 @@ export function handlePolicySplitVoteCast(event: PolicySplitVoteCast): void {
 }
 
 // PolicyVotes.VoteCompleted(Result result)
-export function handleVoteCompleted(event: VoteCompleted): void {
+export function handleVoteCompletion(event: VoteCompletion): void {
     // get entity
     const policyVote = PolicyVote.load(event.address.toHexString());
     // determine and set result

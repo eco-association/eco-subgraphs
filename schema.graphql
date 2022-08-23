@@ -24,8 +24,9 @@ ECO generation
 type Generation @entity {
     id: String! "generation number"
     number: BigInt!
+    nextGenerationStart: BigInt!
     currencyGovernance: CurrencyGovernance! @derivedFrom(field: "generation")
-    policyProposal: PolicyProposal @derivedFrom(field: "generation")
+    policyProposal: PolicyProposal! @derivedFrom(field: "generation")
     policyVote: PolicyVote @derivedFrom(field: "generation")
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
     monetaryProposals: [MonetaryProposal!]! @derivedFrom(field: "generation")
