@@ -3,15 +3,28 @@ import {
     NewCurrencyGovernance,
     CurrencyTimer,
     NewLockup,
+    NewInflation
 } from "../../generated/CurrencyTimer/CurrencyTimer";
 import { Policy } from "../../generated/CurrencyTimer/Policy";
 import { CurrencyGovernance as CurrencyGovernanceContract } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
 import { Lockup as LockupContract } from "../../generated/templates/Lockup/Lockup";
+import { RandomInflation as RandomInflationContract } from "../../generated/templates/RandomInflation/RandomInflation";
+import { InflationRootHashProposal as InflationRootHashProposalContract } from "../../generated/templates/InflationRootHashProposal/InflationRootHashProposal";
+
 import {
     CurrencyGovernance as CurrencyGovernanceTemplate,
     Lockup as LockupTemplate,
+    RandomInflation as RandomInflationTemplate,
+    InflationRootHashProposal as InflationRootHashProposalTemplate
 } from "../../generated/templates";
-import { CurrencyGovernance, FundsLockup } from "../../generated/schema";
+import {
+    ContractAddresses,
+    CurrencyGovernance,
+    FundsLockup,
+    InflationRootHashProposal,
+    RandomInflation,
+    VDFVerifier
+} from "../../generated/schema";
 
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateContractAddresses } from ".";
@@ -59,7 +72,67 @@ export function handleNewCurrencyGovernance(
     contracts.currencyGovernance = currencyGovernanceAddress.toHexString();
     contracts.policyProposals = NULL_ADDRESS;
     contracts.policyVotes = NULL_ADDRESS;
+    contracts.lockup = NULL_ADDRESS;
+    contracts.randomInflation = NULL_ADDRESS;
     contracts.save();
+}
+
+// NewInflation(RandomInflation indexed addr, uint256 indexed generation)
+export function handleNewInflation(event: NewInflation): void {
+    // save inflation entity for the generation
+    const newInflation = new RandomInflation(event.params.addr.toHexString());
+    newInflation.generation = event.params.generation.toString();
+
+    // also get data from contract
+    const randomInflationContract = RandomInflationContract.bind(
+        event.params.addr
+    );
+    newInflation.vdfVerifier = randomInflationContract
+        .vdfVerifier()
+        .toHexString();
+    newInflation.inflationRootHashProposal = randomInflationContract
+        .inflationRootHashProposal()
+        .toHexString();
+    newInflation.numRecipients = randomInflationContract.numRecipients();
+    newInflation.reward = randomInflationContract.reward();
+    newInflation.claimPeriodStarts =
+        randomInflationContract.claimPeriodStarts();
+    newInflation.CLAIM_PERIOD = randomInflationContract.CLAIM_PERIOD();
+    newInflation.blockNumber = randomInflationContract.blockNumber();
+    newInflation.save();
+    RandomInflationTemplate.create(event.params.addr);
+
+    const newInflationRootHashProposal = new InflationRootHashProposal(
+        newInflation.inflationRootHashProposal
+    );
+    const inflationRootHashProposalContract =
+        InflationRootHashProposalContract.bind(
+            randomInflationContract.inflationRootHashProposal()
+        );
+    newInflationRootHashProposal.CHALLENGE_FEE =
+        inflationRootHashProposalContract.CHALLENGE_FEE();
+    newInflationRootHashProposal.PROPOSER_FEE =
+        inflationRootHashProposalContract.PROPOSER_FEE();
+    newInflationRootHashProposal.CHALLENGING_TIME =
+        inflationRootHashProposalContract.CHALLENGING_TIME();
+    newInflationRootHashProposal.CONTESTING_TIME =
+        inflationRootHashProposalContract.CONTESTING_TIME();
+    newInflationRootHashProposal.FEE_COLLECTION_TIME =
+        inflationRootHashProposalContract.FEE_COLLECTION_TIME();
+    newInflationRootHashProposal.save();
+    InflationRootHashProposalTemplate.create(
+        randomInflationContract.inflationRootHashProposal()
+    );
+
+    const newVDFVerifier = new VDFVerifier(newInflation.vdfVerifier);
+    newVDFVerifier.save();
+
+    // add contract address
+    const contracts = ContractAddresses.load("0");
+    if (contracts) {
+        contracts.randomInflation = event.params.addr.toHexString();
+        contracts.save();
+    }
 }
 
 export function handleNewLockup(event: NewLockup): void {
@@ -78,4 +151,11 @@ export function handleNewLockup(event: NewLockup): void {
 
     // listen for new lockup's events
     LockupTemplate.create(event.params.addr);
+
+    // add contract address
+    const contracts = ContractAddresses.load("0");
+    if (contracts) {
+        contracts.lockup = event.params.addr.toHexString();
+        contracts.save();
+    }
 }
