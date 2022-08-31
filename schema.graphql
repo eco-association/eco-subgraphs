@@ -215,6 +215,7 @@ type Account @entity {
     fundsLockupDeposits: [FundsLockupDeposit!]! @derivedFrom(field: "account")
     fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]! @derivedFrom(field: "delegate")
     lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
+    randomInflationClaims: [RandomInflationClaim!]! @derivedFrom(field: "account")
 }
 
 
@@ -275,7 +276,7 @@ Vote balance
 historical vote balance at blockNumber (representing a part of voting power)
 """
 type sECOxVotingPower @entity {
-    id: Bytes!
+    id: String!
     account: Account!
     value: BigInt!
     blockNumber: BigInt!
@@ -362,8 +363,19 @@ type RandomInflation @entity {
     seedCommit: BigInt
     seedReveal: Bytes
     blockNumber: BigInt!
+    claims: [RandomInflationClaim!]! @derivedFrom(field: "randomInflation")
     vdfVerifier: VDFVerifier!
     inflationRootHashProposal: InflationRootHashProposal!
+}
+
+type RandomInflationClaim @entity {
+    id: String!
+    sequenceNumber: BigInt!
+    """
+    account: wallet that earned this sequence number
+    """
+    account: Account!
+    randomInflation: RandomInflation!
 }
 
 type VDFVerifier @entity {
@@ -371,14 +383,10 @@ type VDFVerifier @entity {
     randomInflation: RandomInflation! @derivedFrom(field: "vdfVerifier")
 }
 
-enum InflationRootHashStatus {
-    Accepted
-    Rejected
-}
 
 type InflationRootHashProposal @entity {
     id: String!
-    status: InflationRootHashStatus
+    accepted: Boolean!
     acceptedRootHash: Bytes
     acceptedTotalSum: BigInt
     acceptedAmountOfAccounts: BigInt

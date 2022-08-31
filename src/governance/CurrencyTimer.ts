@@ -119,6 +119,7 @@ export function handleNewInflation(event: NewInflation): void {
         inflationRootHashProposalContract.CONTESTING_TIME();
     newInflationRootHashProposal.FEE_COLLECTION_TIME =
         inflationRootHashProposalContract.FEE_COLLECTION_TIME();
+    newInflationRootHashProposal.accepted = false;
     newInflationRootHashProposal.save();
     InflationRootHashProposalTemplate.create(
         randomInflationContract.inflationRootHashProposal()

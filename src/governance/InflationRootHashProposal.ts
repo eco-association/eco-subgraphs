@@ -2,8 +2,7 @@ import { InflationRootHashProposal } from "../../generated/schema";
 
 import {
     RootHashAcceptance,
-    InflationRootHashProposal as InflationRootHashProposalContract,
-    RootHashRejection
+    InflationRootHashProposal as InflationRootHashProposalContract
 } from "../../generated/templates/InflationRootHashProposal/InflationRootHashProposal";
 
 export function handleRootHashAcceptance(event: RootHashAcceptance): void {
@@ -22,18 +21,7 @@ export function handleRootHashAcceptance(event: RootHashAcceptance): void {
             event.params.amountOfAccounts;
         inflationRootHashProposal.feeCollectionEnds =
             inflationRootHashProposalContract.feeCollectionEnds();
-        inflationRootHashProposal.status = "Accepted";
-        inflationRootHashProposal.save();
-    }
-}
-
-export function handleRootHashRejection(event: RootHashRejection): void {
-    const inflationRootHashProposal = InflationRootHashProposal.load(
-        event.address.toHexString()
-    );
-
-    if (inflationRootHashProposal) {
-        inflationRootHashProposal.status = "Rejected";
+        inflationRootHashProposal.accepted = true;
         inflationRootHashProposal.save();
     }
 }

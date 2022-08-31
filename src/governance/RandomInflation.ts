@@ -1,17 +1,25 @@
-import { log } from "@graphprotocol/graph-ts";
-import { RandomInflation } from "../../generated/schema";
+import { RandomInflation, RandomInflationClaim } from "../../generated/schema";
 import {
     Claim,
     EntropySeedReveal,
     EntropyVDFSeedCommit
 } from "../../generated/templates/RandomInflation/RandomInflation";
+import { loadOrCreateAccount } from "../currency";
 
 // Claim(address indexed who, uint256 sequence)
 export function handleClaim(event: Claim): void {
-    log.info("Claim: who = {}, sequence = {}", [
-        event.params.who.toHexString(),
-        event.params.sequence.toString()
-    ]);
+    // create new claim
+    const claim = new RandomInflationClaim(
+        event.transaction.hash.toHexString()
+    );
+    claim.sequenceNumber = event.params.sequence;
+
+    const account = loadOrCreateAccount(event.params.who);
+    claim.account = account.id;
+
+    claim.randomInflation = event.address.toHexString();
+
+    claim.save();
 }
 // EntropyVDFSeedCommit(uint256 seed)
 export function handleEntropyVDFSeedCommit(event: EntropyVDFSeedCommit): void {

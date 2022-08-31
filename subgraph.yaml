@@ -370,6 +370,8 @@ templates:
       language: wasm/assemblyscript
       entities:
         - RandomInflation
+        - RandomInflationClaim
+        - Account
       abis:
         - name: RandomInflation
           file: ./abis/RandomInflation.json
@@ -398,6 +400,4 @@ templates:
       eventHandlers:
         - event: RootHashAcceptance(indexed address,uint256,uint256)
           handler: handleRootHashAcceptance
-        - event: RootHashRejection(indexed address)
-          handler: handleRootHashRejection
       file: ./src/governance/InflationRootHashProposal.ts
