@@ -1,14 +1,16 @@
 import { BigInt, store } from "@graphprotocol/graph-ts";
 import {
-    NewInflationMultiplier,
-    BaseValueTransfer,
-    Approval,
     ECO,
+    Approval as ApprovalEvent,
+    UpdatedVotes as UpdatedVotesEvent,
+    BaseValueTransfer as BaseValueTransferEvent,
+    NewInflationMultiplier as NewInflationMultiplierEvent,
 } from "../../generated/ECO/ECO";
 import {
     ECOAllowance,
     ECOBalance,
     InflationMultiplier,
+    VotingPower,
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
@@ -16,7 +18,7 @@ import { Token } from "./entity/Token";
 
 // ECO.NewInflationMultiplier(uint256)
 export function handleNewInflationMultiplier(
-    event: NewInflationMultiplier
+    event: NewInflationMultiplierEvent
 ): void {
     // create new inflation multiplier
     const newInflationMultiplier = new InflationMultiplier(
@@ -33,7 +35,7 @@ export function handleNewInflationMultiplier(
 }
 
 // ECO.Approval(address owner, address spender, uint256 value)
-export function handleApproval(event: Approval): void {
+export function handleApproval(event: ApprovalEvent): void {
     const ownerAccount = loadOrCreateAccount(event.params.owner);
     const spender = event.params.spender.toHexString();
 
@@ -59,7 +61,7 @@ export function handleApproval(event: Approval): void {
 }
 
 // ECO.BaseValueTransfer(address from, address to, uint256 value)
-export function handleBaseValueTransfer(event: BaseValueTransfer): void {
+export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
     const from = loadOrCreateAccount(event.params.from);
     const to = loadOrCreateAccount(event.params.to);
 
@@ -97,4 +99,19 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         // is a burn, decrement total supply
         Token.load("eco", event.address).decreaseSupply(event.params.value);
     }
+}
+
+// ECO.UpdatedVotes(address delegate, uint256 newBalance)
+export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
+    const delegate = loadOrCreateAccount(event.params.voter);
+    delegate.votes = event.params.newVotes;
+    delegate.save();
+
+    // create new historical vote balance entry
+    const newBalance = new VotingPower(event.transaction.hash);
+    newBalance.token = 'eco';
+    newBalance.account = delegate.id;
+    newBalance.value = delegate.votes;
+    newBalance.blockNumber = event.block.number;
+    newBalance.save();
 }
