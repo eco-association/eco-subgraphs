@@ -15,7 +15,14 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     delegate.save();
 
     // create new historical vote balance entry
-    const newBalance = new sECOxVotingPower(event.transaction.hash);
+    let newBalance = sECOxVotingPower.load(
+        `${delegate.id}-${event.block.number.toString()}`
+    );
+    if (!newBalance) {
+        newBalance = new sECOxVotingPower(
+            `${delegate.id}-${event.block.number.toString()}`
+        );
+    }
     newBalance.account = delegate.id;
     newBalance.value = delegate.votes;
     newBalance.blockNumber = event.block.number;

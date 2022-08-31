@@ -3,12 +3,12 @@ import {
     NewInflationMultiplier,
     BaseValueTransfer,
     Approval,
-    ECO,
+    ECO
 } from "../../generated/ECO/ECO";
 import {
     ECOAllowance,
     ECOBalance,
-    InflationMultiplier,
+    InflationMultiplier
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
@@ -69,9 +69,14 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         from.save();
 
         // create new historical ECO balance entry
-        const newBalance = new ECOBalance(
-            `${event.transaction.hash.toHexString()}-${from.id}`
+        let newBalance = ECOBalance.load(
+            `${from.id}-${event.block.number.toString()}`
         );
+        if (!newBalance) {
+            newBalance = new ECOBalance(
+                `${from.id}-${event.block.number.toString()}`
+            );
+        }
         newBalance.account = from.id;
         newBalance.value = from.ECO;
         newBalance.blockNumber = event.block.number;
@@ -86,9 +91,14 @@ export function handleBaseValueTransfer(event: BaseValueTransfer): void {
         to.ECO = to.ECO.plus(event.params.value);
         to.save();
 
-        const newBalance = new ECOBalance(
-            `${event.transaction.hash.toHexString()}-${to.id}`
+        let newBalance = ECOBalance.load(
+            `${to.id}-${event.block.number.toString()}`
         );
+        if (!newBalance) {
+            newBalance = new ECOBalance(
+                `${to.id}-${event.block.number.toString()}`
+            );
+        }
         newBalance.account = to.id;
         newBalance.value = to.ECO;
         newBalance.blockNumber = event.block.number;
