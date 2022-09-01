@@ -19,7 +19,7 @@ export function handleTransfer(event: TransferEvent): void {
         from.wECO = from.wECO.minus(event.params.amount);
         from.save();
     } else {
-        Token.load("wECO", event.address).increaseSupply(event.params.amount);
+        Token.load("wEco", event.address).increaseSupply(event.params.amount);
     }
 
     if (to.id != NULL_ADDRESS) {
@@ -27,6 +27,6 @@ export function handleTransfer(event: TransferEvent): void {
         to.save();
     } else {
         // is a burn, decrement total supply
-        Token.load("wECO", event.address).decreaseSupply(event.params.amount);
+        Token.load("wEco", event.address).decreaseSupply(event.params.amount);
     }
 }
