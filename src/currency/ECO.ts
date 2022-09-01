@@ -103,15 +103,17 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
 
 // ECO.UpdatedVotes(address delegate, uint256 newBalance)
 export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
-    const delegate = loadOrCreateAccount(event.params.voter);
-    delegate.votes = event.params.newVotes;
-    delegate.save();
+    const account = loadOrCreateAccount(event.params.voter);
 
-    // create new historical vote balance entry
-    const newBalance = new VotingPower(event.transaction.hash);
-    newBalance.token = 'eco';
-    newBalance.account = delegate.id;
-    newBalance.value = delegate.votes;
-    newBalance.blockNumber = event.block.number;
-    newBalance.save();
+    const eco = ECO.bind(event.address);
+    const inflation = eco.getPastLinearInflation(event.block.number);
+    const amount = event.params.newVotes.div(inflation);
+
+    // create new historical
+    const votingPower = new VotingPower(event.transaction.hash);
+    votingPower.token = "eco";
+    votingPower.account = account.id;
+    votingPower.value = amount;
+    votingPower.blockNumber = event.block.number;
+    votingPower.save();
 }
