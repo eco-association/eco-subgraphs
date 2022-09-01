@@ -1,9 +1,9 @@
 import {
     UpdatedVotes as UpdatedVotesEvent,
     Transfer as TransferEvent,
-    NewPrimaryDelegate as NewPrimaryDelegateEvent
+    NewPrimaryDelegate as NewPrimaryDelegateEvent,
 } from "../../generated/ECOxStaking/ECOxStaking";
-import { sECOxVotingPower } from "../../generated/schema";
+import { VotingPower } from "../../generated/schema";
 import { loadOrCreateAccount } from ".";
 import { NULL_ADDRESS } from "../constants";
 import { Token } from "./entity/Token";
@@ -15,7 +15,8 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     delegate.save();
 
     // create new historical vote balance entry
-    const newBalance = new sECOxVotingPower(event.transaction.hash);
+    const newBalance = new VotingPower(event.transaction.hash);
+    newBalance.token = 'ecox';
     newBalance.account = delegate.id;
     newBalance.value = delegate.votes;
     newBalance.blockNumber = event.block.number;
