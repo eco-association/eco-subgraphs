@@ -4,13 +4,13 @@ import {
     Approval as ApprovalEvent,
     UpdatedVotes as UpdatedVotesEvent,
     BaseValueTransfer as BaseValueTransferEvent,
-    NewInflationMultiplier as NewInflationMultiplierEvent,
+    NewInflationMultiplier as NewInflationMultiplierEvent
 } from "../../generated/ECO/ECO";
 import {
     ECOAllowance,
     ECOBalance,
     InflationMultiplier,
-    VotingPower,
+    VotingPower
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
@@ -107,7 +107,7 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
 
     const eco = ECO.bind(event.address);
     const inflation = eco.getPastLinearInflation(event.block.number);
-    const amount = event.params.newVotes.div(inflation);
+    const amount = event.params.newVotes.times(inflation);
 
     // create new historical
     const votingPower = new VotingPower(event.transaction.hash);
