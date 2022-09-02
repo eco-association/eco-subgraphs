@@ -46,6 +46,7 @@ export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
 export function handleNewGeneration(event: NewGenerationEvent): void {
     const generation = new Generation(event.params.generation.toString());
     generation.number = event.params.generation;
+    generation.blockNumber = event.block.number;
 
     const timedPoliciesContract = TimedPolicies.bind(event.address);
     generation.nextGenerationStart =

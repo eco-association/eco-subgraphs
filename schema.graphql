@@ -26,6 +26,7 @@ ECO generation
 type Generation @entity {
     id: String! "generation number"
     number: BigInt!
+    blockNumber: BigInt!
     nextGenerationStart: BigInt!
     currencyGovernance: CurrencyGovernance! @derivedFrom(field: "generation")
     policyProposal: PolicyProposal! @derivedFrom(field: "generation")
@@ -106,6 +107,7 @@ type TrustedNodes @entity {
 type TrusteeCohort @entity {
     id: String!
     number: BigInt!
+    blockNumber: BigInt!
     node: TrustedNodes!
     trustees: [Trustee!]! @derivedFrom(field: "cohorts")
 }

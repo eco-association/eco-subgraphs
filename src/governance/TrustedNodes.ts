@@ -1,10 +1,10 @@
-import { store, Address, BigInt, log } from "@graphprotocol/graph-ts";
+import { Address, BigInt, log } from "@graphprotocol/graph-ts";
 import { Trustee, TrustedNodes, TrusteeCohort } from "../../generated/schema";
 import {
     RewardsTrackingUpdate as RewardsTrackingUpdateEvent,
     TrustedNodeAddition as TrustedNodeAdditionEvent,
     TrustedNodeRemoval as TrustedNodeRemovalEvent,
-    TrustedNodes as TrustedNodesContract,
+    TrustedNodes as TrustedNodesContract
 } from "../../generated/TrustedNodes/TrustedNodes";
 
 export function loadOrCreateTrustee(node: Address): Trustee {
@@ -19,18 +19,25 @@ export function loadOrCreateTrustee(node: Address): Trustee {
     return trustee;
 }
 
-function loadOrCreateCohort(cohortId: BigInt): TrusteeCohort {
+function loadOrCreateCohort(
+    cohortId: BigInt,
+    blockNumber: BigInt
+): TrusteeCohort {
     let cohort = TrusteeCohort.load(cohortId.toString());
     if (!cohort) {
         cohort = new TrusteeCohort(cohortId.toString());
         cohort.node = "0";
         cohort.number = cohortId;
+        cohort.blockNumber = blockNumber;
         cohort.save();
     }
     return cohort;
 }
 
-function loadOrCreateTrustedNode(address: Address): TrustedNodes {
+function loadOrCreateTrustedNode(
+    address: Address,
+    blockNumber: BigInt
+): TrustedNodes {
     let trustedEntity = TrustedNodes.load("0");
     if (!trustedEntity) {
         trustedEntity = new TrustedNodes("0");
@@ -42,7 +49,7 @@ function loadOrCreateTrustedNode(address: Address): TrustedNodes {
         trustedEntity.unallocatedRewardsCount =
             trustedNodes.unallocatedRewardsCount();
 
-        loadOrCreateCohort(trustedNodes.cohort());
+        loadOrCreateCohort(trustedNodes.cohort(), blockNumber);
 
         trustedEntity.save();
     }
@@ -54,10 +61,10 @@ export function handleTrustedNodeAdded(event: TrustedNodeAdditionEvent): void {
     const cohortId = event.params.cohort;
 
     // load/create the trusted node entity
-    loadOrCreateTrustedNode(event.address);
+    loadOrCreateTrustedNode(event.address, event.block.number);
 
     // load/create a cohort for this addition
-    loadOrCreateCohort(cohortId);
+    loadOrCreateCohort(cohortId, event.block.number);
 
     // load/create the trustee and add the cohort to it's array
     const trustee = loadOrCreateTrustee(event.params.node);
@@ -67,14 +74,25 @@ export function handleTrustedNodeAdded(event: TrustedNodeAdditionEvent): void {
 
 // TrustedNodeRemoved(address indexed node)
 export function handleTrustedNodeRemoved(event: TrustedNodeRemovalEvent): void {
+    // remove trustee from cohort
     const id = event.params.node.toHexString();
-    store.remove("Trustee", id);
+    const trustee = Trustee.load(id);
+    if (trustee) {
+        trustee.cohorts = trustee.cohorts.splice(
+            trustee.cohorts.indexOf(event.params.cohort.toString()),
+            1
+        );
+        trustee.save();
+    }
 }
 
 export function handleRewardsTrackingUpdate(
     event: RewardsTrackingUpdateEvent
 ): void {
-    const trustedNodesEntity = loadOrCreateTrustedNode(event.address);
+    const trustedNodesEntity = loadOrCreateTrustedNode(
+        event.address,
+        event.block.number
+    );
     const trustedNodes = TrustedNodesContract.bind(event.address);
     trustedNodesEntity.yearEnd = trustedNodes.yearEnd();
     trustedNodesEntity.yearStartGen = trustedNodes.yearStartGen();
