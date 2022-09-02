@@ -15,6 +15,8 @@ type ContractAddresses @entity {
     weco: String!
     ecoxStaking: String!
     trustedNodes: String!
+    lockup: String!
+    randomInflation: String!
 }
 
 
@@ -28,6 +30,8 @@ type Generation @entity {
     currencyGovernance: CurrencyGovernance! @derivedFrom(field: "generation")
     policyProposal: PolicyProposal! @derivedFrom(field: "generation")
     policyVote: PolicyVote @derivedFrom(field: "generation")
+    lockup: FundsLockup @derivedFrom(field: "generation")
+    randomInflation: RandomInflation @derivedFrom(field: "generation")
     communityProposals: [CommunityProposal!]! @derivedFrom(field: "generation")
     monetaryProposals: [MonetaryProposal!]! @derivedFrom(field: "generation")
 }
@@ -211,6 +215,7 @@ type Account @entity {
     fundsLockupDeposits: [FundsLockupDeposit!]! @derivedFrom(field: "account")
     fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]! @derivedFrom(field: "delegate")
     lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
+    randomInflationClaims: [RandomInflationClaim!]! @derivedFrom(field: "account")
 }
 
 
@@ -271,7 +276,7 @@ Vote balance
 historical vote balance at blockNumber (representing a part of voting power)
 """
 type VotingPower @entity {
-    id: Bytes!
+    id: String!
     token: Token!
     account: Account!
     value: BigInt!
@@ -279,14 +284,14 @@ type VotingPower @entity {
 }
 
 """
-Funds Lockup
+Funds Lockup (ECO)
 """
 type FundsLockup @entity {
     """
     id: lockup address
     """
     id: String!
-    generation: String!
+    generation: Generation!
     depositWindowDuration: BigInt!
     depositWindowEndsAt: BigInt!
     duration: BigInt!
@@ -340,4 +345,57 @@ type VestingChunk @entity(immutable: true) {
     vault: LockupVault!
     amount: BigInt!
     timestamp: BigInt!
+}
+
+
+"""
+Random Inflation
+"""
+type RandomInflation @entity {
+    """
+    id: address
+    """
+    id: String!
+    generation: Generation!
+    numRecipients: BigInt!
+    reward: BigInt!
+    claimPeriodStarts: BigInt!
+    CLAIM_PERIOD: BigInt!
+    seedCommit: BigInt
+    seedReveal: Bytes
+    blockNumber: BigInt!
+    claims: [RandomInflationClaim!]! @derivedFrom(field: "randomInflation")
+    vdfVerifier: VDFVerifier!
+    inflationRootHashProposal: InflationRootHashProposal!
+}
+
+type RandomInflationClaim @entity {
+    id: String!
+    sequenceNumber: BigInt!
+    """
+    account: wallet that earned this sequence number
+    """
+    account: Account!
+    randomInflation: RandomInflation!
+}
+
+type VDFVerifier @entity {
+    id: String!
+    randomInflation: RandomInflation! @derivedFrom(field: "vdfVerifier")
+}
+
+
+type InflationRootHashProposal @entity {
+    id: String!
+    accepted: Boolean!
+    acceptedRootHash: Bytes
+    acceptedTotalSum: BigInt
+    acceptedAmountOfAccounts: BigInt
+    feeCollectionEnds: BigInt
+    CHALLENGE_FEE: BigInt!
+    PROPOSER_FEE: BigInt!
+    CHALLENGING_TIME: BigInt!
+    CONTESTING_TIME: BigInt!
+    FEE_COLLECTION_TIME: BigInt!
+    randomInflation: RandomInflation! @derivedFrom(field: "inflationRootHashProposal")
 }

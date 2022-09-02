@@ -71,9 +71,14 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         from.save();
 
         // create new historical ECO balance entry
-        const newBalance = new ECOBalance(
-            `${event.transaction.hash.toHexString()}-${from.id}`
+        let newBalance = ECOBalance.load(
+            `${from.id}-${event.block.number.toString()}`
         );
+        if (!newBalance) {
+            newBalance = new ECOBalance(
+                `${from.id}-${event.block.number.toString()}`
+            );
+        }
         newBalance.account = from.id;
         newBalance.value = from.ECO;
         newBalance.blockNumber = event.block.number;
@@ -88,9 +93,14 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         to.ECO = to.ECO.plus(event.params.value);
         to.save();
 
-        const newBalance = new ECOBalance(
-            `${event.transaction.hash.toHexString()}-${to.id}`
+        let newBalance = ECOBalance.load(
+            `${to.id}-${event.block.number.toString()}`
         );
+        if (!newBalance) {
+            newBalance = new ECOBalance(
+                `${to.id}-${event.block.number.toString()}`
+            );
+        }
         newBalance.account = to.id;
         newBalance.value = to.ECO;
         newBalance.blockNumber = event.block.number;
@@ -110,7 +120,11 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     const amount = event.params.newVotes.times(inflation);
 
     // create new historical
-    const votingPower = new VotingPower(event.transaction.hash);
+    const id = `eco-${account.id}-${event.block.number.toString()}`;
+    let votingPower = VotingPower.load(id);
+    if (!votingPower) {
+        votingPower = new VotingPower(id);
+    }
     votingPower.token = "eco";
     votingPower.account = account.id;
     votingPower.value = amount;

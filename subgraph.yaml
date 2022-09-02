@@ -43,6 +43,9 @@ dataSources:
         - Generation
         - CurrencyGovernance
         - FundsLockup
+        - RandomInflation
+        - VDFVerifier
+        - InflationRootHashProposal
       abis:
         - name: CurrencyTimer
           file: ./abis/CurrencyTimer.json
@@ -52,9 +55,15 @@ dataSources:
           file: ./abis/Policy.json
         - name: Lockup
           file: ./abis/Lockup.json
+        - name: RandomInflation
+          file: ./abis/RandomInflation.json
+        - name: InflationRootHashProposal
+          file: ./abis/InflationRootHashProposal.json
       eventHandlers:
         - event: NewCurrencyGovernance(indexed address,indexed uint256)
           handler: handleNewCurrencyGovernance
+        - event: NewInflation(indexed address,indexed uint256)
+          handler: handleNewInflation
         - event: NewLockup(indexed address,indexed uint256)
           handler: handleNewLockup
       file: ./src/governance/CurrencyTimer.ts
@@ -353,3 +362,45 @@ templates:
         - event: Clawback(uint256)
           handler: handleClawback
       file: ./src/governance/LockupVault.ts
+  - kind: ethereum
+    name: RandomInflation
+    network: goerli
+    source:
+      abi: RandomInflation
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - RandomInflation
+        - RandomInflationClaim
+        - Account
+      abis:
+        - name: RandomInflation
+          file: ./abis/RandomInflation.json
+      eventHandlers:
+        - event: Claim(indexed address,uint256)
+          handler: handleClaim
+        - event: EntropyVDFSeedCommit(uint256)
+          handler: handleEntropyVDFSeedCommit
+        - event: EntropySeedReveal(bytes32)
+          handler: handleEntropySeedReveal
+      file: ./src/governance/RandomInflation.ts
+  - kind: ethereum
+    name: InflationRootHashProposal
+    network: goerli
+    source:
+      abi: InflationRootHashProposal
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - InflationRootHashProposal
+      abis:
+        - name: InflationRootHashProposal
+          file: ./abis/InflationRootHashProposal.json
+      eventHandlers:
+        - event: RootHashAcceptance(indexed address,uint256,uint256)
+          handler: handleRootHashAcceptance
+      file: ./src/governance/InflationRootHashProposal.ts
