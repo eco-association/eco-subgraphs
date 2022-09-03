@@ -1,4 +1,4 @@
-import { Address, BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { Account } from "../../generated/schema";
 
 export function loadOrCreateAccount(address: Address): Account {
@@ -10,6 +10,8 @@ export function loadOrCreateAccount(address: Address): Account {
         account.sECOx = BigInt.fromString("0");
         account.wECO = BigInt.fromString("0");
         account.votes = BigInt.fromString("0");
+        account.ECODelegator = Bytes.empty();
+        account.ECOxDelegator = Bytes.empty();
         account.save();
     }
     return account;
