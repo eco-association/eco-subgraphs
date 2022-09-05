@@ -10,6 +10,7 @@ export function loadOrCreateAccount(address: Address): Account {
         account.sECOx = BigInt.fromString("0");
         account.wECO = BigInt.fromString("0");
         account.votes = BigInt.fromString("0");
+        account.ECOxDelegator = address;
         account.save();
     }
     return account;
