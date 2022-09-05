@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes } from "@graphprotocol/graph-ts";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { Account } from "../../generated/schema";
 
 export function loadOrCreateAccount(address: Address): Account {
