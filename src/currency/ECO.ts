@@ -4,6 +4,7 @@ import {
     Approval as ApprovalEvent,
     UpdatedVotes as UpdatedVotesEvent,
     BaseValueTransfer as BaseValueTransferEvent,
+    NewPrimaryDelegate as NewPrimaryDelegateEvent,
     NewInflationMultiplier as NewInflationMultiplierEvent
 } from "../../generated/ECO/ECO";
 import {
@@ -130,4 +131,16 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     votingPower.value = amount;
     votingPower.blockNumber = event.block.number;
     votingPower.save();
+}
+
+// ECO.NewPrimaryDelegate(address, address)
+export function handleDelegation(event: NewPrimaryDelegateEvent): void {
+    const delegator = loadOrCreateAccount(event.params.delegator);
+    if (event.params.primaryDelegate.toHexString() != delegator.id) {
+        const delegate = loadOrCreateAccount(event.params.primaryDelegate);
+        delegator.ECODelegator = delegate.id;
+    } else {
+        delegator.ECODelegator = null;
+    }
+    delegator.save();
 }

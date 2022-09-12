@@ -210,7 +210,10 @@ type Account @entity {
     sECOx: BigInt!
     wECO: BigInt!
     votes: BigInt!
-    ECOxDelegator: Bytes! "ECOx delegator"
+    ECODelegator: Account "ECO primary delegate"
+    sECOxDelegator: Account "ECOx primary delegate"
+    ECODelegatedToMe: [Account!]! @derivedFrom(field: "ECODelegator")
+    sECOxDelegatedToMe: [Account!]! @derivedFrom(field: "sECOxDelegator")
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
     historicalVotingPowers: [VotingPower!]! @derivedFrom(field: "account")

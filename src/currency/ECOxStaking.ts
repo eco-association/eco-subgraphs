@@ -54,6 +54,11 @@ export function handleTransfer(event: TransferEvent): void {
 // ECOxStaking.NewPrimaryDelegate(address, address)
 export function handleDelegation(event: NewPrimaryDelegateEvent): void {
     const delegator = loadOrCreateAccount(event.params.delegator);
-    delegator.ECOxDelegator = event.params.primaryDelegate;
+    if (event.params.primaryDelegate.toHexString() != delegator.id) {
+        const delegate = loadOrCreateAccount(event.params.primaryDelegate);
+        delegator.sECOxDelegator = delegate.id;
+    } else {
+        delegator.sECOxDelegator = null;
+    }
     delegator.save();
 }
