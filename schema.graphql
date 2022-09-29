@@ -169,6 +169,7 @@ type PolicyVote @entity {
     id: String!
     generation: Generation!
     voteEnds: BigInt!
+    majorityReachedAt: BigInt
     ENACTION_DELAY: BigInt!
     totalVotingPower: BigInt!
     blockNumber: BigInt!
