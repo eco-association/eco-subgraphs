@@ -239,6 +239,7 @@ templates:
         - CommunityProposal
         - CommunityProposalSupport
         - PolicyVotes
+        - ActivityRecord
       abis:
         - name: PolicyProposals
           file: ./abis/PolicyProposals.json
@@ -273,6 +274,7 @@ templates:
         - PolicyVote
         - CommunityProposal
         - CommunityProposalVote
+        - ActivityRecord
       abis:
         - name: PolicyProposals
           file: ./abis/PolicyProposals.json
