@@ -6,7 +6,7 @@ import {
     Support,
     Unsupport,
     SupportThresholdReached,
-    VoteStart,
+    VoteStart
 } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyVotes } from "../../generated/templates/PolicyVotes/PolicyVotes";
 import { Proposal } from "../../generated/templates/PolicyProposals/Proposal";
@@ -15,7 +15,7 @@ import {
     CommunityProposal,
     CommunityProposalSupport,
     PolicyProposal,
-    PolicyVote,
+    PolicyVote
 } from "../../generated/schema";
 
 import { loadContractAddresses } from ".";
@@ -36,8 +36,9 @@ export function handleRegister(event: Register): void {
     ) {
         // create a new proposal entity
         const proposal = new CommunityProposal(
-            event.params.proposalAddress.toHexString()
+            `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
         );
+        proposal.address = event.params.proposalAddress;
         proposal.proposer = event.params.proposer;
 
         // get the policyProposals entity for the generation
@@ -73,7 +74,7 @@ export function handleSupport(event: Support): void {
 
     // update proposal total support amount
     const proposal = CommunityProposal.load(
-        event.params.proposalAddress.toHexString()
+        `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
     );
     if (proposal) {
         proposal.totalSupportAmount = proposal.totalSupportAmount.plus(
@@ -99,7 +100,7 @@ export function handleUnsupport(event: Unsupport): void {
 
     // update proposal total support amount
     const proposal = CommunityProposal.load(
-        event.params.proposalAddress.toHexString()
+        `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
     );
     if (proposal) {
         proposal.totalSupportAmount = proposal.totalSupportAmount.minus(amount);
@@ -112,7 +113,7 @@ export function handleSupportThresholdReached(
     event: SupportThresholdReached
 ): void {
     const proposal = CommunityProposal.load(
-        event.params.proposalAddress.toHexString()
+        `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
     );
     if (proposal) {
         proposal.reachedSupportThreshold = true;
@@ -123,7 +124,7 @@ export function handleSupportThresholdReached(
 // PolicyProposals.ProposalRefund(address proposer, address proposalAddress)
 export function handleProposalRefund(event: ProposalRefund): void {
     const proposal = CommunityProposal.load(
-        event.params.proposalAddress.toHexString()
+        `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
     );
     if (proposal) {
         proposal.refunded = true;
