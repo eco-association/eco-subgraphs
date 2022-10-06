@@ -128,6 +128,25 @@ type Trustee @entity {
 """
 Community Support entities
 """
+enum ActivityRecordType {
+    "Proposal activities"
+    ProposalSubmitted
+    ProposalSupported
+    ProposalUnsupported
+    ProposalQuorum
+    ProposalVoting
+    ProposalResult
+    ProposalExecuted
+}
+
+type ActivityRecord @entity {
+    id: String!
+    type: ActivityRecordType!
+    timestamp: BigInt!
+
+    communityProposal: CommunityProposal
+}
+
 type PolicyProposal @entity {
     id: String! "address"
     generation: Generation!
@@ -148,6 +167,7 @@ type CommunityProposal @entity {
     refunded: Boolean!
     totalSupportAmount: BigInt!
     support: [CommunityProposalSupport!]! @derivedFrom(field: "proposal")
+    activities: [ActivityRecord!]! @derivedFrom(field: "communityProposal")
 }
 
 type CommunityProposalSupport @entity {

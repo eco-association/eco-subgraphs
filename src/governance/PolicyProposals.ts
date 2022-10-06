@@ -1,29 +1,25 @@
-import { BigInt, store } from "@graphprotocol/graph-ts";
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
-    PolicyProposals,
-    Register,
-    ProposalRefund,
-    Support,
-    Unsupport,
-    SupportThresholdReached,
-    VoteStart,
+    ProposalRefund as ProposalRefundEvent,
+    Register as RegisterEvent,
+    Support as SupportEvent,
+    SupportThresholdReached as SupportThresholdReachedEvent,
+    Unsupport as UnsupportEvent,
+    VoteStart as VoteStartEvent,
 } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyVotes } from "../../generated/templates/PolicyVotes/PolicyVotes";
-import { Proposal } from "../../generated/templates/PolicyProposals/Proposal";
+import { Proposal as ProposalContract } from "../../generated/templates/PolicyProposals/Proposal";
 import { PolicyVotes as PolicyVotesTemplate } from "../../generated/templates";
-import {
-    CommunityProposal,
-    CommunityProposalSupport,
-    PolicyProposal,
-    PolicyVote,
-} from "../../generated/schema";
-
+import { PolicyProposal, PolicyVote } from "../../generated/schema";
+import { Proposal } from "./entities/Proposal";
 import { loadContractAddresses } from ".";
 
 // PolicyProposals.Register(address proposer, address proposalAddress)
-export function handleRegister(event: Register): void {
+export function handleRegister(event: RegisterEvent): void {
     // get data from the proposal contract itself
-    const proposalContract = Proposal.bind(event.params.proposalAddress);
+    const proposalContract = ProposalContract.bind(
+        event.params.proposalAddress
+    );
     const nameRequest = proposalContract.try_name();
     const descriptionRequest = proposalContract.try_description();
     const urlRequest = proposalContract.try_url();
@@ -34,105 +30,59 @@ export function handleRegister(event: Register): void {
         !descriptionRequest.reverted &&
         !urlRequest.reverted
     ) {
-        // create a new proposal entity
-        const proposal = new CommunityProposal(
-            event.params.proposalAddress.toHexString()
+        const proposal = Proposal.load(event.params.proposalAddress);
+
+        proposal.register(
+            event.params.proposer,
+            nameRequest.value,
+            descriptionRequest.value,
+            urlRequest.value
         );
-        proposal.proposer = event.params.proposer;
 
         // get the policyProposals entity for the generation
         const policyProposal = PolicyProposal.load(event.address.toHexString());
-        if (policyProposal) {
-            proposal.generation = policyProposal.generation;
-        }
-        proposal.name = nameRequest.value;
-        proposal.description = descriptionRequest.value;
-        proposal.url = urlRequest.value;
-        proposal.reachedSupportThreshold = false;
-        proposal.refunded = false;
-        proposal.totalSupportAmount = BigInt.fromString("0");
+        if (policyProposal) proposal.setGeneration(policyProposal.generation);
         proposal.save();
+        proposal.historyRecord("ProposalSubmitted", event.block.timestamp);
     }
 }
 
 // PolicyProposals.Support(address supporter, address proposalAddress)
-export function handleSupport(event: Support): void {
-    const id = `${event.params.supporter.toHexString()}-${event.params.proposalAddress.toHexString()}`;
-    const support = new CommunityProposalSupport(id);
-    support.supporter = event.params.supporter;
-    support.proposal = event.params.proposalAddress.toHexString();
-    support.policyProposal = event.address.toHexString();
-
-    // get amount
-    const policyProposalsContract = PolicyProposals.bind(event.address);
-    const amount = policyProposalsContract.votingPower(
-        event.params.supporter,
-        policyProposalsContract.blockNumber()
-    );
-    support.amount = amount;
-
-    // update proposal total support amount
-    const proposal = CommunityProposal.load(
-        event.params.proposalAddress.toHexString()
-    );
-    if (proposal) {
-        proposal.totalSupportAmount = proposal.totalSupportAmount.plus(
-            support.amount
-        );
-        proposal.save();
-    }
-
-    support.save();
+export function handleSupport(event: SupportEvent): void {
+    const proposal = Proposal.load(event.params.proposalAddress);
+    proposal.support(event.params.supporter, event.address);
+    proposal.save();
+    proposal.historyRecord("ProposalSupported", event.block.timestamp);
 }
 
 // PolicyProposals.Unsupport(address unsupporter, address proposalAddress)
-export function handleUnsupport(event: Unsupport): void {
-    const id = `${event.params.unsupporter.toHexString()}-${event.params.proposalAddress.toHexString()}`;
-    store.remove("CommunityProposalSupport", id);
-
-    // get amount
-    const policyProposalsContract = PolicyProposals.bind(event.address);
-    const amount = policyProposalsContract.votingPower(
-        event.params.unsupporter,
-        policyProposalsContract.blockNumber()
-    );
-
-    // update proposal total support amount
-    const proposal = CommunityProposal.load(
-        event.params.proposalAddress.toHexString()
-    );
-    if (proposal) {
-        proposal.totalSupportAmount = proposal.totalSupportAmount.minus(amount);
-        proposal.save();
-    }
+export function handleUnsupport(event: UnsupportEvent): void {
+    const proposal = Proposal.load(event.params.proposalAddress);
+    proposal.unsupport(event.params.unsupporter, event.address);
+    proposal.save();
+    proposal.historyRecord("ProposalUnsupported", event.block.timestamp);
 }
 
-// PolicyPropsals.SupportThresholdReached(address proposalAddress)
+// PolicyProposals.SupportThresholdReached(address proposalAddress)
 export function handleSupportThresholdReached(
-    event: SupportThresholdReached
+    event: SupportThresholdReachedEvent
 ): void {
-    const proposal = CommunityProposal.load(
-        event.params.proposalAddress.toHexString()
-    );
-    if (proposal) {
-        proposal.reachedSupportThreshold = true;
-        proposal.save();
-    }
+    const proposal = Proposal.load(event.params.proposalAddress);
+    proposal.thresholdReached();
+    proposal.save();
+
+    proposal.historyRecord("ProposalQuorum", event.block.timestamp);
 }
 
 // PolicyProposals.ProposalRefund(address proposer, address proposalAddress)
-export function handleProposalRefund(event: ProposalRefund): void {
-    const proposal = CommunityProposal.load(
-        event.params.proposalAddress.toHexString()
-    );
-    if (proposal) {
-        proposal.refunded = true;
-        proposal.save();
-    }
+export function handleProposalRefund(event: ProposalRefundEvent): void {
+    const proposal = Proposal.load(event.params.proposalAddress);
+    proposal.refunded();
+    proposal.save();
 }
 
-// PolicyPropsals.VoteStart(address contractAddress)
-export function handleVoteStart(event: VoteStart): void {
+// PolicyProposals.VoteStart(address contractAddress)
+export function handleVoteStart(event: VoteStartEvent): void {
     // subscribe to policyVotes events
     PolicyVotesTemplate.create(event.params.contractAddress);
 
@@ -147,7 +97,7 @@ export function handleVoteStart(event: VoteStart): void {
         newPolicyVotes.generation = policyProposal.generation;
     }
 
-    // get the policyVotes contract and grab additonal arguments
+    // get the policyVotes contract and grab additional arguments
     const policyVoteContract = PolicyVotes.bind(event.params.contractAddress);
     newPolicyVotes.voteEnds = policyVoteContract.voteEnds();
     newPolicyVotes.ENACTION_DELAY = policyVoteContract.ENACTION_DELAY();
@@ -155,12 +105,16 @@ export function handleVoteStart(event: VoteStart): void {
     newPolicyVotes.totalVotingPower = policyVoteContract.totalVotingPower(
         newPolicyVotes.blockNumber
     );
-    newPolicyVotes.proposal = policyVoteContract.proposal().toHexString();
-    newPolicyVotes.yesVoteAmount = BigInt.fromString("0");
-    newPolicyVotes.totalVoteAmount = BigInt.fromString("0");
+    const proposalId = policyVoteContract.proposal();
+    newPolicyVotes.proposal = proposalId.toHexString();
+    newPolicyVotes.yesVoteAmount = BigInt.zero();
+    newPolicyVotes.totalVoteAmount = BigInt.zero();
 
     // save entity
     newPolicyVotes.save();
+
+    const proposal = Proposal.load(proposalId);
+    proposal.historyRecord("ProposalVoting", event.block.timestamp);
 
     // update contracts with the new PolicyVotes address
     const contracts = loadContractAddresses();

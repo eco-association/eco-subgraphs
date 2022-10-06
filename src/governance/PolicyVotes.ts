@@ -5,6 +5,7 @@ import {
     PolicySplitVoteCast,
     VoteCompletion,
 } from "../../generated/templates/PolicyVotes/PolicyVotes";
+import { Proposal } from "./entities/Proposal";
 
 class VoteManager {
     private readonly vote: CommunityProposalVote;
@@ -134,5 +135,10 @@ export function handleVoteCompletion(event: VoteCompletion): void {
             policyVote.result = "Failed";
         }
         policyVote.save();
+
+        const proposal = Proposal.load(
+            Bytes.fromHexString(policyVote.proposal)
+        );
+        proposal.historyRecord("ProposalResult", event.block.timestamp);
     }
 }
