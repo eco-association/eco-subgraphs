@@ -106,18 +106,22 @@ export function handleVoteReveal(event: VoteReveal): void {
 
     const votes: string[] = [];
     for (let i = 0; i < event.params.votes.length; i++) {
-        votes.push(event.params.votes[i].toHexString());
+        votes.push(event.params.votes[i][0].toAddress().toHexString());
 
         // if not default proposal
-        if (event.params.votes[i].toHexString() != NULL_ADDRESS) {
+        if (
+            event.params.votes[i][0].toAddress().toHexString() != NULL_ADDRESS
+        ) {
             const id = `${event.address.toHexString()}-${event.params.votes[
                 i
-            ].toHexString()}`;
+            ][0]
+                .toAddress()
+                .toHexString()}`;
             // update score of monetary proposal
             const proposal = MonetaryProposal.load(id);
             if (proposal) {
                 proposal.score = currencyGovernanceContract.score(
-                    event.params.votes[i]
+                    event.params.votes[i][0].toAddress()
                 );
                 proposal.save();
             }

@@ -100,20 +100,19 @@ export function handleRewardsTrackingUpdate(
         trustedNodes.unallocatedRewardsCount();
 
     const cohort = trustedNodes.cohort();
-    const numTrustees = trustedNodes.numTrustees().toI32();
+    // const numTrustees = trustedNodes.numTrustees().toI32();
 
-    for (let i = 0; i < numTrustees; i++) {
-        const trusteeAddress = trustedNodes.getTrustedNodeFromCohort(
-            cohort,
-            BigInt.fromU32(i)
-        );
-        log.info("Updated trustee {}", [trusteeAddress.toHexString()]);
-        const trustee = loadOrCreateTrustee(trusteeAddress);
+    const trustees = trustedNodes.getTrustedNodesFromCohort(cohort);
+    for (let i = 0; i < trustees.length; i++) {
+        log.info("Updated trustee {}", [trustees[i].toHexString()]);
+        const trustee = loadOrCreateTrustee(trustees[i]);
         trustee.votingRecord = BigInt.fromString("0");
-        trustee.lastYearVotingRecord =
-            trustedNodes.lastYearVotingRecord(trusteeAddress);
-        trustee.fullyVestedRewards =
-            trustedNodes.fullyVestedRewards(trusteeAddress);
+        trustee.lastYearVotingRecord = trustedNodes.lastYearVotingRecord(
+            trustees[i]
+        );
+        trustee.fullyVestedRewards = trustedNodes.fullyVestedRewards(
+            trustees[i]
+        );
         trustee.save();
     }
 }

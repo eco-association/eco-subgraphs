@@ -50,7 +50,7 @@ export function handleNewGeneration(event: NewGenerationEvent): void {
 
     const timedPoliciesContract = TimedPolicies.bind(event.address);
     generation.nextGenerationStart =
-        timedPoliciesContract.nextGenerationStart();
+        timedPoliciesContract.nextGenerationWindowOpen();
 
     generation.save();
 }
