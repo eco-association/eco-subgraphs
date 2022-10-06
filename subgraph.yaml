@@ -6,9 +6,9 @@ dataSources:
     name: TrustedNodes
     network: goerli
     source:
-      address: "0xB418b67B7C467AfFF5F75729D417F4B5371c47Df"
+      address: "0xaEFAccCCdF5238406D64f637AFaC99dD26AFa945"
       abi: TrustedNodes
-      startBlock: 7382650
+      startBlock: 7718600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -31,9 +31,9 @@ dataSources:
     name: CurrencyTimer
     network: goerli
     source:
-      address: "0xD19C36A9b30ed8C133082e62195Dd14baF337720"
+      address: "0x71f1Fab5829058eBAAFEc28801115ea86A066493"
       abi: CurrencyTimer
-      startBlock: 7382650
+      startBlock: 7718600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -71,9 +71,9 @@ dataSources:
     name: TimedPolicies
     network: goerli
     source:
-      address: "0xA3424Dc17C0678126dbce10dc3C108c7dD10b06d"
+      address: "0xBC56540F18f03aAbbaE51e7F1564Bf3cb9Fd94C1"
       abi: TimedPolicies
-      startBlock: 7382650
+      startBlock: 7718600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -98,8 +98,8 @@ dataSources:
     network: goerli
     source:
       abi: ECO
-      address: "0xA6A1ffc01Bea2fe465b5e0B316a4b10fEa045cD0"
-      startBlock: 7382650
+      address: "0xc39538769a0412b06f1B496F57F3DFd9AA829063"
+      startBlock: 7718600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -132,9 +132,9 @@ dataSources:
     name: ECOx
     network: goerli
     source:
-      address: "0x1aF18D9d9E29710D9642578fD3d6cD3686B23128"
+      address: "0x8f77eed37eeA309bC0aa83F20c113746D6Fbe94e"
       abi: ECOx
-      startBlock: 7382650
+      startBlock: 7718600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -155,9 +155,9 @@ dataSources:
     name: ECOxStaking
     network: goerli
     source:
-      address: "0x9d6FF62F8430a34B5E8b8A7EDfDE2494D483c8e6"
+      address: "0xDfD16a2F9fa0Cc7F6919b17445a4086F7A2a02c5"
       abi: ECOxStaking
-      startBlock: 7382650
+      startBlock: 7718600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -183,9 +183,9 @@ dataSources:
     name: LockupVaultFactory
     network: goerli
     source:
-      address: "0xA489eCFdd6E2D1827A300C7f91383e80D56dA268"
+      address: "0x0000000000000000000000000000000000000000"
       abi: LockupVaultFactory
-      startBlock: 7434150
+      startBlock: 7718600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -205,9 +205,9 @@ dataSources:
     name: ECOWrapped
     network: goerli
     source:
-      address: "0xD8694a147CF07a2c2747e91B0Ad1195a2EbF3ca4"
+      address: "0x0000000000000000000000000000000000000000"
       abi: ECOWrapped
-      startBlock: 7434450
+      startBlock: 7718600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -281,10 +281,8 @@ templates:
         - name: Proposal
           file: ./abis/Proposal.json
       eventHandlers:
-        - event: PolicyVote(indexed address,indexed bool,uint256)
+        - event: PolicyVote(indexed address,uint256,uint256)
           handler: handlePolicyVote
-        - event: PolicySplitVoteCast(indexed address,uint256,uint256)
-          handler: handlePolicySplitVoteCast
         - event: VoteCompletion(indexed uint8)
           handler: handleVoteCompletion
       file: ./src/governance/PolicyVotes.ts
@@ -314,7 +312,7 @@ templates:
           handler: handleProposalRetraction
         - event: VoteCast(indexed address)
           handler: handleVoteCast
-        - event: VoteReveal(indexed address,address[])
+        - event: VoteReveal(indexed address,(address,uint256)[])
           handler: handleVoteReveal
         - event: VoteResult(indexed address)
           handler: handleVoteResult
