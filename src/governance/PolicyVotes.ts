@@ -1,9 +1,9 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { CommunityProposalVote, PolicyVote } from "../../generated/schema";
+
 import {
     PolicyVote as PolicyVoteEvent,
-    PolicySplitVoteCast,
-    VoteCompletion,
+    VoteCompletion
 } from "../../generated/templates/PolicyVotes/PolicyVotes";
 import { Proposal } from "./entities/Proposal";
 
@@ -92,25 +92,8 @@ class VoteManager {
     }
 }
 
-// PolicyVotes.PolicyVoteCast(address voter, bool vote, uint256 amount)
+// PolicyVotes.PolicyVote(address indexed voter, uint256 votesYes, uint256 votesNo)
 export function handlePolicyVote(event: PolicyVoteEvent): void {
-    const policy = PolicyVote.load(event.address.toHexString());
-
-    if (policy) {
-        const voteManager = new VoteManager(event.params.voter, policy);
-        voteManager.resetVote();
-        if (event.params.vote) {
-            voteManager.voteFor(event.params.amount);
-        } else {
-            voteManager.voteAgainst(event.params.amount);
-        }
-        voteManager.checkMajority(event.block.timestamp);
-        voteManager.save();
-    }
-}
-
-// PolicyVotes.PolicySplitVoteCast(address indexed voter, uint256 votesYes, uint256 votesNo)
-export function handlePolicySplitVoteCast(event: PolicySplitVoteCast): void {
     const policy = PolicyVote.load(event.address.toHexString());
     if (policy) {
         const voteManager = new VoteManager(event.params.voter, policy);
@@ -136,9 +119,7 @@ export function handleVoteCompletion(event: VoteCompletion): void {
         }
         policyVote.save();
 
-        const proposal = Proposal.load(
-            Bytes.fromHexString(policyVote.proposal)
-        );
+        const proposal = Proposal.load(policyVote.proposal);
         proposal.historyRecord("ProposalResult", event.block.timestamp);
     }
 }

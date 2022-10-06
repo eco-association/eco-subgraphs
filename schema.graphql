@@ -157,7 +157,8 @@ type PolicyProposal @entity {
 }
 
 type CommunityProposal @entity {
-    id: String! "address"
+    id: String! "policyProposalAddress + - + proposalAddress"
+    address: Bytes!
     generation: Generation!
     proposer: Bytes!
     name: String!

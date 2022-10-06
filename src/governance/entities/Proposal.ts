@@ -2,17 +2,17 @@ import { Address, BigInt, Bytes, store } from "@graphprotocol/graph-ts/index";
 import {
     ActivityRecord,
     CommunityProposal,
-    CommunityProposalSupport,
+    CommunityProposalSupport
 } from "../../../generated/schema";
 import { PolicyProposals } from "../../../generated/templates/PolicyProposals/PolicyProposals";
 
 export class Proposal {
     private proposal: CommunityProposal;
 
-    constructor(address: Bytes) {
-        let proposal = CommunityProposal.load(address.toHexString());
+    constructor(id: string) {
+        let proposal = CommunityProposal.load(id);
         if (!proposal) {
-            proposal = new CommunityProposal(address.toHexString());
+            proposal = new CommunityProposal(id);
             proposal.refunded = false;
             proposal.reachedSupportThreshold = false;
             proposal.totalSupportAmount = BigInt.zero();
@@ -20,8 +20,8 @@ export class Proposal {
         this.proposal = proposal;
     }
 
-    public static load(address: Bytes): Proposal {
-        return new Proposal(address);
+    public static load(id: string): Proposal {
+        return new Proposal(id);
     }
 
     public static getVoterVotingPower(

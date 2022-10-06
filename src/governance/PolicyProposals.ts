@@ -5,7 +5,7 @@ import {
     Support as SupportEvent,
     SupportThresholdReached as SupportThresholdReachedEvent,
     Unsupport as UnsupportEvent,
-    VoteStart as VoteStartEvent,
+    VoteStart as VoteStartEvent
 } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyVotes } from "../../generated/templates/PolicyVotes/PolicyVotes";
 import { Proposal as ProposalContract } from "../../generated/templates/PolicyProposals/Proposal";
@@ -30,7 +30,9 @@ export function handleRegister(event: RegisterEvent): void {
         !descriptionRequest.reverted &&
         !urlRequest.reverted
     ) {
-        const proposal = Proposal.load(event.params.proposalAddress);
+        const proposal = Proposal.load(
+            `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
+        );
 
         proposal.register(
             event.params.proposer,
@@ -49,7 +51,9 @@ export function handleRegister(event: RegisterEvent): void {
 
 // PolicyProposals.Support(address supporter, address proposalAddress)
 export function handleSupport(event: SupportEvent): void {
-    const proposal = Proposal.load(event.params.proposalAddress);
+    const proposal = Proposal.load(
+        `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
+    );
     proposal.support(event.params.supporter, event.address);
     proposal.save();
     proposal.historyRecord("ProposalSupported", event.block.timestamp);
@@ -57,7 +61,9 @@ export function handleSupport(event: SupportEvent): void {
 
 // PolicyProposals.Unsupport(address unsupporter, address proposalAddress)
 export function handleUnsupport(event: UnsupportEvent): void {
-    const proposal = Proposal.load(event.params.proposalAddress);
+    const proposal = Proposal.load(
+        `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
+    );
     proposal.unsupport(event.params.unsupporter, event.address);
     proposal.save();
     proposal.historyRecord("ProposalUnsupported", event.block.timestamp);
@@ -67,7 +73,9 @@ export function handleUnsupport(event: UnsupportEvent): void {
 export function handleSupportThresholdReached(
     event: SupportThresholdReachedEvent
 ): void {
-    const proposal = Proposal.load(event.params.proposalAddress);
+    const proposal = Proposal.load(
+        `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
+    );
     proposal.thresholdReached();
     proposal.save();
 
@@ -76,7 +84,9 @@ export function handleSupportThresholdReached(
 
 // PolicyProposals.ProposalRefund(address proposer, address proposalAddress)
 export function handleProposalRefund(event: ProposalRefundEvent): void {
-    const proposal = Proposal.load(event.params.proposalAddress);
+    const proposal = Proposal.load(
+        `${event.address.toHexString()}-${event.params.proposalAddress.toHexString()}`
+    );
     proposal.refunded();
     proposal.save();
 }
@@ -105,8 +115,10 @@ export function handleVoteStart(event: VoteStartEvent): void {
     newPolicyVotes.totalVotingPower = policyVoteContract.totalVotingPower(
         newPolicyVotes.blockNumber
     );
-    const proposalId = policyVoteContract.proposal();
-    newPolicyVotes.proposal = proposalId.toHexString();
+    const proposalId = `${event.address.toHexString()}-${policyVoteContract
+        .proposal()
+        .toHexString()}`;
+    newPolicyVotes.proposal = proposalId;
     newPolicyVotes.yesVoteAmount = BigInt.zero();
     newPolicyVotes.totalVoteAmount = BigInt.zero();
 
