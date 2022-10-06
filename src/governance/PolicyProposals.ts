@@ -35,6 +35,7 @@ export function handleRegister(event: RegisterEvent): void {
         );
 
         proposal.register(
+            event.params.proposalAddress,
             event.params.proposer,
             nameRequest.value,
             descriptionRequest.value,

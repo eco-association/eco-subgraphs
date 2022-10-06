@@ -48,11 +48,13 @@ export class Proposal {
     }
 
     register(
+        address: Bytes,
         proposer: Bytes,
         name: string,
         description: string,
         url: string
     ): void {
+        this.proposal.address = address;
         this.proposal.proposer = proposer;
         this.proposal.url = url;
         this.proposal.name = name;
