@@ -137,6 +137,12 @@ enum ActivityRecordType {
     ProposalVoting
     ProposalResult
     ProposalExecuted
+
+    "New Random Inflation"
+    RandomInflation
+
+    "New Funds Lockup"
+    Lockup
 }
 
 type ActivityRecord @entity {
@@ -145,6 +151,8 @@ type ActivityRecord @entity {
     timestamp: BigInt!
 
     communityProposal: CommunityProposal
+    randomInflation: RandomInflation
+    fundsLockup: FundsLockup
 }
 
 type PolicyProposal @entity {
@@ -328,6 +336,7 @@ type FundsLockup @entity {
     """
     totalLocked: BigInt!
     deposits: [FundsLockupDeposit!]! @derivedFrom(field: "lockup")
+    activities: [ActivityRecord!]! @derivedFrom(field: "fundsLockup")
 }
 
 """
@@ -391,9 +400,10 @@ type RandomInflation @entity {
     seedCommit: BigInt
     seedReveal: Bytes
     blockNumber: BigInt!
-    claims: [RandomInflationClaim!]! @derivedFrom(field: "randomInflation")
     vdfVerifier: VDFVerifier!
     inflationRootHashProposal: InflationRootHashProposal!
+    claims: [RandomInflationClaim!]! @derivedFrom(field: "randomInflation")
+    activities: [ActivityRecord!]! @derivedFrom(field: "randomInflation")
 }
 
 type RandomInflationClaim @entity {

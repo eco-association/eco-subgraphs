@@ -1,10 +1,10 @@
 import { Address, BigInt, Bytes, store } from "@graphprotocol/graph-ts/index";
 import {
-    ActivityRecord,
     CommunityProposal,
-    CommunityProposalSupport
+    CommunityProposalSupport,
 } from "../../../generated/schema";
 import { PolicyProposals } from "../../../generated/templates/PolicyProposals/PolicyProposals";
+import { HistoryRecord } from "./HistoryRecord";
 
 export class Proposal {
     private proposal: CommunityProposal;
@@ -37,14 +37,6 @@ export class Proposal {
         supporter: Bytes
     ): string {
         return `${supporter.toHexString()}-${address}`;
-    }
-
-    private static generateHistoryRecordId(
-        type: string,
-        proposal: string,
-        timestamp: BigInt
-    ): string {
-        return `${type}-${proposal}-${timestamp.toString()}`;
     }
 
     register(
@@ -105,15 +97,6 @@ export class Proposal {
     }
 
     historyRecord(type: string, timestamp: BigInt): void {
-        const id = Proposal.generateHistoryRecordId(
-            type,
-            this.proposal.id,
-            timestamp
-        );
-        const record = new ActivityRecord(id);
-        record.type = type;
-        record.timestamp = timestamp;
-        record.communityProposal = this.proposal.id;
-        record.save();
+        HistoryRecord.createProposalRecord(type, this.proposal.id, timestamp);
     }
 }

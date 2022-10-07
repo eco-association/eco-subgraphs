@@ -28,6 +28,7 @@ import {
 
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateContractAddresses } from ".";
+import { HistoryRecord } from "./entities/HistoryRecord";
 
 // CurrencyTimer.NewCurrencyGovernance(addr, generation)
 export function handleNewCurrencyGovernance(
@@ -128,6 +129,9 @@ export function handleNewInflation(event: NewInflation): void {
     const newVDFVerifier = new VDFVerifier(newInflation.vdfVerifier);
     newVDFVerifier.save();
 
+    // Create history record
+    HistoryRecord.createInflationRecord(newInflation.id, event.block.timestamp);
+
     // add contract address
     const contracts = ContractAddresses.load("0");
     if (contracts) {
@@ -152,6 +156,9 @@ export function handleNewLockup(event: NewLockup): void {
 
     // listen for new lockup's events
     LockupTemplate.create(event.params.addr);
+
+    // Create history record
+    HistoryRecord.createLockupRecord(newLockup.id, event.block.timestamp);
 
     // add contract address
     const contracts = ContractAddresses.load("0");
