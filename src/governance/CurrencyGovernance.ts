@@ -89,7 +89,7 @@ export function handleVoteCast(event: VoteCast): void {
     commit.save();
 }
 
-// CurrencyGovernance.VoteReveal(address indexed voter, address[] votes)
+// CurrencyGovernance.VoteReveal(address indexed voter, Vote[] votes)
 export function handleVoteReveal(event: VoteReveal): void {
     // create new monetary vote entity
     const newMonetaryVote = new MonetaryVote(
@@ -104,9 +104,40 @@ export function handleVoteReveal(event: VoteReveal): void {
     newMonetaryVote.currencyGovernance = event.address.toHexString();
     newMonetaryVote.trustee = event.params.voter.toHexString();
 
-    const votes: string[] = [];
+    let votes: string[] = [];
+    let voteScores: BigInt[] = [];
     for (let i = 0; i < event.params.votes.length; i++) {
-        votes.push(event.params.votes[i][0].toAddress().toHexString());
+        if (votes.length === 0) {
+            votes.push(event.params.votes[i][0].toAddress().toHexString());
+            voteScores.push(event.params.votes[i][1].toBigInt());
+        } else {
+            // there is at least one vote already counted
+            for (let j = 0; j < votes.length; j++) {
+                if (
+                    j === votes.length - 1 &&
+                    event.params.votes[i][1].toBigInt().lt(voteScores[j])
+                ) {
+                    votes.push(
+                        event.params.votes[i][0].toAddress().toHexString()
+                    );
+                    voteScores.push(event.params.votes[i][1].toBigInt());
+                } else if (
+                    event.params.votes[i][1].toBigInt().gt(voteScores[j])
+                ) {
+                    votes = votes
+                        .slice(0, j)
+                        .concat([
+                            event.params.votes[i][0].toAddress().toHexString()
+                        ])
+                        .concat(votes.slice(j));
+                    voteScores = voteScores
+                        .slice(0, j)
+                        .concat([event.params.votes[i][1].toBigInt()])
+                        .concat(voteScores.slice(j));
+                    break;
+                }
+            }
+        }
 
         // if not default proposal
         if (

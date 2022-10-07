@@ -1,36 +1,36 @@
 {
     "goerli": {
         "TrustedNodes": {
-            "address": "0xaEFAccCCdF5238406D64f637AFaC99dD26AFa945",
-            "startBlock": 7718600
+            "address": "0x9CDD0E5Fe06c96853FAb30D533234e6F7db5c5f8",
+            "startBlock": 7725700
         },
         "CurrencyTimer": {
-            "address": "0x71f1Fab5829058eBAAFEc28801115ea86A066493",
-            "startBlock": 7718600
+            "address": "0xfA94b0c2e96957E84ba7ae7a8f1D39Ef51daB746",
+            "startBlock": 7725700
         },
         "TimedPolicies": {
-            "address": "0xBC56540F18f03aAbbaE51e7F1564Bf3cb9Fd94C1",
-            "startBlock": 7718600
+            "address": "0x18c6397A49d887E31973C85c0683cB87Da192473",
+            "startBlock": 7725700
         },
         "ECO": {
-            "address": "0xc39538769a0412b06f1B496F57F3DFd9AA829063",
-            "startBlock": 7718600
+            "address": "0x98A90b68b6dAe4216f532A3e839AA868C91686f3",
+            "startBlock": 7725700
         },
         "ECOx": {
-            "address": "0x8f77eed37eeA309bC0aa83F20c113746D6Fbe94e",
-            "startBlock": 7718600
+            "address": "0x5182652D2fbf10D16336552bcAe84C33Af66617a",
+            "startBlock": 7725700
         },
         "ECOxStaking": {
-            "address": "0xDfD16a2F9fa0Cc7F6919b17445a4086F7A2a02c5",
-            "startBlock": 7718600
+            "address": "0x72BA9863Cb4F42010695CB62C52E363b5fE0d436",
+            "startBlock": 7725700
         },
         "LockupVaultFactory": {
             "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 7718600
+            "startBlock": 7725700
         },
         "ECOWrapped": {
-            "address": "0x28Dfb5795079254487A12EA474a8976F57011b00",
-            "startBlock": 7724800
+            "address": "0x43a17029CE53071b7fcf306410c24f0c4f1b4006",
+            "startBlock": 7725775
         }
     },
     "localhost": {
