@@ -1,12 +1,12 @@
 import {
     UpdatedVotes as UpdatedVotesEvent,
     Transfer as TransferEvent,
-    NewPrimaryDelegate as NewPrimaryDelegateEvent
+    NewPrimaryDelegate as NewPrimaryDelegateEvent,
 } from "../../generated/ECOxStaking/ECOxStaking";
-import { VotingPower } from "../../generated/schema";
 import { loadOrCreateAccount } from ".";
 import { NULL_ADDRESS } from "../constants";
 import { Token } from "./entity/Token";
+import { VotingPower } from "../governance/entities/VotingPower";
 
 // ECOxStaking.UpdatedVotes(address delegate, uint256 newBalance)
 export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
@@ -15,16 +15,7 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     delegate.save();
 
     // create new historical vote balance entry
-    const id = `ecox-${delegate.id}-${event.block.number.toString()}`;
-    let votingPower = VotingPower.load(id);
-    if (!votingPower) {
-        votingPower = new VotingPower(id);
-    }
-    votingPower.token = "ecox";
-    votingPower.account = delegate.id;
-    votingPower.value = delegate.votes;
-    votingPower.blockNumber = event.block.number;
-    votingPower.save();
+    VotingPower.setEcoX(delegate.id, event.block.number, delegate.votes);
 }
 
 // ECOxStaking.Transfer(address from, address to, uint256 value)
