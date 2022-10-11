@@ -5,17 +5,17 @@ import {
     UpdatedVotes as UpdatedVotesEvent,
     BaseValueTransfer as BaseValueTransferEvent,
     NewPrimaryDelegate as NewPrimaryDelegateEvent,
-    NewInflationMultiplier as NewInflationMultiplierEvent
+    NewInflationMultiplier as NewInflationMultiplierEvent,
 } from "../../generated/ECO/ECO";
 import {
     ECOAllowance,
     ECOBalance,
     InflationMultiplier,
-    VotingPower
 } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
+import { VotingPower } from "../governance/entities/VotingPower";
 
 // ECO.NewInflationMultiplier(uint256)
 export function handleNewInflationMultiplier(
@@ -118,19 +118,10 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
 
     const eco = ECO.bind(event.address);
     const inflation = eco.getPastLinearInflation(event.block.number);
-    const amount = event.params.newVotes.times(inflation);
+    const amount = event.params.newVotes.div(inflation);
 
     // create new historical
-    const id = `eco-${account.id}-${event.block.number.toString()}`;
-    let votingPower = VotingPower.load(id);
-    if (!votingPower) {
-        votingPower = new VotingPower(id);
-    }
-    votingPower.token = "eco";
-    votingPower.account = account.id;
-    votingPower.value = amount;
-    votingPower.blockNumber = event.block.number;
-    votingPower.save();
+    VotingPower.setEco(account.id, event.block.number, amount);
 }
 
 // ECO.NewPrimaryDelegate(address, address)

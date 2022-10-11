@@ -1,5 +1,8 @@
 import { PolicyVote } from "../../generated/schema";
-import { PolicyVote as PolicyVoteEvent, VoteCompletion } from "../../generated/templates/PolicyVotes/PolicyVotes";
+import {
+    PolicyVote as PolicyVoteEvent,
+    VoteCompletion,
+} from "../../generated/templates/PolicyVotes/PolicyVotes";
 import { Proposal } from "./entities/Proposal";
 import { VoteManager } from "./entities/VoteManager";
 
@@ -15,22 +18,34 @@ export function handlePolicyVote(event: PolicyVoteEvent): void {
     }
 }
 
+enum VoteResult {
+    Accepted,
+    Rejected,
+    Failed,
+}
+
+function getResult(result: VoteResult): string {
+    switch (result) {
+        case VoteResult.Accepted:
+            return "Accepted";
+        case VoteResult.Rejected:
+            return "Rejected";
+        case VoteResult.Failed:
+        default:
+            return "Failed";
+    }
+}
+
 // PolicyVotes.VoteCompleted(Result result)
 export function handleVoteCompletion(event: VoteCompletion): void {
-    // get entity
     const policyVote = PolicyVote.load(event.address.toHexString());
-    // determine and set result
     if (policyVote) {
-        if (event.params.result === 0) {
-            policyVote.result = "Accepted";
-        } else if (event.params.result === 1) {
-            policyVote.result = "Rejected";
-        } else {
-            policyVote.result = "Failed";
-        }
+        policyVote.result = getResult(event.params.result);
         policyVote.save();
 
-        const proposal = Proposal.load(policyVote.proposal);
-        proposal.historyRecord("ProposalResult", event.block.timestamp);
+        Proposal.load(policyVote.proposal).historyRecord(
+            "ProposalResult",
+            event.block.timestamp
+        );
     }
 }
