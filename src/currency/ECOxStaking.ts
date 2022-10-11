@@ -15,7 +15,7 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     delegate.save();
 
     // create new historical vote balance entry
-    VotingPower.setEcoX(delegate.id, event.block.number, delegate.votes);
+    VotingPower.setSEcoX(delegate.id, event.block.number, delegate.votes);
 }
 
 // ECOxStaking.Transfer(address from, address to, uint256 value)

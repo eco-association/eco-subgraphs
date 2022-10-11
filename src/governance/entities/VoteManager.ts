@@ -1,16 +1,20 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts/index";
 import { CommunityProposalVote, PolicyVote } from "../../../generated/schema";
+import { Proposal } from "./Proposal";
 
 export class VoteManager {
     private readonly vote: CommunityProposalVote;
 
     private readonly policy: PolicyVote;
 
-    static generateVoteId(voter: Bytes, policyVoteAddress: Bytes): string {
+    private static generateVoteId(
+        voter: Bytes,
+        policyVoteAddress: Bytes
+    ): string {
         return `${voter.toHexString()}-${policyVoteAddress.toHexString()}`;
     }
 
-    static loadOrCreateVote(
+    private static loadOrCreateVote(
         voter: Bytes,
         policyVoteAddress: Bytes
     ): CommunityProposalVote {

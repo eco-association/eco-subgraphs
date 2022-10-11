@@ -18,12 +18,12 @@ export class VotingPower {
         VotingPower.create("eco", address, blockNumber, amount);
     }
 
-    public static setEcoX(
+    public static setSEcoX(
         address: string,
         blockNumber: BigInt,
         amount: BigInt
     ): void {
-        VotingPower.create("ecox", address, blockNumber, amount);
+        VotingPower.create("secox", address, blockNumber, amount);
     }
 
     public static create(
