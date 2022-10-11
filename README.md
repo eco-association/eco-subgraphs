@@ -2,6 +2,7 @@
 - [Manifest](#manifest)
 - [Entities](#entities)
 - [Mappings](#mappings)
+- [Production](#production)
 
 ## Development
 
@@ -46,3 +47,12 @@ Mappings are the AssemblyScript functions that fire when the graph node detects 
 [See more](https://thegraph.com/docs/en/developer/create-subgraph-hosted/#writing-mappings)
 
 [AssemblyScript API](https://thegraph.com/docs/en/developer/assemblyscript-api/)
+
+
+## Production
+
+In order to deploy the subgraph to the hosted service, create a new object in `networks.json` with the key `"mainnet"`, use the exact same structure as the goerli and localhost objects, where each contract has `address` and `startBlock` attributes.
+
+As LockupVaultFactory or ECOWrapped may not be deployed with the rest of the contracts, you can use `0x0000000000000000000000000000000000000000` as the address, and copy the startBlock from any other of your production deployed contracts. Do not use a a startBlock of 0 as the subgraph will try to listen for events from the very beginning of the network.
+
+Once the `networks.json` file has the mainnet configuration, run `yarn network mainnet` and `yarn deploy --node https://api.thegraph.com/deploy/ <your account>/<your subgraph project>` to deploy the subgraph to the hosted service.
