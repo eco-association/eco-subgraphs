@@ -1,7 +1,7 @@
 import {
     NewGeneration as NewGenerationEvent,
     PolicyDecisionStart,
-    TimedPolicies
+    TimedPolicies,
 } from "../../generated/TimedPolicies/TimedPolicies";
 import { PolicyProposals } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyProposals as PolicyProposalsTemplate } from "../../generated/templates";
@@ -46,6 +46,7 @@ export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
 export function handleNewGeneration(event: NewGenerationEvent): void {
     const generation = new Generation(event.params.generation.toString());
     generation.number = event.params.generation;
+    generation.createdAt = event.block.timestamp;
     generation.blockNumber = event.block.number;
 
     const timedPoliciesContract = TimedPolicies.bind(event.address);

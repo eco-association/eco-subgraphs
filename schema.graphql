@@ -27,6 +27,7 @@ type Generation @entity {
     id: String! "generation number"
     number: BigInt!
     blockNumber: BigInt!
+    createdAt: BigInt!
     nextGenerationStart: BigInt!
     currencyGovernance: CurrencyGovernance! @derivedFrom(field: "generation")
     policyProposal: PolicyProposal! @derivedFrom(field: "generation")
