@@ -28,6 +28,7 @@ export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
     newPolicyProposals.generation = timedPoliciesContract
         .generation()
         .toString();
+    newPolicyProposals.refundIfLost = policyProposalsContract.REFUND_IF_LOST();
     newPolicyProposals.proposalEnds = policyProposalsContract.proposalEnds();
     const blockNumber = policyProposalsContract.blockNumber();
     newPolicyProposals.blockNumber = blockNumber;

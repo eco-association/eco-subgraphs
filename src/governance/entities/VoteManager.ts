@@ -1,6 +1,5 @@
 import { BigInt, Bytes } from "@graphprotocol/graph-ts/index";
 import { CommunityProposalVote, PolicyVote } from "../../../generated/schema";
-import { Proposal } from "./Proposal";
 
 export class VoteManager {
     private readonly vote: CommunityProposalVote;

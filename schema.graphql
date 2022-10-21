@@ -162,12 +162,14 @@ type PolicyProposal @entity {
     proposalEnds: BigInt!
     totalVotingPower: BigInt!
     blockNumber: BigInt!
+    refundIfLost: BigInt!
     support: [CommunityProposalSupport!]! @derivedFrom(field: "policyProposal")
 }
 
 type CommunityProposal @entity {
     id: String! "policyProposalAddress + - + proposalAddress"
     address: Bytes!
+    generationNumber: BigInt!
     generation: Generation!
     proposer: Bytes!
     name: String!
@@ -178,6 +180,7 @@ type CommunityProposal @entity {
     totalSupportAmount: BigInt!
     support: [CommunityProposalSupport!]! @derivedFrom(field: "proposal")
     activities: [ActivityRecord!]! @derivedFrom(field: "communityProposal")
+    policyVotes: [PolicyVote!]! @derivedFrom(field: "proposal")
 }
 
 type CommunityProposalSupport @entity {

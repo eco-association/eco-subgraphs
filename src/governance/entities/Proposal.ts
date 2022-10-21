@@ -2,6 +2,7 @@ import { Address, BigInt, Bytes, store } from "@graphprotocol/graph-ts/index";
 import {
     CommunityProposal,
     CommunityProposalSupport,
+    PolicyProposal,
 } from "../../../generated/schema";
 import { PolicyProposals } from "../../../generated/templates/PolicyProposals/PolicyProposals";
 import { HistoryRecord } from "./HistoryRecord";
@@ -34,9 +35,14 @@ export class Proposal {
 
     private static generateSupportId(
         address: string,
-        supporter: Bytes
+        supporter: Bytes,
+        policy: Bytes
     ): string {
-        return `${supporter.toHexString()}-${address}`;
+        return `${supporter.toHexString()}-${address}-${policy.toHexString()}`;
+    }
+
+    static generateId(address: Bytes, proposal: Bytes): string {
+        return `${address.toHexString()}-${proposal.toHexString()}`;
     }
 
     register(
@@ -44,26 +50,25 @@ export class Proposal {
         proposer: Bytes,
         name: string,
         description: string,
-        url: string
+        url: string,
+        policy: PolicyProposal
     ): void {
         this.proposal.address = address;
         this.proposal.proposer = proposer;
         this.proposal.url = url;
         this.proposal.name = name;
         this.proposal.description = description;
+        this.proposal.generation = policy.generation;
+        this.proposal.generationNumber = BigInt.fromString(policy.generation);
         // Default values
         this.proposal.refunded = false;
         this.proposal.reachedSupportThreshold = false;
         this.proposal.totalSupportAmount = BigInt.zero();
     }
 
-    setGeneration(generation: string): void {
-        this.proposal.generation = generation;
-    }
-
     support(supporter: Address, policy: Address): void {
         const support = new CommunityProposalSupport(
-            Proposal.generateSupportId(this.proposal.id, supporter)
+            Proposal.generateSupportId(this.proposal.id, supporter, policy)
         );
         support.amount = Proposal.getVoterVotingPower(policy, supporter);
         support.supporter = supporter;
@@ -77,7 +82,7 @@ export class Proposal {
     unsupport(unsupporter: Address, policy: Address): void {
         store.remove(
             "CommunityProposalSupport",
-            Proposal.generateSupportId(this.proposal.id, unsupporter)
+            Proposal.generateSupportId(this.proposal.id, unsupporter, policy)
         );
         const amount = Proposal.getVoterVotingPower(policy, unsupporter);
         this.proposal.totalSupportAmount =
