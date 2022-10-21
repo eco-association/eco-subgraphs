@@ -28,6 +28,10 @@
             "address": "0x0000000000000000000000000000000000000000",
             "startBlock": 7725700
         },
+        "EmployeeLockupVaultFactory": {
+            "address": "0xa79463E67a132Ca7550ddafAeb338374bBA0A254",
+            "startBlock": 7805309
+        },
         "ECOWrapped": {
             "address": "0x43a17029CE53071b7fcf306410c24f0c4f1b4006",
             "startBlock": 7725775
@@ -60,6 +64,10 @@
         },
         "LockupVaultFactory": {
             "address": "0x89c41bf50f31624db523fa45b4c8a334cfd58a28",
+            "startBlock": 0
+        },
+        "EmployeeLockupVaultFactory": {
+            "address": "0xa79463E67a132Ca7550ddafAeb338374bBA0A254",
             "startBlock": 0
         },
         "ECOWrapped": {

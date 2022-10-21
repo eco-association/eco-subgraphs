@@ -202,6 +202,28 @@ dataSources:
           handler: handleVaultCreated
       file: ./src/governance/LockupVaultFactory.ts
   - kind: ethereum
+    name: EmployeeLockupVaultFactory
+    network: goerli
+    source:
+      abi: LockupVaultFactory
+      address: "0xa79463E67a132Ca7550ddafAeb338374bBA0A254"
+      startBlock: 7805309
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - LockupVault
+      abis:
+        - name: LockupVaultFactory
+          file: ./abis/LockupVaultFactory.json
+        - name: LockupVault
+          file: ./abis/LockupVault.json
+      eventHandlers:
+        - event: VaultCreated(address,address,address)
+          handler: handleEmployeeVaultCreated
+      file: ./src/governance/LockupVaultFactory.ts
+  - kind: ethereum
     name: ECOWrapped
     network: goerli
     source:

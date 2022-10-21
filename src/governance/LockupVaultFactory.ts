@@ -5,7 +5,7 @@ import { LockupVault as LockupVaultTemplate } from "../../generated/templates";
 import { LockupVault, VestingChunk } from "../../generated/schema";
 import { loadOrCreateAccount } from "../currency";
 
-export function handleVaultCreated(event: VaultCreatedEvent): void {
+function createVault(event: VaultCreatedEvent, type: string): void {
     // Instantiating a new Lockup Vault Template
     LockupVaultTemplate.create(event.params.vault);
 
@@ -15,6 +15,7 @@ export function handleVaultCreated(event: VaultCreatedEvent): void {
     const beneficiary = loadOrCreateAccount(event.params.beneficiary);
     const vaultAccount = loadOrCreateAccount(event.params.vault);
 
+    vault.type = type;
     vault.beneficiary = beneficiary.id;
     vault.account = vaultAccount.id;
     vault.admin = lockupVaultContract.owner();
@@ -34,4 +35,12 @@ export function handleVaultCreated(event: VaultCreatedEvent): void {
         chunk.timestamp = timestamps[i];
         chunk.save();
     }
+}
+
+export function handleVaultCreated(event: VaultCreatedEvent): void {
+    createVault(event, "Investor");
+}
+
+export function handleEmployeeVaultCreated(event: VaultCreatedEvent): void {
+    createVault(event, "Employee");
 }

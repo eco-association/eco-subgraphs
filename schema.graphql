@@ -366,11 +366,17 @@ type FundsLockupDeposit @entity {
 """
 ECO Lockup Vault
 """
+enum LockupVaultType {
+    Investor,
+    Employee
+}
+
 type LockupVault @entity {
     """
     id: lockup vault contract address
     """
     id: Bytes! "address"
+    type: LockupVaultType!
     beneficiary: Account!
     account: Account!
     admin: Bytes! # admin address
