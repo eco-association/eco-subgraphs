@@ -53,7 +53,11 @@ export function handleSupport(event: SupportEvent): void {
     const proposal = Proposal.load(
         Proposal.generateId(event.address, event.params.proposalAddress)
     );
-    proposal.support(event.params.supporter, event.address);
+    proposal.support(
+        event.params.supporter,
+        event.address,
+        event.block.timestamp
+    );
     proposal.save();
     proposal.historyRecord("ProposalSupported", event.block.timestamp);
 }

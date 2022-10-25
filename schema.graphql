@@ -186,6 +186,7 @@ type CommunityProposal @entity {
 type CommunityProposalSupport @entity {
     id: String! "supporter + - + proposal"
     supporter: Bytes!
+    createdAt: BigInt!
     proposal: CommunityProposal!
     policyProposal: PolicyProposal!
     amount: BigInt!

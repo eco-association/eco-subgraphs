@@ -66,12 +66,13 @@ export class Proposal {
         this.proposal.totalSupportAmount = BigInt.zero();
     }
 
-    support(supporter: Address, policy: Address): void {
+    support(supporter: Address, policy: Address, timestamp: BigInt): void {
         const support = new CommunityProposalSupport(
             Proposal.generateSupportId(this.proposal.id, supporter, policy)
         );
         support.amount = Proposal.getVoterVotingPower(policy, supporter);
         support.supporter = supporter;
+        support.createdAt = timestamp;
         support.proposal = this.proposal.id;
         support.policyProposal = policy.toHexString();
         this.proposal.totalSupportAmount =
