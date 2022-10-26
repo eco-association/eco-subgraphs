@@ -54,8 +54,8 @@ export class VoteManager {
     }
 
     public voteSplit(forVotes: BigInt, againstVotes: BigInt): void {
-        this.voteFor(forVotes);
         this.voteAgainst(againstVotes);
+        this.voteFor(forVotes);
         this.vote.totalAmount = forVotes.plus(againstVotes);
     }
 
