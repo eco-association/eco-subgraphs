@@ -15,13 +15,15 @@ Running the subgraph in development is a task on it's own, in order to run the s
 - ECOx
 - ECOxStaking
 
+You'll also need to have docker running, we recommend [4.8.2](https://docs.docker.com/desktop/release-notes/#docker-desktop-482). 
+
 Once you have the addresses, paste them into [networks.json](./networks.json) under 'localhost', then run `yarn network` to sync the `subgraph.yaml` file.
 
-Start up the graph node from the submodule by running the command `yarn graph-node` (if you haven't added the submodule yet, run `git submodule update --init`)
+Start up the graph node by running the command `yarn graph-node` (if you haven't added the submodule yet, run `git submodule update --init`)
 
-Once you start up the graph-node, run `yarn create-local` once to create your subgraph on the local node. Then to deploy (or redeploy after making changes), run `yarn deploy-local`.
+Once you start up the graph-node, run  `yarn codegen`, then run `yarn create-local` once to create your subgraph on the local node. Then to deploy (or redeploy after making changes), run `yarn deploy-local`.
 
-If you make changes to entities in `schema.graphql` or add templates or data sources to `subgraph.yaml`, run `yarn codegen` to generate AssemblyScript code before working on mappings.
+Make sure to run `yarn codegen` to generate AssemblyScript code any time you make changes to entities in `schema.graphql` or add templates or data sources to `subgraph.yaml`, before working on mappings.
 
 Once you have successfully deployed the subgraph locally you can test queries [here](http://localhost:8000/subgraphs/name/paged1/Policy/graphql)
 
