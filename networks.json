@@ -1,4 +1,42 @@
 {
+    "mainnet": {
+        "TrustedNodes": {
+            "address": "0x9fA130E9d1dA166164381F6d1de8660da0afc1f1",
+            "startBlock": 15778020
+        },
+        "CurrencyTimer": {
+            "address": "0x953d8bC7410D189C83713151bA506D33ea5Bf995",
+            "startBlock": 15778020
+        },
+        "TimedPolicies": {
+            "address": "0x1E5F34C1281BE1249074b987FdDd295685e1ACCb",
+            "startBlock": 15778020
+        },
+        "ECO": {
+            "address": "0x8dBF9A4c99580fC7Fd4024ee08f3994420035727",
+            "startBlock": 15778020
+        },
+        "ECOx": {
+            "address": "0xcccD1Ba9f7acD6117834E0D28F25645dECb1736a",
+            "startBlock": 15778020
+        },
+        "ECOxStaking": {
+            "address": "0x12cD0e8a2bd86bc17E773b500e7BBC316901b75E",
+            "startBlock": 15778020
+        },
+        "LockupVaultFactory": {
+            "address": "0x0000000000000000000000000000000000000000",
+            "startBlock": 15778020
+        },
+        "EmployeeLockupVaultFactory": {
+            "address": "0x0000000000000000000000000000000000000000",
+            "startBlock": 15778020
+        },
+        "ECOWrapped": {
+            "address": "0x0000000000000000000000000000000000000000",
+            "startBlock": 15778020
+        }
+    },
     "goerli": {
         "TrustedNodes": {
             "address": "0x9CDD0E5Fe06c96853FAb30D533234e6F7db5c5f8",
