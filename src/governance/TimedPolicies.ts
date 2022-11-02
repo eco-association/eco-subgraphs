@@ -7,6 +7,7 @@ import { PolicyProposals } from "../../generated/templates/PolicyProposals/Polic
 import { PolicyProposals as PolicyProposalsTemplate } from "../../generated/templates";
 import { Generation, PolicyProposal } from "../../generated/schema";
 import { loadContractAddresses } from ".";
+import { HistoryRecord } from "./entities/HistoryRecord";
 
 // TimedPolicies.PolicyDecisionStarted(address contractAddress)
 export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
@@ -55,4 +56,6 @@ export function handleNewGeneration(event: NewGenerationEvent): void {
         timedPoliciesContract.nextGenerationWindowOpen();
 
     generation.save();
+
+    HistoryRecord.createGenerationRecord(generation.id, event.block.timestamp);
 }

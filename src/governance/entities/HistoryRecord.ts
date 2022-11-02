@@ -30,6 +30,10 @@ export class HistoryRecord {
         new HistoryRecord("Lockup", id, timestamp).lockup();
     }
 
+    public static createGenerationRecord(id: string, timestamp: BigInt): void {
+        new HistoryRecord("Generation", id, timestamp).generation();
+    }
+
     constructor(type: string, id: string, timestamp: BigInt) {
         this.id = id;
         this.record = new ActivityRecord(
@@ -51,6 +55,11 @@ export class HistoryRecord {
 
     public lockup(): void {
         this.record.fundsLockup = this.id;
+        this.record.save();
+    }
+
+    public generation(): void {
+        this.record.generation = this.id;
         this.record.save();
     }
 }

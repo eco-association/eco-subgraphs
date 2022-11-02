@@ -144,6 +144,9 @@ enum ActivityRecordType {
 
     "New Funds Lockup"
     Lockup
+
+    "Generation"
+    Generation
 }
 
 type ActivityRecord @entity {
@@ -154,6 +157,7 @@ type ActivityRecord @entity {
     communityProposal: CommunityProposal
     randomInflation: RandomInflation
     fundsLockup: FundsLockup
+    generation: Generation
 }
 
 type PolicyProposal @entity {
