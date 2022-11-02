@@ -39,39 +39,39 @@
     },
     "goerli": {
         "TrustedNodes": {
-            "address": "0x9CDD0E5Fe06c96853FAb30D533234e6F7db5c5f8",
-            "startBlock": 7725700
+            "address": "0x02122C0c335aeFb595Bc90135b9F3fCdE35E02B8",
+            "startBlock": 7874686
         },
         "CurrencyTimer": {
-            "address": "0xfA94b0c2e96957E84ba7ae7a8f1D39Ef51daB746",
-            "startBlock": 7725700
+            "address": "0xd6B33fA89E83428591D53999a20032bA966fa9f6",
+            "startBlock": 7874686
         },
         "TimedPolicies": {
-            "address": "0x18c6397A49d887E31973C85c0683cB87Da192473",
-            "startBlock": 7725700
+            "address": "0x9bdA8eA359957De2Ea0a55BcCE733e5a1dc6c6dC",
+            "startBlock": 7874686
         },
         "ECO": {
-            "address": "0x98A90b68b6dAe4216f532A3e839AA868C91686f3",
-            "startBlock": 7725700
+            "address": "0xCb00C1B8D165c4d13bD4E3C96204a9E00cc9aC1D",
+            "startBlock": 7874686
         },
         "ECOx": {
-            "address": "0x5182652D2fbf10D16336552bcAe84C33Af66617a",
-            "startBlock": 7725700
+            "address": "0x308055F5E1D058843eDF77a198708DF7A28c6c46",
+            "startBlock": 7874686
         },
         "ECOxStaking": {
-            "address": "0x72BA9863Cb4F42010695CB62C52E363b5fE0d436",
-            "startBlock": 7725700
+            "address": "0xB26F87e63FC9A3FFe8a4A27C66F85191CD8A9680",
+            "startBlock": 7874819
         },
         "LockupVaultFactory": {
             "address": "0x0000000000000000000000000000000000000000",
             "startBlock": 7725700
         },
         "EmployeeLockupVaultFactory": {
-            "address": "0xa79463E67a132Ca7550ddafAeb338374bBA0A254",
+            "address": "0x0000000000000000000000000000000000000000",
             "startBlock": 7805309
         },
         "ECOWrapped": {
-            "address": "0x43a17029CE53071b7fcf306410c24f0c4f1b4006",
+            "address": "0x0000000000000000000000000000000000000000",
             "startBlock": 7725775
         }
     },
