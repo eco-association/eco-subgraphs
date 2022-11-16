@@ -87,6 +87,8 @@ dataSources:
           file: ./abis/TimedPolicies.json
         - name: PolicyProposals
           file: ./abis/PolicyProposals.json
+        - name: ECO
+          file: ./abis/ECO.json
       eventHandlers:
         - event: PolicyDecisionStart(address)
           handler: handlePolicyDecisionStarted
@@ -269,6 +271,8 @@ templates:
           file: ./abis/PolicyVotes.json
         - name: Proposal
           file: ./abis/Proposal.json
+        - name: ECO
+          file: ./abis/ECO.json
       eventHandlers:
         - event: Register(indexed address,indexed address)
           handler: handleRegister

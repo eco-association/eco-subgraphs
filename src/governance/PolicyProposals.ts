@@ -7,7 +7,8 @@ import {
     Unsupport as UnsupportEvent,
     VoteStart as VoteStartEvent,
 } from "../../generated/templates/PolicyProposals/PolicyProposals";
-import { PolicyVotes } from "../../generated/templates/PolicyVotes/PolicyVotes";
+import { ECO } from "../../generated/templates/PolicyProposals/ECO";
+import { PolicyVotes } from "../../generated/templates/PolicyProposals/PolicyVotes";
 import { Proposal as ProposalContract } from "../../generated/templates/PolicyProposals/Proposal";
 import { PolicyVotes as PolicyVotesTemplate } from "../../generated/templates";
 import { PolicyProposal, PolicyVote } from "../../generated/schema";
@@ -114,10 +115,18 @@ export function handleVoteStart(event: VoteStartEvent): void {
     const policyVoteContract = PolicyVotes.bind(event.params.contractAddress);
     newPolicyVotes.voteEnds = policyVoteContract.voteEnds();
     newPolicyVotes.ENACTION_DELAY = policyVoteContract.ENACTION_DELAY();
-    newPolicyVotes.blockNumber = policyVoteContract.blockNumber();
-    newPolicyVotes.totalVotingPower = policyVoteContract.totalVotingPower(
-        newPolicyVotes.blockNumber
-    );
+    const blockNumber = policyVoteContract.blockNumber();
+    newPolicyVotes.blockNumber = blockNumber;
+
+    const votingPowerResult = policyVoteContract.try_totalVotingPower(blockNumber);
+    if (!votingPowerResult.reverted) {
+        newPolicyVotes.totalVotingPower = votingPowerResult.value;
+    }
+    else {
+        const ecoContract = ECO.bind(policyVoteContract.ecoToken());
+        newPolicyVotes.totalVotingPower = ecoContract.totalSupply().plus(BigInt.fromString("10").times(policyVoteContract.totalECOxSnapshot())).minus(policyVoteContract.excludedVotingPower());
+    }
+
     const proposalId = Proposal.generateId(
         event.address,
         policyVoteContract.proposal()
