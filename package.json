@@ -1,15 +1,15 @@
 {
-    "name": "Policy",
-    "license": "UNLICENSED",
+    "name": "the-eco-currency-subgraphs",
+    "license": "MIT",
     "scripts": {
         "graph-node": "node scripts/runGraphNode.js",
         "network": "node scripts/setupNetwork.js :",
         "codegen": "graph codegen",
         "build": "graph build",
-        "deploy": "graph deploy --node https://api.thegraph.com/deploy/ paged1/policy",
-        "create-local": "graph create --node http://localhost:8020/ paged1/Policy",
-        "remove-local": "graph remove --node http://localhost:8020/ paged1/Policy",
-        "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 paged1/Policy"
+        "deploy": "graph deploy --node https://api.thegraph.com/deploy/ ecographs/the-eco-currency-subgraphs",
+        "create-local": "graph create --node http://localhost:8020/ ecographs/the-eco-currency-subgraphs",
+        "remove-local": "graph remove --node http://localhost:8020/ ecographs/the-eco-currency-subgraphs",
+        "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 ecographs/the-eco-currency-subgraphs"
     },
     "dependencies": {
         "@graphprotocol/graph-cli": "^0.34.0",
