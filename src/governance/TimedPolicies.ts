@@ -1,8 +1,10 @@
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
     NewGeneration as NewGenerationEvent,
     PolicyDecisionStart,
     TimedPolicies,
 } from "../../generated/TimedPolicies/TimedPolicies";
+import { ECO } from "../../generated/TimedPolicies/ECO";
 import { PolicyProposals } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyProposals as PolicyProposalsTemplate } from "../../generated/templates";
 import { Generation, PolicyProposal } from "../../generated/schema";
@@ -33,8 +35,15 @@ export function handlePolicyDecisionStarted(event: PolicyDecisionStart): void {
     newPolicyProposals.proposalEnds = policyProposalsContract.proposalEnds();
     const blockNumber = policyProposalsContract.blockNumber();
     newPolicyProposals.blockNumber = blockNumber;
-    newPolicyProposals.totalVotingPower =
-        policyProposalsContract.totalVotingPower(blockNumber);
+
+    const votingPowerResult = policyProposalsContract.try_totalVotingPower(blockNumber);
+    if (!votingPowerResult.reverted) {
+        newPolicyProposals.totalVotingPower = votingPowerResult.value;
+    }
+    else {
+        const ecoContract = ECO.bind(policyProposalsContract.ecoToken());
+        newPolicyProposals.totalVotingPower = ecoContract.totalSupply().plus(BigInt.fromString("10").times(policyProposalsContract.totalECOxSnapshot())).minus(policyProposalsContract.excludedVotingPower());
+    }
     newPolicyProposals.save();
 
     // update contracts with the new PolicyProposals address
