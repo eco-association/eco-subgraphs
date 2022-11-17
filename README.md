@@ -15,13 +15,15 @@ Running the subgraph in development is a task on it's own, in order to run the s
 - ECOx
 - ECOxStaking
 
+You'll also need to have docker running, we recommend [4.8.2](https://docs.docker.com/desktop/release-notes/#docker-desktop-482).
+
 Once you have the addresses, paste them into [networks.json](./networks.json) under 'localhost', then run `yarn network` to sync the `subgraph.yaml` file.
 
-Start up the graph node from the submodule by running the command `yarn graph-node` (if you haven't added the submodule yet, run `git submodule update --init`)
+Start up the graph node by running the command `yarn graph-node` (if you haven't added the submodule yet, run `git submodule update --init`)
 
-Once you start up the graph-node, run `yarn create-local` once to create your subgraph on the local node. Then to deploy (or redeploy after making changes), run `yarn deploy-local`.
+Once you start up the graph-node, run  `yarn codegen`, then run `yarn create-local` once to create your subgraph on the local node. Then to deploy (or redeploy after making changes), run `yarn deploy-local`.
 
-If you make changes to entities in `schema.graphql` or add templates or data sources to `subgraph.yaml`, run `yarn codegen` to generate AssemblyScript code before working on mappings.
+Make sure to run `yarn codegen` to generate AssemblyScript code any time you make changes to entities in `schema.graphql` or add templates or data sources to `subgraph.yaml`, before working on mappings.
 
 Once you have successfully deployed the subgraph locally you can test queries [here](http://localhost:8000/subgraphs/name/paged1/Policy/graphql)
 
@@ -55,4 +57,6 @@ In order to deploy the subgraph to the hosted service, create a new object in `n
 
 As LockupVaultFactory or ECOWrapped may not be deployed with the rest of the contracts, you can use `0x0000000000000000000000000000000000000000` as the address, and copy the startBlock from any other of your production deployed contracts. Do not use a a startBlock of 0 as the subgraph will try to listen for events from the very beginning of the network.
 
-Once the `networks.json` file has the mainnet configuration, run `yarn network mainnet` and `yarn deploy --node https://api.thegraph.com/deploy/ <your account>/<your subgraph project>` to deploy the subgraph to the hosted service.
+Once the `networks.json` file has the mainnet configuration, run `yarn network mainnet` and `graph deploy --node https://api.thegraph.com/deploy/ <your account>/<your subgraph project>` to deploy the subgraph to the hosted service.
+
+You will need to [install the Graph CLI](https://thegraph.com/docs/en/cookbook/quick-start/#1-install-the-graph-cli)
