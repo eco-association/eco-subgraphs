@@ -147,6 +147,8 @@ dataSources:
       abis:
         - name: ECOx
           file: ./abis/ECOx.json
+        - name: ECO
+          file: ./abis/ECO.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
@@ -171,6 +173,8 @@ dataSources:
       abis:
         - name: ECOxStaking
           file: ./abis/ECOxStaking.json
+        - name: ECO
+          file: ./abis/ECO.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
@@ -243,6 +247,8 @@ dataSources:
       abis:
         - name: ECOWrapped
           file: ./abis/ECOWrapped.json
+        - name: ECO
+          file: ./abis/ECO.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
