@@ -19,7 +19,7 @@ function getLockupDepositId(
 function getLockupDeposit(
     contract: Address,
     depositor: Address,
-    index = 0
+    index: number = 0
 ): FundsLockupDeposit {
     const id = getLockupDepositId(contract, depositor, index);
     let deposit = FundsLockupDeposit.load(id);
@@ -32,7 +32,7 @@ function getLockupDeposit(
         deposit.account = account.id;
         // associate lockup
         deposit.lockup = contract.toHexString();
-    } else if (deposit.withdrawnAt != null) {
+    } else if (deposit.withdrawnAt) {
         return getLockupDeposit(contract, depositor, index + 1);
     }
 
@@ -46,6 +46,8 @@ export function handleDeposit(event: Deposit): void {
     // get deposit record struct
     const lockupContract = LockupContract.bind(event.address);
     const contractDeposit = lockupContract.deposits(event.params.to);
+
+    deposit.withdrawnAt = null;
 
     // gonsDepositAmount
     deposit.amount = contractDeposit.value0;
@@ -79,7 +81,7 @@ export function handleWithdrawal(event: Withdrawal): void {
             );
             fundsLockup.save();
         }
-        // withdrawal => delete the deposit
-        store.remove("FundsLockupDeposit", id);
+
+        deposit.withdrawnAt = event.block.timestamp;
     }
 }

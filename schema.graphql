@@ -353,11 +353,12 @@ Deposits to a funds lockup (active)
 """
 type FundsLockupDeposit @entity {
     """
-    id: lockup address + "-" + depositer address
+    id: lockup address + "-" + depositor address
     """
     id: String!
     account: Account!
     lockup: FundsLockup!
+    withdrawnAt: BigInt
     """
     amount: underlying value of eco
     """
