@@ -147,6 +147,8 @@ dataSources:
       abis:
         - name: ECOx
           file: ./abis/ECOx.json
+        - name: ECO
+          file: ./abis/ECO.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
@@ -157,7 +159,7 @@ dataSources:
     name: ECOxStaking
     network: goerli
     source:
-      address: "0x1a13146Cf397B3CFD8E15B1eE7c8c5476981496c"
+      address: "0x3a16f2Fee32827a9E476d0c87E454aB7C75C92D7"
       abi: ECOxStaking
       startBlock: 7955615
     mapping:
@@ -171,6 +173,8 @@ dataSources:
       abis:
         - name: ECOxStaking
           file: ./abis/ECOxStaking.json
+        - name: ECO
+          file: ./abis/ECO.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:
@@ -243,6 +247,8 @@ dataSources:
       abis:
         - name: ECOWrapped
           file: ./abis/ECOWrapped.json
+        - name: ECO
+          file: ./abis/ECO.json
         - name: ERC20
           file: ./abis/ERC20.json
       eventHandlers:

@@ -1,6 +1,6 @@
 {
     "name": "the-eco-currency-subgraphs",
-    "license": "UNLICENSED",
+    "license": "MIT",
     "scripts": {
         "graph-node": "node scripts/runGraphNode.js",
         "network": "node scripts/setupNetwork.js :",

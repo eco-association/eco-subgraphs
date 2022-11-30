@@ -15,7 +15,7 @@ Running the subgraph in development is a task on it's own, in order to run the s
 - ECOx
 - ECOxStaking
 
-You'll also need to have docker running, we recommend [4.8.2](https://docs.docker.com/desktop/release-notes/#docker-desktop-482). 
+You'll also need to have docker running, we recommend [4.8.2](https://docs.docker.com/desktop/release-notes/#docker-desktop-482).
 
 Once you have the addresses, paste them into [networks.json](./networks.json) under 'localhost', then run `yarn network` to sync the `subgraph.yaml` file.
 

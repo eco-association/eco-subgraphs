@@ -286,6 +286,7 @@ type Token @entity {
     symbol: String!
     decimals: Int!
     totalSupply: BigInt!
+    initialSupply: BigInt
 }
 
 

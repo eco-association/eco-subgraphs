@@ -1,6 +1,7 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts/index";
 import { Token as TokenSchema } from "../../../generated/schema";
 import { ERC20 } from "../../../generated/ECO/ERC20";
+import { ECO } from "../../../generated/ECO/ECO";
 
 export class Token {
     public readonly token: TokenSchema;
@@ -18,6 +19,10 @@ export class Token {
             token.symbol = tokenContract.symbol();
             token.decimals = tokenContract.decimals();
             token.totalSupply = BigInt.fromString("0");
+            if (id == "eco" || id == "ecox") {
+                const contractWithInitialSupply = ECO.bind(address);
+                token.initialSupply = contractWithInitialSupply.initialSupply();
+            }
         }
         this.token = token;
     }

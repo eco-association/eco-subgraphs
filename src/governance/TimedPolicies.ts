@@ -4,7 +4,7 @@ import {
     PolicyDecisionStart,
     TimedPolicies,
 } from "../../generated/TimedPolicies/TimedPolicies";
-import { ECO } from "../../generated/ECO/ECO";
+import { ECO } from "../../generated/TimedPolicies/ECO";
 import { PolicyProposals } from "../../generated/templates/PolicyProposals/PolicyProposals";
 import { PolicyProposals as PolicyProposalsTemplate } from "../../generated/templates";
 import { Generation, PolicyProposal } from "../../generated/schema";

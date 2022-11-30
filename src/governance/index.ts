@@ -29,11 +29,11 @@ export function loadOrCreateContractAddresses(
             .toHexString();
         contracts.eco = policy.policyFor(ID_ECO).toHexString();
         contracts.ecox = policy.policyFor(ID_ECOX).toHexString();
-        contracts.ecoxStaking = policy.policyFor(ID_ECOXSTAKING).toHexString();
         contracts.trustedNodes = policy
             .policyFor(ID_TRUSTED_NODES)
             .toHexString();
         contracts.weco = NULL_ADDRESS;
     }
+    contracts.ecoxStaking = policy.policyFor(ID_ECOXSTAKING).toHexString();
     return contracts;
 }

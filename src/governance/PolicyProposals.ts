@@ -7,7 +7,7 @@ import {
     Unsupport as UnsupportEvent,
     VoteStart as VoteStartEvent,
 } from "../../generated/templates/PolicyProposals/PolicyProposals";
-import { ECO } from "../../generated/ECO/ECO";
+import { ECO } from "../../generated/templates/PolicyProposals/ECO";
 import { PolicyVotes } from "../../generated/templates/PolicyProposals/PolicyVotes";
 import { Proposal as ProposalContract } from "../../generated/templates/PolicyProposals/Proposal";
 import { PolicyVotes as PolicyVotesTemplate } from "../../generated/templates";
