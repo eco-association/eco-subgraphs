@@ -1,4 +1,4 @@
-import { Address } from "@graphprotocol/graph-ts/index";
+import { Address, BigInt } from "@graphprotocol/graph-ts/index";
 import {
     Deposit,
     Lockup as LockupContract,
@@ -11,15 +11,15 @@ import { loadOrCreateAccount } from "../currency";
 function getLockupDepositId(
     contract: Address,
     depositor: Address,
-    index: number
+    index: BigInt
 ): string {
-    return `${contract.toHexString()}-${depositor.toHexString()}-${index}`;
+    return `${contract.toHexString()}-${depositor.toHexString()}-${index.toString()}`;
 }
 
 function getLockupDeposit(
     contract: Address,
     depositor: Address,
-    index: number = 0
+    index: BigInt = BigInt.zero()
 ): FundsLockupDeposit {
     const id = getLockupDepositId(contract, depositor, index);
     let deposit = FundsLockupDeposit.load(id);
@@ -33,7 +33,7 @@ function getLockupDeposit(
         // associate lockup
         deposit.lockup = contract.toHexString();
     } else if (deposit.withdrawnAt) {
-        return getLockupDeposit(contract, depositor, index + 1);
+        return getLockupDeposit(contract, depositor, index.plus(BigInt.fromString("1")));
     }
 
     return deposit;
