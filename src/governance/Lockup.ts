@@ -83,5 +83,6 @@ export function handleWithdrawal(event: Withdrawal): void {
         }
 
         deposit.withdrawnAt = event.block.timestamp;
+        deposit.save();
     }
 }
