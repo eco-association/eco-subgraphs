@@ -1,32 +1,53 @@
-import { store } from "@graphprotocol/graph-ts";
-
+import { Address, BigInt } from "@graphprotocol/graph-ts/index";
 import {
     Deposit,
+    Lockup as LockupContract,
     Withdrawal,
-    Lockup as LockupContract
 } from "../../generated/templates/Lockup/Lockup";
 
 import { FundsLockup, FundsLockupDeposit } from "../../generated/schema";
 import { loadOrCreateAccount } from "../currency";
 
-// Lockup.Deposit(address indexed to, uint256 amount)
-export function handleDeposit(event: Deposit): void {
-    const id = `${event.address.toHexString()}-${event.params.to.toHexString()}`;
+function getLockupDepositId(
+    contract: Address,
+    depositor: Address,
+    index: BigInt
+): string {
+    return `${contract.toHexString()}-${depositor.toHexString()}-${index.toString()}`;
+}
+
+function getLockupDeposit(
+    contract: Address,
+    depositor: Address,
+    index: BigInt = BigInt.zero()
+): FundsLockupDeposit {
+    const id = getLockupDepositId(contract, depositor, index);
     let deposit = FundsLockupDeposit.load(id);
 
     if (!deposit) {
         deposit = new FundsLockupDeposit(id);
 
-        const account = loadOrCreateAccount(event.params.to);
+        const account = loadOrCreateAccount(depositor);
         // associate account
         deposit.account = account.id;
         // associate lockup
-        deposit.lockup = event.address.toHexString();
+        deposit.lockup = contract.toHexString();
+    } else if (deposit.withdrawnAt) {
+        return getLockupDeposit(contract, depositor, index.plus(BigInt.fromString("1")));
     }
+
+    return deposit;
+}
+
+// Lockup.Deposit(address indexed to, uint256 amount)
+export function handleDeposit(event: Deposit): void {
+    const deposit = getLockupDeposit(event.address, event.params.to);
 
     // get deposit record struct
     const lockupContract = LockupContract.bind(event.address);
     const contractDeposit = lockupContract.deposits(event.params.to);
+
+    deposit.withdrawnAt = null;
 
     // gonsDepositAmount
     deposit.amount = contractDeposit.value0;
@@ -35,8 +56,7 @@ export function handleDeposit(event: Deposit): void {
     // lockupEnd
     deposit.lockupEndsAt = contractDeposit.value2;
     // delegate
-    const delegateAccount = loadOrCreateAccount(contractDeposit.value3);
-    deposit.delegate = delegateAccount.id;
+    deposit.delegate = contractDeposit.value3.toHexString();
 
     deposit.save();
 
@@ -50,9 +70,7 @@ export function handleDeposit(event: Deposit): void {
 
 // Lockup.Withdrawal(address indexed to, uint256 amount)
 export function handleWithdrawal(event: Withdrawal): void {
-    const id = `${event.address.toHexString()}-${event.params.to.toHexString()}`;
-
-    const deposit = FundsLockupDeposit.load(id);
+    const deposit = getLockupDeposit(event.address, event.params.to);
 
     if (deposit) {
         // update total locked
@@ -63,7 +81,8 @@ export function handleWithdrawal(event: Withdrawal): void {
             );
             fundsLockup.save();
         }
-        // withdrawal => delete the deposit
-        store.remove("FundsLockupDeposit", id);
+
+        deposit.withdrawnAt = event.block.timestamp;
+        deposit.save();
     }
 }
