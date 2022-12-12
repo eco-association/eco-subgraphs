@@ -7,6 +7,7 @@ import {
 
 import { FundsLockup, FundsLockupDeposit } from "../../generated/schema";
 import { loadOrCreateAccount } from "../currency";
+import { HistoryRecord } from "./entities/HistoryRecord";
 
 function getLockupDepositId(
     contract: Address,
@@ -33,7 +34,11 @@ function getLockupDeposit(
         // associate lockup
         deposit.lockup = contract.toHexString();
     } else if (deposit.withdrawnAt) {
-        return getLockupDeposit(contract, depositor, index.plus(BigInt.fromString("1")));
+        return getLockupDeposit(
+            contract,
+            depositor,
+            index.plus(BigInt.fromString("1"))
+        );
     }
 
     return deposit;
@@ -59,6 +64,14 @@ export function handleDeposit(event: Deposit): void {
     deposit.delegate = contractDeposit.value3.toHexString();
 
     deposit.save();
+
+    // Create history record
+    HistoryRecord.createLockupRecord(
+        "LockupDeposit",
+        deposit.id,
+        event.block.timestamp,
+        event.params.to
+    );
 
     // update total locked
     const fundsLockup = FundsLockup.load(event.address.toHexString());

@@ -3,7 +3,7 @@ import {
     NewCurrencyGovernance,
     CurrencyTimer,
     NewLockup,
-    NewInflation
+    NewInflation,
 } from "../../generated/CurrencyTimer/CurrencyTimer";
 import { Policy } from "../../generated/CurrencyTimer/Policy";
 import { CurrencyGovernance as CurrencyGovernanceContract } from "../../generated/templates/CurrencyGovernance/CurrencyGovernance";
@@ -15,7 +15,7 @@ import {
     CurrencyGovernance as CurrencyGovernanceTemplate,
     Lockup as LockupTemplate,
     RandomInflation as RandomInflationTemplate,
-    InflationRootHashProposal as InflationRootHashProposalTemplate
+    InflationRootHashProposal as InflationRootHashProposalTemplate,
 } from "../../generated/templates";
 import {
     ContractAddresses,
@@ -23,7 +23,7 @@ import {
     FundsLockup,
     InflationRootHashProposal,
     RandomInflation,
-    VDFVerifier
+    VDFVerifier,
 } from "../../generated/schema";
 
 import { NULL_ADDRESS } from "../constants";
@@ -158,7 +158,12 @@ export function handleNewLockup(event: NewLockup): void {
     LockupTemplate.create(event.params.addr);
 
     // Create history record
-    HistoryRecord.createLockupRecord(newLockup.id, event.block.timestamp);
+    HistoryRecord.createLockupRecord(
+        "Lockup",
+        newLockup.id,
+        event.block.timestamp,
+        Address.zero()
+    );
 
     // add contract address
     const contracts = ContractAddresses.load("0");
