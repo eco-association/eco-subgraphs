@@ -396,7 +396,6 @@ type FundsLockupDeposit @entity {
     """
     amount: BigInt!
     reward: BigInt!
-    lockupEndsAt: BigInt!
     delegate: Account!
 }
 

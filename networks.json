@@ -39,40 +39,40 @@
     },
     "goerli": {
         "TrustedNodes": {
-            "address": "0x498437a434f1f02286dC38C391De8BB00A906bE2",
-            "startBlock": 7955615
+            "address": "0x60dEdecE13A5950a4D6Df94417826A62A93c9a81",
+            "startBlock": 8037596
         },
         "CurrencyTimer": {
-            "address": "0x64Bef9F83E573389de3c14bF36195E95a41816b7",
-            "startBlock": 7955615
+            "address": "0xB41db379f45f63d8a00e7F30D8780Fd665a8cFf2",
+            "startBlock": 8037596
         },
         "TimedPolicies": {
-            "address": "0xa7f42E00517bB126204d4F93afd96C82371DC583",
-            "startBlock": 7955615
+            "address": "0x745f0b290Bc466084d7897832857d78817CA33CF",
+            "startBlock": 8037596
         },
         "ECO": {
-            "address": "0xF75c6c82807eE3BC81c9D9C69Da5B2525B45433E",
-            "startBlock": 7955615
+            "address": "0x5EB3D908107e47Bd26a82a11608fd3fdbd138dcA",
+            "startBlock": 8037596
         },
         "ECOx": {
-            "address": "0xDf4c05140DD5613237A25953E944636f01aC3551",
-            "startBlock": 7955615
+            "address": "0x2c1755647b9Bfbfd76f8cB80c49580736eD68C80",
+            "startBlock": 8037596
         },
         "ECOxStaking": {
-            "address": "0x1a13146Cf397B3CFD8E15B1eE7c8c5476981496c",
-            "startBlock": 7955615
+            "address": "0xe468c6298fa4945d15722d61688117fe845C4873",
+            "startBlock": 8037596
         },
         "LockupVaultFactory": {
             "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 7955615
+            "startBlock": 8037596
         },
         "EmployeeLockupVaultFactory": {
             "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 7955615
+            "startBlock": 8037596
         },
         "ECOWrapped": {
             "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 7955615
+            "startBlock": 8037596
         }
     },
     "localhost": {
