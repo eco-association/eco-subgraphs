@@ -99,8 +99,8 @@ dataSources:
     name: ECO
     network: mainnet
     source:
-      abi: ECO
       address: "0x8dBF9A4c99580fC7Fd4024ee08f3994420035727"
+      abi: ECO
       startBlock: 15778020
     mapping:
       kind: ethereum/events
@@ -211,8 +211,8 @@ dataSources:
     name: EmployeeLockupVaultFactory
     network: mainnet
     source:
-      abi: LockupVaultFactory
       address: "0x0000000000000000000000000000000000000000"
+      abi: LockupVaultFactory
       startBlock: 15778020
     mapping:
       kind: ethereum/events
