@@ -53,10 +53,8 @@ export function handleDeposit(event: Deposit): void {
     deposit.amount = contractDeposit.value0;
     // ecoDepositReward
     deposit.reward = contractDeposit.value1;
-    // lockupEnd
-    deposit.lockupEndsAt = contractDeposit.value2;
     // delegate
-    deposit.delegate = contractDeposit.value3.toHexString();
+    deposit.delegate = contractDeposit.value2.toHexString();
 
     deposit.save();
 
