@@ -29,7 +29,20 @@ export class HistoryRecord {
             id,
             timestamp,
             Address.zero()
-        ).inflation();
+        ).randomInflation();
+    }
+
+    public static createRandomInflationClaimRecord(
+        id: string,
+        timestamp: BigInt,
+        triggeredBy: Address
+    ): void {
+        new HistoryRecord(
+            "RandomInflationClaim",
+            id,
+            timestamp,
+            triggeredBy
+        ).randomInflationClaim();
     }
 
     public static createLockupRecord(
@@ -72,8 +85,13 @@ export class HistoryRecord {
         this.save();
     }
 
-    public inflation(): void {
+    public randomInflation(): void {
         this.record.randomInflation = this.id;
+        this.save();
+    }
+
+    public randomInflationClaim(): void {
+        this.record.randomInflationClaim = this.id;
         this.save();
     }
 

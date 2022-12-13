@@ -146,6 +146,7 @@ enum ActivityRecordType {
 
     "New Random Inflation"
     RandomInflation
+    RandomInflationClaim
 
     "Funds Lockup"
     Lockup
@@ -166,12 +167,18 @@ type ActivityRecord @entity {
     type: ActivityRecordType!
     timestamp: BigInt!
 
+    """
+    Entities
+    """
     triggeredBy: Account
     generation: Generation
+    communityProposal: CommunityProposal
+    "Funds Lockup"
     fundsLockup: FundsLockup
     lockupDeposit: FundsLockupDeposit
+    "Random Inflation"
     randomInflation: RandomInflation
-    communityProposal: CommunityProposal
+    randomInflationClaim: RandomInflationClaim
 }
 
 type PolicyProposal @entity {
