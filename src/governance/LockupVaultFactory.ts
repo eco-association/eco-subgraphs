@@ -9,7 +9,7 @@ function createVault(event: VaultCreatedEvent, type: string): void {
     // Instantiating a new Lockup Vault Template
     LockupVaultTemplate.create(event.params.vault);
 
-    const vault = new LockupVault(event.params.vault);
+    const vault = new LockupVault(event.params.vault.toHexString());
     const lockupVaultContract = LockupVaultContract.bind(event.params.vault);
 
     const beneficiary = loadOrCreateAccount(event.params.beneficiary);

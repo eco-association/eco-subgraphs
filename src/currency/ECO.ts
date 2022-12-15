@@ -17,6 +17,20 @@ import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
 import { VotingPower } from "../governance/entities/VotingPower";
 
+function loadOrCreateECOBalance(id: string, blockNumber: BigInt): ECOBalance {
+    let newBalance = ECOBalance.load(
+        `${id}-${blockNumber.toString()}`
+    );
+    if (!newBalance) {
+        newBalance = new ECOBalance(
+            `${id}-${blockNumber.toString()}`
+        );
+    }
+    newBalance.account = id;
+    newBalance.blockNumber = blockNumber;
+    return newBalance;
+}
+
 // ECO.NewInflationMultiplier(uint256)
 export function handleNewInflationMultiplier(
     event: NewInflationMultiplierEvent
@@ -72,17 +86,8 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         from.save();
 
         // create new historical ECO balance entry
-        let newBalance = ECOBalance.load(
-            `${from.id}-${event.block.number.toString()}`
-        );
-        if (!newBalance) {
-            newBalance = new ECOBalance(
-                `${from.id}-${event.block.number.toString()}`
-            );
-        }
-        newBalance.account = from.id;
+        const newBalance = loadOrCreateECOBalance(from.id, event.block.number);
         newBalance.value = from.ECO;
-        newBalance.blockNumber = event.block.number;
         newBalance.save();
     } else {
         // is a mint, increment total supply
@@ -94,17 +99,8 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         to.ECO = to.ECO.plus(event.params.value);
         to.save();
 
-        let newBalance = ECOBalance.load(
-            `${to.id}-${event.block.number.toString()}`
-        );
-        if (!newBalance) {
-            newBalance = new ECOBalance(
-                `${to.id}-${event.block.number.toString()}`
-            );
-        }
-        newBalance.account = to.id;
+        const newBalance = loadOrCreateECOBalance(to.id, event.block.number);
         newBalance.value = to.ECO;
-        newBalance.blockNumber = event.block.number;
         newBalance.save();
     } else {
         // is a burn, decrement total supply

@@ -11,7 +11,7 @@ import { LockupVault } from "../../generated/schema";
  * @dev LockupVault.Claimed(address, address, uint256)
  */
 export function handleClaimed(event: ClaimedEvent): void {
-    const vault = LockupVault.load(event.address);
+    const vault = LockupVault.load(event.address.toHexString());
     if (!vault) {
         log.error(
             "Invalid claimed event: Lockup vault not registered (contract address: {})",
@@ -30,7 +30,7 @@ export function handleClaimed(event: ClaimedEvent): void {
 export function handleOwnershipTransferred(
     event: OwnershipTransferredEvent
 ): void {
-    const vault = LockupVault.load(event.address);
+    const vault = LockupVault.load(event.address.toHexString());
     if (!vault) {
         log.error(
             "Invalid ownership transferred event: Lockup vault not registered (contract address: {})",
@@ -47,7 +47,7 @@ export function handleOwnershipTransferred(
  * @dev LockupVault.Clawback(uint256 amount)
  */
 export function handleClawback(event: ClawbackEvent): void {
-    const vault = LockupVault.load(event.address);
+    const vault = LockupVault.load(event.address.toHexString());
     if (!vault) {
         log.error(
             "Invalid ownership transferred event: Lockup vault not registered (contract address: {})",

@@ -1,3 +1,4 @@
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
     UpdatedVotes as UpdatedVotesEvent,
     Transfer as TransferEvent,
@@ -8,6 +9,21 @@ import { NULL_ADDRESS } from "../constants";
 import { Token } from "./entity/Token";
 import { VotingPower } from "../governance/entities/VotingPower";
 import { HistoryRecord } from "../governance/entities/HistoryRecord";
+import { sECOxBalance } from "../../generated/schema";
+
+function loadOrCreatesECOxBalance(id: string, blockNumber: BigInt): sECOxBalance {
+    let newBalance = sECOxBalance.load(
+        `${id}-${blockNumber.toString()}`
+    );
+    if (!newBalance) {
+        newBalance = new sECOxBalance(
+            `${id}-${blockNumber.toString()}`
+        );
+    }
+    newBalance.account = id;
+    newBalance.blockNumber = blockNumber;
+    return newBalance;
+}
 
 // ECOxStaking.UpdatedVotes(address delegate, uint256 newBalance)
 export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
@@ -28,6 +44,11 @@ export function handleTransfer(event: TransferEvent): void {
         // not a mint
         from.sECOx = from.sECOx.minus(event.params.value);
         from.save();
+
+        // create new historical sECOx balance entry
+        const newBalance = loadOrCreatesECOxBalance(from.id, event.block.number);
+        newBalance.value = from.sECOx;
+        newBalance.save();
     } else {
         // is a mint, increment total supply
         Token.load("sEcox", event.address).increaseSupply(event.params.value);
@@ -37,6 +58,10 @@ export function handleTransfer(event: TransferEvent): void {
         // not a burn
         to.sECOx = to.sECOx.plus(event.params.value);
         to.save();
+
+        const newBalance = loadOrCreatesECOxBalance(to.id, event.block.number);
+        newBalance.value = to.sECOx;
+        newBalance.save();
     } else {
         // is a burn, decrement total supply
         Token.load("sEcox", event.address).decreaseSupply(event.params.value);

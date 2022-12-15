@@ -143,7 +143,10 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Account
+        - ECOxBalance
         - Token
+        - LockupVault
+        - VestingChunk
       abis:
         - name: ECOx
           file: ./abis/ECOx.json
@@ -169,7 +172,9 @@ dataSources:
       entities:
         - Generation
         - Account
+        - sECOxBalance
         - VotingPower
+        - Token
       abis:
         - name: ECOxStaking
           file: ./abis/ECOxStaking.json

@@ -275,6 +275,8 @@ type Account @entity {
     votes: BigInt!
     approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
+    historicalECOxBalances: [ECOxBalance!]! @derivedFrom(field: "account")
+    historicalsECOxBalances: [sECOxBalance!]! @derivedFrom(field: "account")
     """
     VOTING POWER
     """
@@ -336,6 +338,27 @@ type ECOBalance @entity {
     blockNumber: BigInt!
 }
 
+"""
+ECOx balance
+historical ECOx balance at blockNumber
+"""
+type ECOxBalance @entity {
+    id: String!
+    account: Account!
+    value: BigInt!
+    blockNumber: BigInt!
+}
+
+"""
+sECOx balance
+historical sECOx balance at blockNumber
+"""
+type sECOxBalance @entity {
+    id: String!
+    account: Account!
+    value: BigInt!
+    blockNumber: BigInt!
+}
 
 """
 historical linear inflation multipliers
@@ -412,7 +435,7 @@ type LockupVault @entity {
     """
     id: lockup vault contract address
     """
-    id: Bytes! "address"
+    id: String! "address"
     type: LockupVaultType!
     beneficiary: Account!
     account: Account!
@@ -423,7 +446,7 @@ type LockupVault @entity {
     vestingChunks: [VestingChunk!]! @derivedFrom(field: "vault")
 }
 
-type VestingChunk @entity(immutable: true) {
+type VestingChunk @entity {
     id: String!
     vault: LockupVault!
     amount: BigInt!
