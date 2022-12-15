@@ -39,40 +39,40 @@
     },
     "goerli": {
         "TrustedNodes": {
-            "address": "0x60dEdecE13A5950a4D6Df94417826A62A93c9a81",
-            "startBlock": 8037596
+            "address": "0xcD9fFB6660E642F603d6f40ec5B5C786b9244AB5",
+            "startBlock": 8132115
         },
         "CurrencyTimer": {
-            "address": "0xB41db379f45f63d8a00e7F30D8780Fd665a8cFf2",
-            "startBlock": 8037596
+            "address": "0x01423084b675b5A10Cc1D473C33cebe99191D736",
+            "startBlock": 8132115
         },
         "TimedPolicies": {
-            "address": "0x745f0b290Bc466084d7897832857d78817CA33CF",
-            "startBlock": 8037596
+            "address": "0x09D779072b223d6869382c3767A2eF52171D45F1",
+            "startBlock": 8132115
         },
         "ECO": {
-            "address": "0x5EB3D908107e47Bd26a82a11608fd3fdbd138dcA",
-            "startBlock": 8037596
+            "address": "0x723c18B89C3857471a3400DF6a9DF7327fb1f54d",
+            "startBlock": 8132115
         },
         "ECOx": {
-            "address": "0x2c1755647b9Bfbfd76f8cB80c49580736eD68C80",
-            "startBlock": 8037596
+            "address": "0xb5c1580904DF7628d8D5266390720ac45a8717C3",
+            "startBlock": 8132115
         },
         "ECOxStaking": {
-            "address": "0xe468c6298fa4945d15722d61688117fe845C4873",
-            "startBlock": 8037596
+            "address": "0xaC7715004A68f07d0412BAA78BA6bD36d03C809d",
+            "startBlock": 8132115
         },
         "LockupVaultFactory": {
             "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 8037596
+            "startBlock": 8132115
         },
         "EmployeeLockupVaultFactory": {
-            "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 8037596
+            "address": "0xfc84894c17C35263b65De956a71b16a442dAD942",
+            "startBlock": 8132115
         },
         "ECOWrapped": {
             "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 8037596
+            "startBlock": 8132115
         }
     },
     "localhost": {
