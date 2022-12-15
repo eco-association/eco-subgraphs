@@ -1,4 +1,5 @@
 import { BigInt } from "@graphprotocol/graph-ts";
+import { Address } from "@graphprotocol/graph-ts/index";
 import {
     ProposalRefund as ProposalRefundEvent,
     Register as RegisterEvent,
@@ -7,7 +8,7 @@ import {
     Unsupport as UnsupportEvent,
     VoteStart as VoteStartEvent,
 } from "../../generated/templates/PolicyProposals/PolicyProposals";
-import { ECO } from "../../generated/templates/PolicyProposals/ECO";
+import { ECO } from "../../generated/ECO/ECO";
 import { PolicyVotes } from "../../generated/templates/PolicyProposals/PolicyVotes";
 import { Proposal as ProposalContract } from "../../generated/templates/PolicyProposals/Proposal";
 import { PolicyVotes as PolicyVotesTemplate } from "../../generated/templates";
@@ -45,7 +46,11 @@ export function handleRegister(event: RegisterEvent): void {
             policyProposal
         );
         proposal.save();
-        proposal.historyRecord("ProposalSubmitted", event.block.timestamp);
+        proposal.historyRecord(
+            "ProposalSubmitted",
+            event.block.timestamp,
+            event.params.proposer
+        );
     }
 }
 
@@ -60,7 +65,11 @@ export function handleSupport(event: SupportEvent): void {
         event.block.timestamp
     );
     proposal.save();
-    proposal.historyRecord("ProposalSupported", event.block.timestamp);
+    proposal.historyRecord(
+        "ProposalSupported",
+        event.block.timestamp,
+        event.params.supporter
+    );
 }
 
 // PolicyProposals.Unsupport(address unsupporter, address proposalAddress)
@@ -70,7 +79,11 @@ export function handleUnsupport(event: UnsupportEvent): void {
     );
     proposal.unsupport(event.params.unsupporter, event.address);
     proposal.save();
-    proposal.historyRecord("ProposalUnsupported", event.block.timestamp);
+    proposal.historyRecord(
+        "ProposalUnsupported",
+        event.block.timestamp,
+        event.params.unsupporter
+    );
 }
 
 // PolicyProposals.SupportThresholdReached(address proposalAddress)
@@ -83,7 +96,11 @@ export function handleSupportThresholdReached(
     proposal.thresholdReached();
     proposal.save();
 
-    proposal.historyRecord("ProposalQuorum", event.block.timestamp);
+    proposal.historyRecord(
+        "ProposalQuorum",
+        event.block.timestamp,
+        Address.zero()
+    );
 }
 
 // PolicyProposals.ProposalRefund(address proposer, address proposalAddress)
@@ -92,6 +109,11 @@ export function handleProposalRefund(event: ProposalRefundEvent): void {
         Proposal.generateId(event.address, event.params.proposalAddress)
     );
     proposal.refunded();
+    proposal.historyRecord(
+        "ProposalRefunded",
+        event.block.timestamp,
+        event.params.proposer
+    );
     proposal.save();
 }
 
@@ -118,13 +140,20 @@ export function handleVoteStart(event: VoteStartEvent): void {
     const blockNumber = policyVoteContract.blockNumber();
     newPolicyVotes.blockNumber = blockNumber;
 
-    const votingPowerResult = policyVoteContract.try_totalVotingPower(blockNumber);
+    const votingPowerResult =
+        policyVoteContract.try_totalVotingPower(blockNumber);
     if (!votingPowerResult.reverted) {
         newPolicyVotes.totalVotingPower = votingPowerResult.value;
-    }
-    else {
+    } else {
         const ecoContract = ECO.bind(policyVoteContract.ecoToken());
-        newPolicyVotes.totalVotingPower = ecoContract.totalSupply().plus(BigInt.fromString("10").times(policyVoteContract.totalECOxSnapshot())).minus(policyVoteContract.excludedVotingPower());
+        newPolicyVotes.totalVotingPower = ecoContract
+            .totalSupply()
+            .plus(
+                BigInt.fromString("10").times(
+                    policyVoteContract.totalECOxSnapshot()
+                )
+            )
+            .minus(policyVoteContract.excludedVotingPower());
     }
 
     const proposalId = Proposal.generateId(
@@ -139,7 +168,11 @@ export function handleVoteStart(event: VoteStartEvent): void {
     newPolicyVotes.save();
 
     const proposal = Proposal.load(proposalId);
-    proposal.historyRecord("ProposalVoting", event.block.timestamp);
+    proposal.historyRecord(
+        "ProposalVoting",
+        event.block.timestamp,
+        Address.zero()
+    );
 
     // update contracts with the new PolicyVotes address
     const contracts = loadContractAddresses();

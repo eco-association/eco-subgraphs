@@ -7,6 +7,7 @@ import { loadOrCreateAccount } from ".";
 import { NULL_ADDRESS } from "../constants";
 import { Token } from "./entity/Token";
 import { VotingPower } from "../governance/entities/VotingPower";
+import { HistoryRecord } from "../governance/entities/HistoryRecord";
 
 // ECOxStaking.UpdatedVotes(address delegate, uint256 newBalance)
 export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
@@ -48,8 +49,24 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
     if (event.params.primaryDelegate.toHexString() != delegator.id) {
         const delegate = loadOrCreateAccount(event.params.primaryDelegate);
         delegator.sECOxDelegator = delegate.id;
+        const record = new HistoryRecord(
+            "sEcoXDelegate",
+            "sEcoX",
+            event.block.timestamp,
+            event.params.delegator
+        );
+        record.save();
     } else {
         delegator.sECOxDelegator = null;
+
+        // Record
+        const record = new HistoryRecord(
+            "sEcoXUndelegate",
+            "sEcoX",
+            event.block.timestamp,
+            event.params.delegator
+        );
+        record.save();
     }
     delegator.save();
 }

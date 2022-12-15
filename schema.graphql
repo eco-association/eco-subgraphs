@@ -138,15 +138,28 @@ enum ActivityRecordType {
     ProposalVoting
     ProposalResult
     ProposalExecuted
+    ProposalRefunded
+
+    "Policy Vote"
+    ProposalVoteFor
+    ProposalVoteAgainst
 
     "New Random Inflation"
     RandomInflation
+    RandomInflationClaim
 
-    "New Funds Lockup"
+    "Funds Lockup"
     Lockup
+    LockupDeposit
 
     "Generation"
     Generation
+
+    "Delegation"
+    EcoDelegate
+    EcoUndelegate
+    sEcoXDelegate
+    sEcoXUndelegate
 }
 
 type ActivityRecord @entity {
@@ -154,10 +167,18 @@ type ActivityRecord @entity {
     type: ActivityRecordType!
     timestamp: BigInt!
 
-    communityProposal: CommunityProposal
-    randomInflation: RandomInflation
-    fundsLockup: FundsLockup
+    """
+    Entities
+    """
+    triggeredBy: Account
     generation: Generation
+    communityProposal: CommunityProposal
+    "Funds Lockup"
+    fundsLockup: FundsLockup
+    lockupDeposit: FundsLockupDeposit
+    "Random Inflation"
+    randomInflation: RandomInflation
+    randomInflationClaim: RandomInflationClaim
 }
 
 type PolicyProposal @entity {
@@ -244,21 +265,31 @@ type Account @entity {
     id: account address
     """
     id: String!
+    """
+    BALANCES
+    """
     ECO: BigInt!
     ECOx: BigInt!
     sECOx: BigInt!
     wECO: BigInt!
     votes: BigInt!
+    approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
+    historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
+    """
+    VOTING POWER
+    """
     ECODelegator: Account "ECO primary delegate"
     sECOxDelegator: Account "ECOx primary delegate"
     ECODelegatedToMe: [Account!]! @derivedFrom(field: "ECODelegator")
     sECOxDelegatedToMe: [Account!]! @derivedFrom(field: "sECOxDelegator")
-    approvedECO: [ECOAllowance!]! @derivedFrom(field: "owner")
-    historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
     historicalVotingPowers: [VotingPower!]! @derivedFrom(field: "account")
-    fundsLockupDeposits: [FundsLockupDeposit!]! @derivedFrom(field: "account")
     fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]! @derivedFrom(field: "delegate")
+    """
+    OTHERS
+    """
+    activities: [ActivityRecord!]! @derivedFrom(field: "triggeredBy")
     lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
+    fundsLockupDeposits: [FundsLockupDeposit!]! @derivedFrom(field: "account")
     randomInflationClaims: [RandomInflationClaim!]! @derivedFrom(field: "account")
 }
 

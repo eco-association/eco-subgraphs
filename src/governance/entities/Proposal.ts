@@ -102,7 +102,12 @@ export class Proposal {
         this.proposal.save();
     }
 
-    historyRecord(type: string, timestamp: BigInt): void {
-        HistoryRecord.createProposalRecord(type, this.proposal.id, timestamp);
+    historyRecord(type: string, timestamp: BigInt, triggeredBy: Address): void {
+        HistoryRecord.createProposalRecord(
+            type,
+            this.proposal.id,
+            timestamp,
+            triggeredBy
+        );
     }
 }
