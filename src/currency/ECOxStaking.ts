@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { ethereum } from "@graphprotocol/graph-ts";
 import {
     UpdatedVotes as UpdatedVotesEvent,
     Transfer as TransferEvent,
@@ -11,17 +11,18 @@ import { VotingPower } from "../governance/entities/VotingPower";
 import { HistoryRecord } from "../governance/entities/HistoryRecord";
 import { sECOxBalance } from "../../generated/schema";
 
-function loadOrCreatesECOxBalance(id: string, blockNumber: BigInt): sECOxBalance {
+function loadOrCreatesECOxBalance(id: string, block: ethereum.Block): sECOxBalance {
     let newBalance = sECOxBalance.load(
-        `${id}-${blockNumber.toString()}`
+        `${id}-${block.number.toString()}`
     );
     if (!newBalance) {
         newBalance = new sECOxBalance(
-            `${id}-${blockNumber.toString()}`
+            `${id}-${block.number.toString()}`
         );
     }
     newBalance.account = id;
-    newBalance.blockNumber = blockNumber;
+    newBalance.blockNumber = block.number;
+    newBalance.timestamp = block.timestamp;
     return newBalance;
 }
 
@@ -46,7 +47,7 @@ export function handleTransfer(event: TransferEvent): void {
         from.save();
 
         // create new historical sECOx balance entry
-        const newBalance = loadOrCreatesECOxBalance(from.id, event.block.number);
+        const newBalance = loadOrCreatesECOxBalance(from.id, event.block);
         newBalance.value = from.sECOx;
         newBalance.save();
     } else {
@@ -59,7 +60,7 @@ export function handleTransfer(event: TransferEvent): void {
         to.sECOx = to.sECOx.plus(event.params.value);
         to.save();
 
-        const newBalance = loadOrCreatesECOxBalance(to.id, event.block.number);
+        const newBalance = loadOrCreatesECOxBalance(to.id, event.block);
         newBalance.value = to.sECOx;
         newBalance.save();
     } else {

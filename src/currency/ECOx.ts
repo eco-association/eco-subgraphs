@@ -1,21 +1,22 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { ethereum } from "@graphprotocol/graph-ts";
 import { Transfer } from "../../generated/ECOx/ECOx";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
 import { ContractAddresses, ECOxBalance, LockupVault, VestingChunk } from "../../generated/schema";
 
-function loadOrCreateECOxBalance(id: string, blockNumber: BigInt): ECOxBalance {
+function loadOrCreateECOxBalance(id: string, block: ethereum.Block): ECOxBalance {
     let newBalance = ECOxBalance.load(
-        `${id}-${blockNumber.toString()}`
+        `${id}-${block.number.toString()}`
     );
     if (!newBalance) {
         newBalance = new ECOxBalance(
-            `${id}-${blockNumber.toString()}`
+            `${id}-${block.number.toString()}`
         );
     }
     newBalance.account = id;
-    newBalance.blockNumber = blockNumber;
+    newBalance.blockNumber = block.number;
+    newBalance.timestamp = block.timestamp;
     return newBalance;
 }
 
@@ -30,7 +31,7 @@ export function handleTransfer(event: Transfer): void {
         from.save();
 
         // create new historical ECOx balance entry
-        const newBalance = loadOrCreateECOxBalance(from.id, event.block.number);
+        const newBalance = loadOrCreateECOxBalance(from.id, event.block);
         newBalance.value = from.ECOx;
         newBalance.save();
     } else {
@@ -43,7 +44,7 @@ export function handleTransfer(event: Transfer): void {
         to.ECOx = to.ECOx.plus(event.params.value);
         to.save();
 
-        const newBalance = loadOrCreateECOxBalance(to.id, event.block.number);
+        const newBalance = loadOrCreateECOxBalance(to.id, event.block);
         newBalance.value = to.ECOx;
         newBalance.save();
     } else {

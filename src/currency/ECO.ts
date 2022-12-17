@@ -1,4 +1,4 @@
-import { BigInt, store } from "@graphprotocol/graph-ts";
+import { BigInt, store, ethereum } from "@graphprotocol/graph-ts";
 import {
     ECO,
     Approval as ApprovalEvent,
@@ -17,17 +17,18 @@ import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
 import { VotingPower } from "../governance/entities/VotingPower";
 
-function loadOrCreateECOBalance(id: string, blockNumber: BigInt): ECOBalance {
+function loadOrCreateECOBalance(id: string, block: ethereum.Block): ECOBalance {
     let newBalance = ECOBalance.load(
-        `${id}-${blockNumber.toString()}`
+        `${id}-${block.number.toString()}`
     );
     if (!newBalance) {
         newBalance = new ECOBalance(
-            `${id}-${blockNumber.toString()}`
+            `${id}-${block.number.toString()}`
         );
     }
     newBalance.account = id;
-    newBalance.blockNumber = blockNumber;
+    newBalance.blockNumber = block.number;
+    newBalance.timestamp = block.timestamp;
     return newBalance;
 }
 
@@ -86,7 +87,7 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         from.save();
 
         // create new historical ECO balance entry
-        const newBalance = loadOrCreateECOBalance(from.id, event.block.number);
+        const newBalance = loadOrCreateECOBalance(from.id, event.block);
         newBalance.value = from.ECO;
         newBalance.save();
     } else {
@@ -99,7 +100,7 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         to.ECO = to.ECO.plus(event.params.value);
         to.save();
 
-        const newBalance = loadOrCreateECOBalance(to.id, event.block.number);
+        const newBalance = loadOrCreateECOBalance(to.id, event.block);
         newBalance.value = to.ECO;
         newBalance.save();
     } else {

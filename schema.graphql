@@ -336,6 +336,7 @@ type ECOBalance @entity {
     """
     value: BigInt!
     blockNumber: BigInt!
+    timestamp: BigInt!
 }
 
 """
@@ -347,6 +348,7 @@ type ECOxBalance @entity {
     account: Account!
     value: BigInt!
     blockNumber: BigInt!
+    timestamp: BigInt!
 }
 
 """
@@ -358,6 +360,7 @@ type sECOxBalance @entity {
     account: Account!
     value: BigInt!
     blockNumber: BigInt!
+    timestamp: BigInt!
 }
 
 """
