@@ -63,8 +63,8 @@
             "startBlock": 8132115
         },
         "LockupVaultFactory": {
-            "address": "0x0000000000000000000000000000000000000000",
-            "startBlock": 8132115
+            "address": "0xfc84894c17C35263b65De956a71b16a442dAD942",
+            "startBlock": 8137068
         },
         "EmployeeLockupVaultFactory": {
             "address": "0xfc84894c17C35263b65De956a71b16a442dAD942",

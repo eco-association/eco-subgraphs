@@ -16,6 +16,7 @@ import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
 import { VotingPower } from "../governance/entities/VotingPower";
+import { HistoryRecord } from "../governance/entities/HistoryRecord";
 
 function loadOrCreateECOBalance(id: string, block: ethereum.Block): ECOBalance {
     let newBalance = ECOBalance.load(
@@ -127,7 +128,21 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
     if (event.params.primaryDelegate.toHexString() != delegator.id) {
         const delegate = loadOrCreateAccount(event.params.primaryDelegate);
         delegator.ECODelegator = delegate.id;
+        const record = new HistoryRecord(
+            "EcoDelegate",
+            "eco",
+            event.block.timestamp,
+            event.params.delegator
+        );
+        record.save();
     } else {
+        const record = new HistoryRecord(
+            "EcoUndelegate",
+            "eco",
+            event.block.timestamp,
+            event.params.delegator
+        );
+        record.save();
         delegator.ECODelegator = null;
     }
     delegator.save();
