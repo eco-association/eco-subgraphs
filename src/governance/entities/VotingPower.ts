@@ -23,7 +23,7 @@ export class VotingPower {
         blockNumber: BigInt,
         amount: BigInt
     ): void {
-        VotingPower.create("secox", address, blockNumber, amount);
+        VotingPower.create("sEcox", address, blockNumber, amount);
     }
 
     public static create(
