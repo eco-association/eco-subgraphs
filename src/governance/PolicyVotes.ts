@@ -67,5 +67,13 @@ export function handleVoteCompletion(event: VoteCompletion): void {
             event.block.timestamp,
             Address.zero()
         );
+
+        if (event.params.result === VoteResult.Accepted) {
+            Proposal.load(policyVote.proposal).historyRecord(
+                "ProposalExecuted",
+                event.block.timestamp.plus(BigInt.fromI32(1)),
+                Address.zero()
+            );
+        }
     }
 }
