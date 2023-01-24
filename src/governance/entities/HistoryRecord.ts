@@ -48,10 +48,13 @@ export class HistoryRecord {
     public static createLockupRecord(
         type: string,
         id: string,
+        amount: BigInt,
         timestamp: BigInt,
         triggeredBy: Address
     ): void {
-        new HistoryRecord(type, id, timestamp, triggeredBy).lockupDeposit();
+        new HistoryRecord(type, id, timestamp, triggeredBy).lockupDeposit(
+            amount
+        );
     }
 
     public static createGenerationRecord(id: string, timestamp: BigInt): void {
@@ -74,6 +77,7 @@ export class HistoryRecord {
             HistoryRecord.generateId(type, id, timestamp)
         );
         this.record.type = type;
+        this.record.amount = BigInt.zero();
         this.record.timestamp = timestamp;
         if (!triggeredBy.equals(Address.zero())) {
             this.record.triggeredBy = triggeredBy.toHexString();
@@ -100,8 +104,9 @@ export class HistoryRecord {
         this.save();
     }
 
-    public lockupDeposit(): void {
+    public lockupDeposit(amount: BigInt): void {
         this.record.lockupDeposit = this.id;
+        this.record.amount = amount;
         this.save();
     }
 
