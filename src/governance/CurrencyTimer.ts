@@ -161,6 +161,7 @@ export function handleNewLockup(event: NewLockup): void {
     HistoryRecord.createLockupRecord(
         "Lockup",
         newLockup.id,
+        BigInt.zero(),
         event.block.timestamp,
         Address.zero()
     );

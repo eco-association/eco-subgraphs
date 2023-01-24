@@ -19,12 +19,12 @@ type ContractAddresses @entity {
     randomInflation: String!
 }
 
-
 """
 ECO generation
 """
 type Generation @entity {
-    id: String! "generation number"
+    id: String!
+    "generation number"
     number: BigInt!
     blockNumber: BigInt!
     createdAt: BigInt!
@@ -38,12 +38,12 @@ type Generation @entity {
     monetaryProposals: [MonetaryProposal!]! @derivedFrom(field: "generation")
 }
 
-
 """
 Currency Governance entities
 """
 type CurrencyGovernance @entity {
-    id: String! "address"
+    id: String!
+    "address"
     generation: Generation!
     proposalEnds: BigInt!
     votingEnds: BigInt!
@@ -125,7 +125,6 @@ type Trustee @entity {
     proposals: [MonetaryProposal!]! @derivedFrom(field: "trustee")
 }
 
-
 """
 Community Support entities
 """
@@ -166,6 +165,7 @@ type ActivityRecord @entity {
     id: String!
     type: ActivityRecordType!
     timestamp: BigInt!
+    amount: BigInt!
 
     """
     Entities
@@ -182,7 +182,8 @@ type ActivityRecord @entity {
 }
 
 type PolicyProposal @entity {
-    id: String! "address"
+    id: String!
+    "address"
     generation: Generation!
     proposalEnds: BigInt!
     totalVotingPower: BigInt!
@@ -192,7 +193,8 @@ type PolicyProposal @entity {
 }
 
 type CommunityProposal @entity {
-    id: String! "policyProposalAddress + - + proposalAddress"
+    id: String!
+    "policyProposalAddress + - + proposalAddress"
     address: Bytes!
     generationNumber: BigInt!
     generation: Generation!
@@ -209,14 +211,14 @@ type CommunityProposal @entity {
 }
 
 type CommunityProposalSupport @entity {
-    id: String! "supporter + - + proposal"
+    id: String!
+    "supporter + - + proposal"
     supporter: Bytes!
     createdAt: BigInt!
     proposal: CommunityProposal!
     policyProposal: PolicyProposal!
     amount: BigInt!
 }
-
 
 """
 Community Vote entities
@@ -256,7 +258,6 @@ type CommunityProposalVote @entity {
     totalAmount: BigInt!
 }
 
-
 """
 Account
 """
@@ -280,21 +281,24 @@ type Account @entity {
     """
     VOTING POWER
     """
-    ECODelegator: Account "ECO primary delegate"
-    sECOxDelegator: Account "ECOx primary delegate"
+    ECODelegator: Account
+    "ECO primary delegate"
+    sECOxDelegator: Account
+    "ECOx primary delegate"
     ECODelegatedToMe: [Account!]! @derivedFrom(field: "ECODelegator")
     sECOxDelegatedToMe: [Account!]! @derivedFrom(field: "sECOxDelegator")
     historicalVotingPowers: [VotingPower!]! @derivedFrom(field: "account")
-    fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]! @derivedFrom(field: "delegate")
+    fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]!
+        @derivedFrom(field: "delegate")
     """
     OTHERS
     """
     activities: [ActivityRecord!]! @derivedFrom(field: "triggeredBy")
     lockupVaults: [LockupVault!]! @derivedFrom(field: "beneficiary")
     fundsLockupDeposits: [FundsLockupDeposit!]! @derivedFrom(field: "account")
-    randomInflationClaims: [RandomInflationClaim!]! @derivedFrom(field: "account")
+    randomInflationClaims: [RandomInflationClaim!]!
+        @derivedFrom(field: "account")
 }
-
 
 """
 ECO Allowance
@@ -309,7 +313,6 @@ type ECOAllowance @entity {
     value: BigInt!
 }
 
-
 """
 Token
 """
@@ -321,7 +324,6 @@ type Token @entity {
     totalSupply: BigInt!
     initialSupply: BigInt
 }
-
 
 """
 ECO balance
@@ -371,7 +373,6 @@ type InflationMultiplier @entity {
     value: BigInt!
     blockNumber: BigInt!
 }
-
 
 """
 Vote balance
@@ -425,12 +426,11 @@ type FundsLockupDeposit @entity {
     delegate: Account!
 }
 
-
 """
 ECO Lockup Vault
 """
 enum LockupVaultType {
-    Investor,
+    Investor
     Employee
 }
 
@@ -438,7 +438,8 @@ type LockupVault @entity {
     """
     id: lockup vault contract address
     """
-    id: String! "address"
+    id: String!
+    "address"
     type: LockupVaultType!
     beneficiary: Account!
     account: Account!
@@ -455,7 +456,6 @@ type VestingChunk @entity {
     amount: BigInt!
     timestamp: BigInt!
 }
-
 
 """
 Random Inflation
@@ -494,7 +494,6 @@ type VDFVerifier @entity {
     randomInflation: RandomInflation! @derivedFrom(field: "vdfVerifier")
 }
 
-
 type InflationRootHashProposal @entity {
     id: String!
     accepted: Boolean!
@@ -507,5 +506,6 @@ type InflationRootHashProposal @entity {
     CHALLENGING_TIME: BigInt!
     CONTESTING_TIME: BigInt!
     FEE_COLLECTION_TIME: BigInt!
-    randomInflation: RandomInflation! @derivedFrom(field: "inflationRootHashProposal")
+    randomInflation: RandomInflation!
+        @derivedFrom(field: "inflationRootHashProposal")
 }

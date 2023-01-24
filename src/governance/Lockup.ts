@@ -67,6 +67,7 @@ export function handleDeposit(event: Deposit): void {
     HistoryRecord.createLockupRecord(
         "LockupDeposit",
         deposit.id,
+        event.params.amount,
         event.block.timestamp,
         event.params.to
     );
