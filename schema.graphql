@@ -258,6 +258,22 @@ type CommunityProposalVote @entity {
     totalAmount: BigInt!
 }
 
+enum DelegationType {
+    None
+    Amount
+    Primary
+}
+
+type TokenDelegate @entity {
+    id: ID!
+    token: Token!
+    delegatee: Account!
+    delegator: Account!
+    amount: BigInt!
+    blockStarted: BigInt!
+    blockEnded: BigInt
+}
+
 """
 Account
 """
@@ -266,6 +282,7 @@ type Account @entity {
     id: account address
     """
     id: String!
+
     """
     BALANCES
     """
@@ -278,18 +295,25 @@ type Account @entity {
     historicalECOBalances: [ECOBalance!]! @derivedFrom(field: "account")
     historicalECOxBalances: [ECOxBalance!]! @derivedFrom(field: "account")
     historicalsECOxBalances: [sECOxBalance!]! @derivedFrom(field: "account")
+
     """
     VOTING POWER
     """
-    ECODelegator: Account
-    "ECO primary delegate"
-    sECOxDelegator: Account
-    "ECOx primary delegate"
-    ECODelegatedToMe: [Account!]! @derivedFrom(field: "ECODelegator")
-    sECOxDelegatedToMe: [Account!]! @derivedFrom(field: "sECOxDelegator")
+    ECODelegator: Account "ECO primary delegate"
+    sECOxDelegator: Account "ECOx primary delegate"
+
+    ecoDelegationType: DelegationType!
+    stakedEcoXDelegationType: DelegationType!
+
+    ecoDelegateIndex: Int!
+    stakedEcoXDelegateIndex: Int!
+
+    tokenDelegatees: [TokenDelegate!]! @derivedFrom(field: "delegatee")
+    tokenDelegators: [TokenDelegate!]! @derivedFrom(field: "delegator")
     historicalVotingPowers: [VotingPower!]! @derivedFrom(field: "account")
     fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]!
         @derivedFrom(field: "delegate")
+
     """
     OTHERS
     """

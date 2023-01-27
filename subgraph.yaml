@@ -129,6 +129,8 @@ dataSources:
           handler: handleUpdatedVotes
         - event: NewPrimaryDelegate(indexed address,indexed address)
           handler: handleDelegation
+        - event: DelegatedVotes(indexed address,indexed address,uint256)
+          handler: handleDelegatedVotes
       file: ./src/currency/ECO.ts
   - kind: ethereum
     name: ECOx
