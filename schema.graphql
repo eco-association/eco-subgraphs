@@ -304,6 +304,8 @@ type Account @entity {
 
     ecoDelegationType: DelegationType!
     stakedEcoXDelegationType: DelegationType!
+    ECODelegatedToMe: [Account!]! @derivedFrom(field: "ECODelegator")
+    sECOxDelegatedToMe: [Account!]! @derivedFrom(field: "sECOxDelegator")
 
     ecoDelegateIndex: Int!
     stakedEcoXDelegateIndex: Int!
