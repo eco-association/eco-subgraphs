@@ -1,8 +1,9 @@
-import { ethereum } from "@graphprotocol/graph-ts";
+import { Address, ethereum, log } from "@graphprotocol/graph-ts";
 import {
     UpdatedVotes as UpdatedVotesEvent,
     Transfer as TransferEvent,
     NewPrimaryDelegate as NewPrimaryDelegateEvent,
+    DelegatedVotes as DelegatedVotesEvent,
 } from "../../generated/ECOxStaking/ECOxStaking";
 import { loadOrCreateAccount } from ".";
 import { NULL_ADDRESS } from "../constants";
@@ -10,15 +11,15 @@ import { Token } from "./entity/Token";
 import { VotingPower } from "../governance/entities/VotingPower";
 import { HistoryRecord } from "../governance/entities/HistoryRecord";
 import { sECOxBalance } from "../../generated/schema";
+import { DelegatedVotesManager } from "./entity/DelegatedVotesManager";
 
-function loadOrCreatesECOxBalance(id: string, block: ethereum.Block): sECOxBalance {
-    let newBalance = sECOxBalance.load(
-        `${id}-${block.number.toString()}`
-    );
+function loadOrCreatesECOxBalance(
+    id: string,
+    block: ethereum.Block
+): sECOxBalance {
+    let newBalance = sECOxBalance.load(`${id}-${block.number.toString()}`);
     if (!newBalance) {
-        newBalance = new sECOxBalance(
-            `${id}-${block.number.toString()}`
-        );
+        newBalance = new sECOxBalance(`${id}-${block.number.toString()}`);
     }
     newBalance.account = id;
     newBalance.blockNumber = block.number;
@@ -34,6 +35,8 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
 
     // create new historical vote balance entry
     VotingPower.setSEcoX(delegate.id, event.block.number, delegate.votes);
+
+    DelegatedVotesManager.handleUndelegateEvent("sEcox", event);
 }
 
 // ECOxStaking.Transfer(address from, address to, uint256 value)
@@ -67,6 +70,19 @@ export function handleTransfer(event: TransferEvent): void {
         // is a burn, decrement total supply
         Token.load("sEcox", event.address).decreaseSupply(event.params.value);
     }
+
+    if (to.ecoDelegationType == "Primary" && to.sECOxDelegator) {
+        const delegationManger = new DelegatedVotesManager(
+            "sEcox",
+            event.params.to,
+            Address.fromString(to.sECOxDelegator!)
+        );
+        delegationManger.incrementDelegation(
+            event.params.value,
+            event.block.number
+        );
+        delegationManger.save();
+    }
 }
 
 // ECOxStaking.NewPrimaryDelegate(address, address)
@@ -83,8 +99,6 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
         );
         record.save();
     } else {
-        delegator.sECOxDelegator = null;
-
         // Record
         const record = new HistoryRecord(
             "sEcoXUndelegate",
@@ -93,6 +107,46 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
             event.params.delegator
         );
         record.save();
+
+        const delegateManager = new DelegatedVotesManager(
+            "sEcox",
+            event.params.delegator,
+            Address.fromString(delegator.sECOxDelegator!)
+        );
+        delegateManager.undelegatePrimary(event.block.number);
+        delegateManager.save();
+
+        delegator.sECOxDelegator = null;
     }
     delegator.save();
+}
+
+// ECOxStaking.DelegatedVotes(address delegator, address delegatee, uint256 amount)
+export function handleDelegatedVotes(event: DelegatedVotesEvent): void {
+    if (!event.receipt) return;
+
+    const delegateManager = new DelegatedVotesManager(
+        "sEcox",
+        event.params.delegator,
+        event.params.delegatee
+    );
+
+    if (DelegatedVotesManager.isPrimaryDelegation(event)) {
+        log.info("ECOx Primary delegation (delegator {}) (delegatee {})", [
+            event.params.delegator.toHexString(),
+            event.params.delegatee.toHexString(),
+        ]);
+        delegateManager.delegatePrimary(
+            event.params.amount,
+            event.block.number
+        );
+    } else {
+        log.info("ECOx Amount delegation (delegator {}) (delegatee {})", [
+            event.params.delegator.toHexString(),
+            event.params.delegatee.toHexString(),
+        ]);
+        delegateManager.delegateAmount(event.params.amount, event.block.number);
+    }
+
+    delegateManager.save();
 }

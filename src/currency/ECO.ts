@@ -1,5 +1,10 @@
-import { BigInt, ethereum, store } from "@graphprotocol/graph-ts";
-import { Bytes, log } from "@graphprotocol/graph-ts/index";
+import {
+    Address,
+    BigInt,
+    ethereum,
+    log,
+    store,
+} from "@graphprotocol/graph-ts";
 import {
     Approval as ApprovalEvent,
     BaseValueTransfer as BaseValueTransferEvent,
@@ -107,6 +112,19 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         // is a burn, decrement total supply
         Token.load("eco", event.address).decreaseSupply(event.params.value);
     }
+
+    if (to.ecoDelegationType == "Primary" && to.ECODelegator) {
+        const delegationManger = new DelegatedVotesManager(
+            "eco",
+            event.params.to,
+            Address.fromString(to.ECODelegator!)
+        );
+        delegationManger.incrementDelegation(
+            event.params.value,
+            event.block.number
+        );
+        delegationManger.save();
+    }
 }
 
 // ECO.UpdatedVotes(address delegate, uint256 newBalance)
@@ -119,6 +137,8 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
 
     // create new historical
     VotingPower.setEco(account.id, event.block.number, amount);
+
+    DelegatedVotesManager.handleUndelegateEvent("eco", event);
 }
 
 // ECO.NewPrimaryDelegate(address, address)
@@ -142,50 +162,44 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
             event.params.delegator
         );
         record.save();
+
+        const delegateManager = new DelegatedVotesManager(
+            "eco",
+            event.params.delegator,
+            Address.fromString(delegator.ECODelegator!)
+        );
+        delegateManager.undelegatePrimary(event.block.number);
+        delegateManager.save();
+
         delegator.ECODelegator = null;
     }
     delegator.save();
 }
 
-const NEW_PRIMARY_DELEGATE_EVENT_SIG =
-    "0x88a6f95a94556f83d3752aaa691040ea5c04d9db823566be9f2f325eb866c9ae";
-
 // ECO.DelegatedVotes(address delegator, address delegatee, uint256 amount)
 export function handleDelegatedVotes(event: DelegatedVotesEvent): void {
+    if (!event.receipt) return;
+
     const delegateManager = new DelegatedVotesManager(
         "eco",
         event.params.delegator,
         event.params.delegatee
     );
 
-    for (let i = 0; i < event.receipt!.logs.length; i++) {
-        const logItem = event.receipt!.logs[i];
-        log.info("Topics ({}): {} - {} - {}", [
-            logItem.address.toHexString(),
-            logItem.topics[0].toString(),
-            logItem.topics[1].toString(),
-            logItem.topics[2].toString(),
+    if (DelegatedVotesManager. isPrimaryDelegation(event)) {
+        log.info("Primary delegation (delegator {}) (delegatee {})", [
+            event.params.delegator.toHexString(),
+            event.params.delegatee.toHexString(),
         ]);
-    }
-
-    let index = -1;
-    for (let i = 0; i < event.receipt!.logs.length; i++) {
-        const logItem = event.receipt!.logs[i];
-        if (
-            logItem.topics[0].toString() == NEW_PRIMARY_DELEGATE_EVENT_SIG &&
-            logItem.topics[1].equals(event.params.delegator) &&
-            logItem.topics[2].equals(event.params.delegatee)
-        ) {
-            index = i;
-        }
-    }
-
-    if (index >= 0) {
         delegateManager.delegatePrimary(
             event.params.amount,
             event.block.number
         );
     } else {
+        log.info("Amount delegation (delegator {}) (delegatee {})", [
+            event.params.delegator.toHexString(),
+            event.params.delegatee.toHexString(),
+        ]);
         delegateManager.delegateAmount(event.params.amount, event.block.number);
     }
 

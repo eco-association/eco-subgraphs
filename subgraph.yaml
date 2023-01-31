@@ -1,4 +1,4 @@
-specVersion: 0.0.4
+specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
@@ -11,7 +11,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Trustee
@@ -36,7 +36,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - ContractAddresses
@@ -76,7 +76,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - ContractAddresses
@@ -104,7 +104,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Account
@@ -127,10 +127,12 @@ dataSources:
           handler: handleBaseValueTransfer
         - event: UpdatedVotes(indexed address,uint256)
           handler: handleUpdatedVotes
+          receipt: true
         - event: NewPrimaryDelegate(indexed address,indexed address)
           handler: handleDelegation
         - event: DelegatedVotes(indexed address,indexed address,uint256)
           handler: handleDelegatedVotes
+          receipt: true
       file: ./src/currency/ECO.ts
   - kind: ethereum
     name: ECOx
@@ -141,7 +143,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Account
@@ -169,7 +171,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Generation
@@ -187,10 +189,14 @@ dataSources:
       eventHandlers:
         - event: UpdatedVotes(indexed address,uint256)
           handler: handleUpdatedVotes
+          receipt: true
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
         - event: NewPrimaryDelegate(indexed address,indexed address)
           handler: handleDelegation
+        - event: DelegatedVotes(indexed address,indexed address,uint256)
+          handler: handleDelegatedVotes
+          receipt: true
       file: ./src/currency/ECOxStaking.ts
   - kind: ethereum
     name: LockupVaultFactory
@@ -201,7 +207,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - LockupVault
@@ -223,7 +229,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - LockupVault
@@ -245,7 +251,7 @@ dataSources:
       startBlock: 15778020
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - Token
@@ -270,7 +276,7 @@ templates:
       abi: PolicyProposals
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - CommunityProposal
@@ -307,7 +313,7 @@ templates:
       abi: PolicyVotes
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - PolicyVote
@@ -334,7 +340,7 @@ templates:
       abi: CurrencyGovernance
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - CurrencyGovernance
@@ -365,7 +371,7 @@ templates:
       abi: Lockup
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - FundsLockup
@@ -388,7 +394,7 @@ templates:
       abi: LockupVault
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - LockupVault
@@ -410,7 +416,7 @@ templates:
       abi: RandomInflation
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - RandomInflation
@@ -434,7 +440,7 @@ templates:
       abi: InflationRootHashProposal
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
         - InflationRootHashProposal

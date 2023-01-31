@@ -68,7 +68,7 @@ export function handleVoteCompletion(event: VoteCompletion): void {
             Address.zero()
         );
 
-        if (event.params.result === VoteResult.Accepted) {
+        if (event.params.result == VoteResult.Accepted) {
             Proposal.load(policyVote.proposal).historyRecord(
                 "ProposalExecuted",
                 event.block.timestamp.plus(BigInt.fromI32(1)),
