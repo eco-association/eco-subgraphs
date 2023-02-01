@@ -264,11 +264,21 @@ enum DelegationType {
     Primary
 }
 
+type TokenDelegateManager @entity {
+    id: ID!
+    token: Token!
+    delegatee: Account!
+    delegator: Account!
+    index: Int!
+    records: [TokenDelegate!]! @derivedFrom(field: "manager")
+}
+
 type TokenDelegate @entity {
     id: ID!
     token: Token!
     delegatee: Account!
     delegator: Account!
+    manager: TokenDelegateManager!
     amount: BigInt!
     blockStarted: BigInt!
     blockEnded: BigInt
@@ -301,17 +311,18 @@ type Account @entity {
     """
     ECODelegator: Account "ECO primary delegate"
     sECOxDelegator: Account "ECOx primary delegate"
-
-    ecoDelegationType: DelegationType!
-    stakedEcoXDelegationType: DelegationType!
     ECODelegatedToMe: [Account!]! @derivedFrom(field: "ECODelegator")
     sECOxDelegatedToMe: [Account!]! @derivedFrom(field: "sECOxDelegator")
 
-    ecoDelegateIndex: Int!
-    stakedEcoXDelegateIndex: Int!
+    ecoDelegationType: DelegationType!
+    stakedEcoXDelegationType: DelegationType!
+
+    delegateeManager: [TokenDelegateManager!]! @derivedFrom(field: "delegatee")
+    delegatorManager: [TokenDelegateManager!]! @derivedFrom(field: "delegator")
 
     tokenDelegatees: [TokenDelegate!]! @derivedFrom(field: "delegatee")
     tokenDelegators: [TokenDelegate!]! @derivedFrom(field: "delegator")
+
     historicalVotingPowers: [VotingPower!]! @derivedFrom(field: "account")
     fundsLockupDepositsDelegatedToMe: [FundsLockupDeposit!]!
         @derivedFrom(field: "delegate")

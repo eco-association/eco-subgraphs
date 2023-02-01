@@ -7,13 +7,27 @@ import {
     Value,
 } from "@graphprotocol/graph-ts/index";
 import { ethereum } from "@graphprotocol/graph-ts";
-import { Account, TokenDelegate } from "../../../generated/schema";
+import {
+    Account,
+    TokenDelegate,
+    TokenDelegateManager,
+} from "../../../generated/schema";
 import { loadOrCreateAccount } from "../index";
 
 import { ECO } from "../../../generated/ECO/ECO";
 import { ECOxStaking } from "../../../generated/ECOxStaking/ECOxStaking";
 
 export class DelegatedVotesManager {
+    public static ECO: string = "eco";
+
+    public static STAKED_ECO_X: string = "sEcox";
+
+    public static ACCOUNT_DELEGATE_TYPE_NONE: string = "None";
+
+    public static ACCOUNT_DELEGATE_TYPE_AMOUNT: string = "Amount";
+
+    public static ACCOUNT_DELEGATE_TYPE_PRIMARY: string = "Primary";
+
     public static NEW_PRIMARY_DELEGATE_EVENT_SIG: string =
         "0x88a6f95a94556f83d3752aaa691040ea5c04d9db823566be9f2f325eb866c9ae";
 
@@ -29,20 +43,49 @@ export class DelegatedVotesManager {
         return `${token}-${delegator.toHexString()}-${delegatee.toHexString()}-${index.toString()}`;
     }
 
-    private static getAccountTokenIndexField(token: string): string {
-        if (token == "sEcox") return "stakedEcoXDelegateIndex";
-        return "ecoDelegateIndex";
+    public static getManagerId(
+        token: string,
+        delegator: Address,
+        delegatee: Address
+    ): string {
+        return `${token}-${delegator.toHexString()}-${delegatee.toHexString()}`;
+    }
+
+    private static getAccountDelegateeField(
+        token: string,
+        account: Account
+    ): string | null {
+        if (token == DelegatedVotesManager.STAKED_ECO_X)
+            return account.sECOxDelegator;
+        return account.ECODelegator;
     }
 
     private static getAccountDelegateTypeField(token: string): string {
-        if (token == "sEcox") return "stakedEcoXDelegationType";
+        if (token == DelegatedVotesManager.STAKED_ECO_X)
+            return "stakedEcoXDelegationType";
         return "ecoDelegationType";
     }
 
-    private static getTokenIndex(token: string, account: Account): i32 {
-        const indexField =
-            DelegatedVotesManager.getAccountTokenIndexField(token);
-        return account.get(indexField)!.toI32();
+    private static loadOrCreateManager(
+        token: string,
+        delegator: Address,
+        delegatee: Address
+    ): TokenDelegateManager {
+        const id = DelegatedVotesManager.getManagerId(
+            token,
+            delegator,
+            delegatee
+        );
+        let manager = TokenDelegateManager.load(id);
+        if (!manager) {
+            manager = new TokenDelegateManager(id);
+            manager.index = 0;
+            manager.token = token;
+            manager.delegator = delegator.toHexString();
+            manager.delegatee = delegatee.toHexString();
+            manager.save();
+        }
+        return manager;
     }
 
     private readonly token: string;
@@ -53,6 +96,8 @@ export class DelegatedVotesManager {
 
     private readonly account: Account;
 
+    private readonly manager: TokenDelegateManager;
+
     public readonly lastTokenDelegate: TokenDelegate | null;
 
     private tokenDelegate: TokenDelegate | null = null;
@@ -62,25 +107,73 @@ export class DelegatedVotesManager {
         this.delegator = delegator;
         this.delegatee = delegatee;
         this.account = loadOrCreateAccount(delegator);
-
-        const lastTokenDelegate = TokenDelegate.load(
-            DelegatedVotesManager.getId(
-                this.token,
-                this.delegator,
-                this.delegatee,
-                DelegatedVotesManager.getTokenIndex(this.token, this.account) -
-                    1
-            )
+        this.manager = DelegatedVotesManager.loadOrCreateManager(
+            this.token,
+            this.delegator,
+            this.delegatee
         );
+
+        const lastTokenDelegate = this.getLastDelegation();
 
         if (lastTokenDelegate && !lastTokenDelegate.blockEnded) {
             this.lastTokenDelegate = lastTokenDelegate;
         }
     }
 
+    private getLastDelegation(): TokenDelegate | null {
+        const delegatee = DelegatedVotesManager.getAccountDelegateeField(
+            this.token,
+            this.account
+        );
+        if (
+            delegatee &&
+            this.getAccountDelegateType() ==
+                DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY
+        ) {
+            log.info("{} Use old delegatee {} (delegator {} index {})", [
+                this.token == DelegatedVotesManager.ECO ? "ECO" : "ECOx",
+                delegatee.toString(),
+                this.delegator.toHexString(),
+                (this.manager.index - 1).toString(),
+            ]);
+
+            return TokenDelegate.load(
+                DelegatedVotesManager.getId(
+                    this.token,
+                    this.delegator,
+                    Address.fromString(delegatee),
+                    this.manager.index - 1
+                )
+            );
+        }
+
+        if (
+            !delegatee &&
+            this.getAccountDelegateType() ==
+                DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY
+        ) {
+            log.info("{} null delegate (delegator {} index {})", [
+                this.token == DelegatedVotesManager.ECO ? "ECO" : "ECOx",
+                this.delegator.toHexString(),
+                (this.manager.index - 1).toString(),
+            ]);
+        }
+
+        return TokenDelegate.load(
+            DelegatedVotesManager.getId(
+                this.token,
+                this.delegator,
+                this.delegatee,
+                this.manager.index - 1
+            )
+        );
+    }
+
     delegatePrimary(amount: BigInt, blockNumber: BigInt): void {
         this.createEntity(amount, blockNumber);
-        this.setAccountDelegateType("Primary");
+        this.setAccountDelegateType(
+            DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY
+        );
     }
 
     incrementDelegation(amount: BigInt, blockNumber: BigInt): void {
@@ -91,7 +184,9 @@ export class DelegatedVotesManager {
 
     delegateAmount(amount: BigInt, blockNumber: BigInt): void {
         this.incrementDelegation(amount, blockNumber);
-        this.setAccountDelegateType("Amount");
+        this.setAccountDelegateType(
+            DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_AMOUNT
+        );
     }
 
     undelegateAmount(amount: BigInt, blockNumber: BigInt): void {
@@ -115,66 +210,74 @@ export class DelegatedVotesManager {
 
     private undelegate(blockNumber: BigInt): void {
         this.endLastRecord(blockNumber);
-        this.incrementAccountIndex();
-        this.setAccountDelegateType("None");
+        this.setAccountDelegateType(
+            DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_NONE
+        );
     }
 
     private endLastRecord(blockNumber: BigInt): void {
-        if (this.lastTokenDelegate) {
-            if (this.lastTokenDelegate!.blockStarted === blockNumber) {
-                store.remove("TokenDelegate", this.lastTokenDelegate!.id);
-            } else {
-                this.lastTokenDelegate!.blockEnded = blockNumber;
-            }
+        if (!this.lastTokenDelegate) {
+            throw new Error(
+                `Could not end last delegation for delegator ${this.delegator.toHexString()} (delegatee ${this.delegatee.toHexString()}) on block ${blockNumber}`
+            );
+        }
+
+        if (this.lastTokenDelegate!.blockStarted.equals(blockNumber)) {
+            store.remove("TokenDelegate", this.lastTokenDelegate!.id);
+        } else {
+            this.lastTokenDelegate!.blockEnded = blockNumber;
         }
     }
 
     save(): void {
-        if (this.account) this.account.save();
+        this.account.save();
+        this.manager.save();
         if (this.tokenDelegate) this.tokenDelegate!.save();
         if (this.lastTokenDelegate) this.lastTokenDelegate!.save();
     }
 
     private createEntity(amount: BigInt, blockStarted: BigInt): void {
-        const index = DelegatedVotesManager.getTokenIndex(
-            this.token,
-            this.account
-        );
-
         const tokenDelegate = new TokenDelegate(
             DelegatedVotesManager.getId(
                 this.token,
                 this.delegator,
                 this.delegatee,
-                index
+                this.manager.index
             )
         );
 
-        tokenDelegate.token = this.token;
         tokenDelegate.amount = amount;
+        tokenDelegate.token = this.token;
+        tokenDelegate.manager = this.manager.id;
         tokenDelegate.blockStarted = blockStarted;
         tokenDelegate.delegator = this.delegator.toHexString();
         tokenDelegate.delegatee = this.delegatee.toHexString();
 
         this.tokenDelegate = tokenDelegate;
 
-        this.endLastRecord(blockStarted);
+        if (this.lastTokenDelegate) {
+            this.endLastRecord(blockStarted);
+        }
+
         this.incrementAccountIndex();
     }
 
     private incrementAccountIndex(): void {
-        const index = DelegatedVotesManager.getTokenIndex(
-            this.token,
-            this.account
-        );
-        const newIndex = index + 1;
-        const indexField = DelegatedVotesManager.getAccountTokenIndexField(
-            this.token
-        );
-        this.account.set(indexField, Value.fromI32(newIndex));
+        this.manager.index += 1;
+    }
+
+    private getAccountDelegateType(): string {
+        return this.account
+            .get(DelegatedVotesManager.getAccountDelegateTypeField(this.token))!
+            .toString();
     }
 
     private setAccountDelegateType(type: string): void {
+        log.info("{} delegator {} type set to {}", [
+            this.token == DelegatedVotesManager.STAKED_ECO_X ? "ECOx" : "ECO",
+            this.account.id,
+            type,
+        ]);
         this.account.set(
             DelegatedVotesManager.getAccountDelegateTypeField(this.token),
             Value.fromString(type)
@@ -243,7 +346,10 @@ export class DelegatedVotesManager {
                 "delegateeVp.lt(delegateePrevVP) {} |" +
                 "delegatorDiff.equals(delegateeDiff) {}",
             [
-                (delegatorAccount.ecoDelegationType == "Amount").toString(),
+                (
+                    delegatorAccount.ecoDelegationType ==
+                    DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_AMOUNT
+                ).toString(),
                 (!delegatee.equals(delegator)).toString(),
                 (!delegator.equals(Address.zero())).toString(),
                 (!delegatee.equals(Address.zero())).toString(),
@@ -280,7 +386,8 @@ export class DelegatedVotesManager {
 
         if (
             !(
-                delegatorAccount.ecoDelegationType == "Amount" &&
+                delegatorAccount.ecoDelegationType ==
+                    DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_AMOUNT &&
                 !delegatee.equals(delegator) &&
                 !delegator.equals(Address.zero()) &&
                 !delegatee.equals(Address.zero()) &&
@@ -346,7 +453,7 @@ export class DelegatedVotesManager {
         for (let i = lastIndex - 1; i >= 0; i--) {
             const currentLog = event.receipt!.logs[i];
             if (
-                currentLog.topics[0].toHexString() ===
+                currentLog.topics[0].toHexString() ==
                     DelegatedVotesManager.UPDATE_VOTES_EVENT_SIG &&
                 DelegatedVotesManager.fromTopicToAddress(
                     currentLog.topics[1]
@@ -360,7 +467,7 @@ export class DelegatedVotesManager {
 
         const prevBlock = event.block.number.minus(BigInt.fromI32(1));
 
-        if (token == "sEcox") {
+        if (token == DelegatedVotesManager.STAKED_ECO_X) {
             const ecoXStaking = ECOxStaking.bind(event.address);
             return ecoXStaking.getPastVotingGons(address, prevBlock);
         }

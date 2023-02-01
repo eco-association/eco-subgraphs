@@ -11,10 +11,6 @@ export function loadOrCreateAccount(address: Address): Account {
         account.wECO = BigInt.zero();
         account.votes = BigInt.zero();
 
-        // Voting Power
-        account.ecoDelegateIndex = 0;
-        account.stakedEcoXDelegateIndex = 0;
-
         account.ecoDelegationType = "None";
         account.stakedEcoXDelegationType = "None";
 

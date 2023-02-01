@@ -1,10 +1,4 @@
-import {
-    Address,
-    BigInt,
-    ethereum,
-    log,
-    store,
-} from "@graphprotocol/graph-ts";
+import { Address, BigInt, ethereum, log, store } from "@graphprotocol/graph-ts";
 import {
     Approval as ApprovalEvent,
     BaseValueTransfer as BaseValueTransferEvent,
@@ -113,7 +107,11 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         Token.load("eco", event.address).decreaseSupply(event.params.value);
     }
 
-    if (to.ecoDelegationType == "Primary" && to.ECODelegator) {
+    if (
+        to.ecoDelegationType ==
+            DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY &&
+        to.ECODelegator
+    ) {
         const delegationManger = new DelegatedVotesManager(
             "eco",
             event.params.to,
@@ -138,7 +136,10 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     // create new historical
     VotingPower.setEco(account.id, event.block.number, amount);
 
-    DelegatedVotesManager.handleUndelegateEvent("eco", event);
+    DelegatedVotesManager.handleUndelegateEvent(
+        DelegatedVotesManager.ECO,
+        event
+    );
 }
 
 // ECO.NewPrimaryDelegate(address, address)
@@ -163,8 +164,13 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
         );
         record.save();
 
+        log.info("ECO Undelegating Primary (delegator {}) (delegatee {})", [
+            event.params.delegator.toHexString(),
+            delegator.ECODelegator!,
+        ]);
+
         const delegateManager = new DelegatedVotesManager(
-            "eco",
+            DelegatedVotesManager.ECO,
             event.params.delegator,
             Address.fromString(delegator.ECODelegator!)
         );
@@ -181,12 +187,12 @@ export function handleDelegatedVotes(event: DelegatedVotesEvent): void {
     if (!event.receipt) return;
 
     const delegateManager = new DelegatedVotesManager(
-        "eco",
+        DelegatedVotesManager.ECO,
         event.params.delegator,
         event.params.delegatee
     );
 
-    if (DelegatedVotesManager. isPrimaryDelegation(event)) {
+    if (DelegatedVotesManager.isPrimaryDelegation(event)) {
         log.info("Primary delegation (delegator {}) (delegatee {})", [
             event.params.delegator.toHexString(),
             event.params.delegatee.toHexString(),

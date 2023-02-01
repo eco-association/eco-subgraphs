@@ -36,7 +36,10 @@ export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
     // create new historical vote balance entry
     VotingPower.setSEcoX(delegate.id, event.block.number, delegate.votes);
 
-    DelegatedVotesManager.handleUndelegateEvent("sEcox", event);
+    DelegatedVotesManager.handleUndelegateEvent(
+        DelegatedVotesManager.STAKED_ECO_X,
+        event
+    );
 }
 
 // ECOxStaking.Transfer(address from, address to, uint256 value)
@@ -71,9 +74,13 @@ export function handleTransfer(event: TransferEvent): void {
         Token.load("sEcox", event.address).decreaseSupply(event.params.value);
     }
 
-    if (to.ecoDelegationType == "Primary" && to.sECOxDelegator) {
+    if (
+        to.stakedEcoXDelegationType ==
+            DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY &&
+        to.sECOxDelegator
+    ) {
         const delegationManger = new DelegatedVotesManager(
-            "sEcox",
+            DelegatedVotesManager.STAKED_ECO_X,
             event.params.to,
             Address.fromString(to.sECOxDelegator!)
         );
@@ -88,12 +95,12 @@ export function handleTransfer(event: TransferEvent): void {
 // ECOxStaking.NewPrimaryDelegate(address, address)
 export function handleDelegation(event: NewPrimaryDelegateEvent): void {
     const delegator = loadOrCreateAccount(event.params.delegator);
-    if (event.params.primaryDelegate.toHexString() != delegator.id) {
+    if (!event.params.primaryDelegate.equals(event.params.delegator)) {
         const delegate = loadOrCreateAccount(event.params.primaryDelegate);
         delegator.sECOxDelegator = delegate.id;
         const record = new HistoryRecord(
             "sEcoXDelegate",
-            "sEcoX",
+            "sEcox",
             event.block.timestamp,
             event.params.delegator
         );
@@ -102,14 +109,19 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
         // Record
         const record = new HistoryRecord(
             "sEcoXUndelegate",
-            "sEcoX",
+            "sEcox",
             event.block.timestamp,
             event.params.delegator
         );
         record.save();
 
+        log.info("ECOx Undelegating Primary (delegator {}) (delegatee {})", [
+            event.params.delegator.toHexString(),
+            delegator.sECOxDelegator!,
+        ]);
+
         const delegateManager = new DelegatedVotesManager(
-            "sEcox",
+            DelegatedVotesManager.STAKED_ECO_X,
             event.params.delegator,
             Address.fromString(delegator.sECOxDelegator!)
         );
@@ -126,7 +138,7 @@ export function handleDelegatedVotes(event: DelegatedVotesEvent): void {
     if (!event.receipt) return;
 
     const delegateManager = new DelegatedVotesManager(
-        "sEcox",
+        DelegatedVotesManager.STAKED_ECO_X,
         event.params.delegator,
         event.params.delegatee
     );
