@@ -2,8 +2,8 @@ import axios from "axios";
 import { BigNumber } from "@ethersproject/bignumber";
 
 const DEBUG = 0;
-const DEBUG_ADDRESS = "0xbcb92a1235869ed3c642337d68499297d2e058a8";
-const DEBUG_BLOCK = 16419368;
+const DEBUG_ADDRESS = "0xa3e8e8a08a7a27f65fc4c7fdf87db698cd4b1807";
+const DEBUG_BLOCK = 16453152;
 
 const SUBGRAPH_URL =
     // "https://api.thegraph.com/subgraphs/name/ecographs/the-eco-currency-subgraphs";
@@ -276,7 +276,7 @@ async function runTests() {
             (log) => !!(log && log.length)
         );
         const includesError = logs.some((log) => log[1].includes("Expected"));
-        if (logs.length && includesError) {
+        if (logs.length && (!DEBUG || includesError)) {
             console.log(`Checking ${account.address} ...`);
             logs.forEach((log) => console.log(...log));
         }

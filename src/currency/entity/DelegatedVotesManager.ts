@@ -3,7 +3,6 @@ import {
     BigInt,
     Bytes,
     ethereum,
-    log,
     store,
     Value,
 } from "@graphprotocol/graph-ts";
@@ -121,16 +120,8 @@ export class DelegatedVotesManager {
         token: string,
         event: ethereum.Event
     ): void {
-        log.info("handleUndelegateEvent {}", [event.logIndex.toString()]);
-
         const contractLogs = DelegatedVotesManager.getContractLogs(event);
         const index = DelegatedVotesManager.getEventIndex(event, contractLogs);
-
-        log.info("handleUndelegateEvent {} contractLogs {} index {}", [
-            event.logIndex.toString(),
-            contractLogs.length.toString(),
-            index.toString(),
-        ]);
 
         const nextIndex = index + 1;
 
@@ -145,17 +136,8 @@ export class DelegatedVotesManager {
                     DelegatedVotesManager.UPDATED_VOTES_EVENT_SIG
             )
         ) {
-            log.info("handleUndelegateEvent {} index {} no next topic", [
-                event.logIndex.toString(),
-                index.toString(),
-            ]);
             return;
         }
-
-        log.info("handleUndelegateEvent {} event.parameters.length {}", [
-            event.logIndex.toString(),
-            event.parameters.length.toString(),
-        ]);
 
         const delegatee = loadOrCreateAccount(
             event.parameters[0].value.toAddress()
@@ -179,42 +161,6 @@ export class DelegatedVotesManager {
         );
         const delegatorDiff = delegatorVp.minus(delegatorPrevVP);
 
-        log.info(
-            "handleUndelegateEvent (block {})  delegatee.id != delegator.id {} | " +
-                "delegator.id != NULL_ADDRESS {} | " +
-                "delegatee.id != NULL_ADDRESS {} | " +
-                "delegatorVp.gt(delegatorPrevVP) {} | " +
-                "delegateeVp.lt(delegateePrevVP) {} | " +
-                "delegatorDiff.equals(delegateeDiff) {} | " +
-                "next log data {} | " +
-                "delegatee {} | " +
-                "delegator {} | " +
-                "delegatorVp {} | " +
-                "delegatorPrevVP {} | " +
-                "delegatorDiff {} | " +
-                "delegateeVp {} | " +
-                "delegateePrevVP {} | " +
-                "delegateeDiff {} -",
-            [
-                event.block.number.toString(),
-                (delegatee.id != delegator.id).toString(),
-                (delegator.id != NULL_ADDRESS).toString(),
-                (delegatee.id != NULL_ADDRESS).toString(),
-                delegatorVp.gt(delegatorPrevVP).toString(),
-                delegateeVp.lt(delegateePrevVP).toString(),
-                delegatorDiff.equals(delegateeDiff).toString(),
-                nextLog.data.toHexString(),
-                delegatee.id,
-                delegator.id,
-                delegatorVp.toHexString(),
-                delegatorPrevVP.toHexString(),
-                delegatorDiff.toHexString(),
-                delegateeVp.toHexString(),
-                delegateePrevVP.toHexString(),
-                delegateeDiff.toHexString(),
-            ]
-        );
-
         if (
             !(
                 delegatee.id != delegator.id &&
@@ -225,66 +171,66 @@ export class DelegatedVotesManager {
                 delegatorDiff.equals(delegateeDiff)
             )
         ) {
-            log.info(
-                "handleUndelegateEvent {} index {} not a valid undelegate event",
-                [event.logIndex.toString(), index.toString()]
-            );
             return;
         }
 
-        const prevIndex =
-            token == DelegatedVotesManager.ECO ? index - 2 : index - 1;
         const transferEventSig =
             token == DelegatedVotesManager.ECO
                 ? DelegatedVotesManager.BASE_VALUE_TRANSFER_EVENT_SIG
                 : DelegatedVotesManager.TRANSFER_EVENT_SIG;
 
-        log.info("handleUndelegateEvent {} prevIndex {}", [
-            event.logIndex.toString(),
-            prevIndex.toString(),
-        ]);
+        const prevIndex =
+            token == DelegatedVotesManager.ECO ? index - 2 : index - 1;
 
-        const prevLog = prevIndex >= 0 ? contractLogs[prevIndex] : null;
+        let prevLog = prevIndex >= 0 ? contractLogs[prevIndex] : null;
 
-        log.info("handleUndelegateEvent {} prevIndex {} prevLogTopics {}", [
-            event.logIndex.toString(),
-            prevIndex.toString(),
-            prevLog ? prevLog.topics.length.toString() : "undefined",
-        ]);
-
-        if (prevLog) {
-            log.info(
-                "handleUndelegateEvent {} prevLog.topics[0].toHexString() {} transferEventSig {} delegatorDiff {} DelegatedVotesManager.fromTopicDataToBigInt(prevLog.data) {}",
-                [
-                    event.logIndex.toString(),
-                    prevLog.topics[0].toHexString(),
-                    transferEventSig.toString(),
-                    delegatorDiff.toHexString(),
-                    DelegatedVotesManager.fromTopicDataToBigInt(
-                        prevLog.data
-                    ).toHexString(),
-                ]
-            );
+        // Check undelegate first after transfer
+        if (
+            DelegatedVotesManager.getAccountDelegateType(token, delegatee) ==
+                DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY &&
+            prevLog &&
+            prevLog.topics[0].toHexString() ==
+                DelegatedVotesManager.UPDATED_VOTES_EVENT_SIG &&
+            prevIndex - 2 >= 0
+        ) {
+            const transferTopics = contractLogs[prevIndex - 2].topics;
+            const undelegateVPTopics = contractLogs[index - 2].topics;
+            const delegateVPTopics = contractLogs[index - 1].topics;
+            if (
+                transferTopics[0].toHexString() == transferEventSig &&
+                undelegateVPTopics[0].toHexString() ==
+                    DelegatedVotesManager.UPDATED_VOTES_EVENT_SIG &&
+                delegateVPTopics[0].toHexString() ==
+                    DelegatedVotesManager.UPDATED_VOTES_EVENT_SIG &&
+                DelegatedVotesManager.fromTopicToAddress(
+                    undelegateVPTopics[1]
+                ).toHexString() == delegatee.id &&
+                DelegatedVotesManager.fromTopicToAddress(
+                    delegateVPTopics[1]
+                ).toHexString() ==
+                    DelegatedVotesManager.getAccountPrimaryDelegatee(
+                        token,
+                        delegatee
+                    )
+            ) {
+                prevLog = contractLogs[prevIndex - 2];
+            }
         }
-
-        // TODO: Check undelegate amount before token transfer case
 
         if (
             prevLog &&
             prevLog.topics[0].toHexString() == transferEventSig &&
+            DelegatedVotesManager.fromTopicToAddress(
+                prevLog.topics[1]
+            ).toHexString() == delegatee.id &&
+            DelegatedVotesManager.fromTopicToAddress(
+                prevLog.topics[2]
+            ).toHexString() == delegator.id &&
             delegatorDiff.equals(
                 DelegatedVotesManager.fromTopicDataToBigInt(prevLog.data)
             )
         ) {
-            log.info(
-                "handleUndelegateEvent Prevented undelegate from token transfer (delegator {}) (delegatee {}) (amount {}) (block {})",
-                [
-                    delegator.id,
-                    delegatee.id,
-                    delegatorDiff.toHexString(),
-                    event.block.number.toString(),
-                ]
-            );
+            // Prevented undelegate from token transfer
             return;
         }
 
@@ -405,15 +351,6 @@ export class DelegatedVotesManager {
             return;
         }
 
-        log.info(
-            "Create new TokenDelegate record for primary delegatee {} delegator {} block {} amount {}",
-            [
-                this.delegatee.toHexString(),
-                this.delegator.toHexString(),
-                blockNumber.toI32().toString(),
-                amount.toHexString(),
-            ]
-        );
         this.createEntity(amount, blockNumber);
         this.setAccountDelegateType(
             DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY
@@ -423,16 +360,6 @@ export class DelegatedVotesManager {
     incrementDelegation(amount: BigInt, blockNumber: BigInt): void {
         const prevAmount = this.getPrevAmount();
         const totalAmount = amount.plus(prevAmount);
-        log.info(
-            "Create TokenDelegate record for increment delegatee {} delegator {} block {} prevAmount {} amount {}",
-            [
-                this.delegatee.toHexString(),
-                this.delegator.toHexString(),
-                blockNumber.toI32().toString(),
-                prevAmount.toHexString(),
-                amount.toHexString(),
-            ]
-        );
         this.createEntity(totalAmount, blockNumber);
     }
 
@@ -465,33 +392,13 @@ export class DelegatedVotesManager {
                 this.account
             );
 
-        if (primaryDelegatee) {
-            log.info(
-                "{} !Address.fromString(primaryDelegatee).equals(this.delegatee) {} | " +
-                    "this.getAccountDelegateType() == DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY {} | this.getAccountDelegateType() {} | primaryDelegatee {} | " +
-                    "delegatee {} | delegator {} ",
-                [
-                    this.token == DelegatedVotesManager.ECO ? "ECO" : "ECOx",
-                    (!Address.fromString(primaryDelegatee).equals(
-                        this.delegatee
-                    )).toString(),
-                    (
-                        this.getAccountDelegateType() ==
-                        DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY
-                    ).toString(),
-                    this.getAccountDelegateType(),
-                    primaryDelegatee.toString(),
-                    this.delegatee.toHexString(),
-                    this.delegator.toHexString(),
-                ]
-            );
-        }
-
         if (
             primaryDelegatee &&
             !Address.fromString(primaryDelegatee).equals(this.delegatee) &&
-            this.getAccountDelegateType() ==
-                DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY
+            DelegatedVotesManager.getAccountDelegateType(
+                this.token,
+                this.account
+            ) == DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY
         ) {
             const delegateeAddress = Address.fromString(primaryDelegatee);
             const oldManager = DelegatedVotesManager.loadOrCreateManager(
@@ -499,13 +406,6 @@ export class DelegatedVotesManager {
                 this.delegator,
                 delegateeAddress
             );
-
-            log.info("{} Use old delegatee {} (delegator {} index {})", [
-                this.token == DelegatedVotesManager.ECO ? "ECO" : "ECOx",
-                primaryDelegatee.toString(),
-                this.delegator.toHexString(),
-                (oldManager.index - 1).toString(),
-            ]);
 
             return TokenDelegate.load(
                 DelegatedVotesManager.getId(
@@ -532,16 +432,6 @@ export class DelegatedVotesManager {
         const totalAmount = prevAmount.minus(amount);
 
         if (!totalAmount.isZero()) {
-            log.info(
-                "Create TokenDelegate record for decrement delegatee {} delegator {} block {} prevAmount {} amount {}",
-                [
-                    this.delegatee.toHexString(),
-                    this.delegator.toHexString(),
-                    blockNumber.toI32().toString(),
-                    prevAmount.toHexString(),
-                    amount.toHexString(),
-                ]
-            );
             this.createEntity(totalAmount, blockNumber);
         } else if (this.lastTokenDelegate) {
             this.undelegate(blockNumber);
@@ -549,15 +439,6 @@ export class DelegatedVotesManager {
     }
 
     private undelegate(blockNumber: BigInt): void {
-        log.info(
-            "{} Undelegated all tokens delegator {} delegatee {} block {}",
-            [
-                this.token == DelegatedVotesManager.ECO ? "ECO" : "ECOX",
-                this.delegator.toHexString(),
-                this.delegatee.toHexString(),
-                blockNumber.toI32().toString(),
-            ]
-        );
         this.endLastRecord(blockNumber);
         this.setAccountDelegateType(
             DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_NONE
@@ -568,12 +449,6 @@ export class DelegatedVotesManager {
         if (!this.lastTokenDelegate) return;
 
         if (this.lastTokenDelegate!.blockStarted.equals(blockNumber)) {
-            log.info("{} Remove TokenDelegate block {} id {} amount {}", [
-                this.token == DelegatedVotesManager.ECO ? "ECO" : "ECOX",
-                blockNumber.toI32().toString(),
-                this.lastTokenDelegate!.id,
-                this.lastTokenDelegate!.amount.toHexString(),
-            ]);
             store.remove("TokenDelegate", this.lastTokenDelegate!.id);
             this.decreaseAccountIndex(this.lastTokenDelegate!.manager);
             this.lastTokenDelegate = null;
@@ -585,17 +460,7 @@ export class DelegatedVotesManager {
     private createEntity(amount: BigInt, blockStarted: BigInt): void {
         this.endLastRecord(blockStarted);
 
-        if (amount.isZero()) {
-            log.info(
-                "Skipped TokenDelegate creation with zero amount delegator {} delegatee {} block {}",
-                [
-                    this.delegator.toHexString(),
-                    this.delegatee.toHexString(),
-                    blockStarted.toI32().toString(),
-                ]
-            );
-            return;
-        }
+        if (amount.isZero()) return;
 
         const tokenDelegate = new TokenDelegate(
             DelegatedVotesManager.getId(
@@ -629,18 +494,15 @@ export class DelegatedVotesManager {
             const manager = TokenDelegateManager.load(managerId);
             manager!.index -= 1;
             manager!.save();
-
-            log.info("{} 8179519 Update old manager {} index {} -", [
-                this.token == DelegatedVotesManager.ECO ? "ECO" : "ECOx",
-                managerId,
-                manager!.index.toString(),
-            ]);
         }
     }
 
-    private getAccountDelegateType(): string {
-        return this.account
-            .get(DelegatedVotesManager.getAccountDelegateTypeField(this.token))!
+    private static getAccountDelegateType(
+        token: string,
+        account: Account
+    ): string {
+        return account
+            .get(DelegatedVotesManager.getAccountDelegateTypeField(token))!
             .toString();
     }
 

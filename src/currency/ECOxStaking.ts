@@ -1,4 +1,4 @@
-import { Address, ethereum, log } from "@graphprotocol/graph-ts";
+import { Address, ethereum } from "@graphprotocol/graph-ts";
 import {
     UpdatedVotes as UpdatedVotesEvent,
     Transfer as TransferEvent,
@@ -79,12 +79,6 @@ export function handleTransfer(event: TransferEvent): void {
 
 // ECOxStaking.UpdatedVotes(address delegate, uint256 newVotes)
 export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
-    log.info("handleUpdatedVotes start {}", [event.logIndex.toString()]);
-    DelegatedVotesManager.handleUndelegateEvent(
-        DelegatedVotesManager.STAKED_ECO_X,
-        event
-    );
-
     // create new historical vote balance entry
     VotingPower.setSEcoX(
         event.params.voter.toHexString(),
@@ -121,11 +115,6 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
         );
         record.save();
 
-        log.info("ECOx Undelegating Primary (delegator {}) (delegatee {})", [
-            event.params.delegator.toHexString(),
-            delegator.sECOxDelegator!,
-        ]);
-
         const delegateManager = DelegatedVotesManager.load(
             DelegatedVotesManager.STAKED_ECO_X,
             delegator,
@@ -150,27 +139,11 @@ export function handleDelegatedVotes(event: DelegatedVotesEvent): void {
     );
 
     if (DelegatedVotesManager.isPrimaryDelegation(event)) {
-        log.info(
-            "ECOx Primary delegation (delegator {}) (delegatee {}) block {}",
-            [
-                event.params.delegator.toHexString(),
-                event.params.delegatee.toHexString(),
-                event.block.number.toString(),
-            ]
-        );
         delegateManager.delegatePrimary(
             event.params.amount,
             event.block.number
         );
     } else {
-        log.info(
-            "ECOx Amount delegation (delegator {}) (delegatee {}) block {}",
-            [
-                event.params.delegator.toHexString(),
-                event.params.delegatee.toHexString(),
-                event.block.number.toString(),
-            ]
-        );
         delegateManager.delegateAmount(event.params.amount, event.block.number);
     }
 

@@ -1,4 +1,4 @@
-import { Address, BigInt, ethereum, log, store } from "@graphprotocol/graph-ts";
+import { Address, BigInt, ethereum, store } from "@graphprotocol/graph-ts";
 import {
     Approval as ApprovalEvent,
     BaseValueTransfer as BaseValueTransferEvent,
@@ -6,13 +6,9 @@ import {
     ECO,
     NewInflationMultiplier as NewInflationMultiplierEvent,
     NewPrimaryDelegate as NewPrimaryDelegateEvent,
-    UpdatedVotes as UpdatedVotesEvent,
+    UpdatedVotes as UpdatedVotesEvent
 } from "../../generated/ECO/ECO";
-import {
-    ECOAllowance,
-    ECOBalance,
-    InflationMultiplier,
-} from "../../generated/schema";
+import { ECOAllowance, ECOBalance, InflationMultiplier } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
@@ -110,17 +106,9 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
     if (
         !event.params.value.isZero() &&
         to.ecoDelegationType ==
-            DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY &&
+        DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY &&
         to.ECODelegator
     ) {
-        log.info(
-            "ECO Increment Delegation (delegator {}) (delegatee {}) (block {})",
-            [
-                event.params.to.toHexString(),
-                to.ECODelegator!,
-                event.block.number.toString(),
-            ]
-        );
         const delegationManger = DelegatedVotesManager.load(
             DelegatedVotesManager.ECO,
             to,
@@ -180,11 +168,6 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
         );
         record.save();
 
-        log.info("ECO Undelegating Primary (delegator {}) (delegatee {})-", [
-            event.params.delegator.toHexString(),
-            delegator.ECODelegator!,
-        ]);
-
         const delegateManager = DelegatedVotesManager.load(
             DelegatedVotesManager.ECO,
             delegator,
@@ -209,29 +192,11 @@ export function handleDelegatedVotes(event: DelegatedVotesEvent): void {
     );
 
     if (DelegatedVotesManager.isPrimaryDelegation(event)) {
-        log.info(
-            "ECO Primary delegation (delegator {}) (delegatee {}) amount {} block {} -",
-            [
-                event.params.delegator.toHexString(),
-                event.params.delegatee.toHexString(),
-                event.params.amount.toHexString(),
-                event.block.number.toString(),
-            ]
-        );
         delegateManager.delegatePrimary(
             event.params.amount,
             event.block.number
         );
     } else {
-        log.info(
-            "ECO Amount delegation (delegator {}) (delegatee {}) amount {} block {}",
-            [
-                event.params.delegator.toHexString(),
-                event.params.delegatee.toHexString(),
-                event.params.amount.toHexString(),
-                event.block.number.toString(),
-            ]
-        );
         delegateManager.delegateAmount(event.params.amount, event.block.number);
     }
 
