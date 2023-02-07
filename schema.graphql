@@ -314,6 +314,9 @@ type Account @entity {
     ECODelegatedToMe: [Account!]! @derivedFrom(field: "ECODelegator")
     sECOxDelegatedToMe: [Account!]! @derivedFrom(field: "sECOxDelegator")
 
+    ecoVotingPower: BigInt!
+    stakedEcoXVotingPower: BigInt!
+
     ecoDelegationType: DelegationType!
     stakedEcoXDelegationType: DelegationType!
 

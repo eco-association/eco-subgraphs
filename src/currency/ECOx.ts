@@ -3,16 +3,20 @@ import { Transfer } from "../../generated/ECOx/ECOx";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
-import { ContractAddresses, ECOxBalance, LockupVault, VestingChunk } from "../../generated/schema";
+import {
+    ContractAddresses,
+    ECOxBalance,
+    LockupVault,
+    VestingChunk,
+} from "../../generated/schema";
 
-function loadOrCreateECOxBalance(id: string, block: ethereum.Block): ECOxBalance {
-    let newBalance = ECOxBalance.load(
-        `${id}-${block.number.toString()}`
-    );
+function loadOrCreateECOxBalance(
+    id: string,
+    block: ethereum.Block
+): ECOxBalance {
+    let newBalance = ECOxBalance.load(`${id}-${block.number.toString()}`);
     if (!newBalance) {
-        newBalance = new ECOxBalance(
-            `${id}-${block.number.toString()}`
-        );
+        newBalance = new ECOxBalance(`${id}-${block.number.toString()}`);
     }
     newBalance.account = id;
     newBalance.blockNumber = block.number;
@@ -23,7 +27,6 @@ function loadOrCreateECOxBalance(id: string, block: ethereum.Block): ECOxBalance
 // ECOx.Transfer(address from, address to, uint256 value)
 export function handleTransfer(event: Transfer): void {
     const from = loadOrCreateAccount(event.params.from);
-    const to = loadOrCreateAccount(event.params.to);
 
     if (from.id != NULL_ADDRESS) {
         // not a mint
@@ -39,6 +42,7 @@ export function handleTransfer(event: Transfer): void {
         Token.load("ecox", event.address).increaseSupply(event.params.value);
     }
 
+    const to = loadOrCreateAccount(event.params.to);
     if (to.id != NULL_ADDRESS) {
         // not a burn
         to.ECOx = to.ECOx.plus(event.params.value);
@@ -54,7 +58,12 @@ export function handleTransfer(event: Transfer): void {
 
     const vault = LockupVault.load(to.id);
     const contractAddresses = ContractAddresses.load("0");
-    if (vault && vault.type == "Employee" && contractAddresses && from.id != contractAddresses.ecoxStaking) {
+    if (
+        vault &&
+        vault.type == "Employee" &&
+        contractAddresses &&
+        from.id != contractAddresses.ecoxStaking
+    ) {
         // (disregard any unstakes the vault might use)
         const chunk = VestingChunk.load(`${vault.id}-0`);
         if (chunk) {
