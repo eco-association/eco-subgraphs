@@ -9,3 +9,5 @@ generated/
 .idea/
 
 tests/
+
+scripts/testDelegation.js

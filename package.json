@@ -4,6 +4,7 @@
     "scripts": {
         "graph-node": "node scripts/runGraphNode.js",
         "network": "node scripts/setupNetwork.js :",
+        "test:delegation": "tsc scripts/testDelegation.ts && node scripts/testDelegation.js",
         "codegen": "graph codegen",
         "build": "graph build",
         "deploy": "graph deploy --node https://api.thegraph.com/deploy/ ecographs/the-eco-currency-subgraphs",

@@ -1,14 +1,8 @@
 import axios from "axios";
 import { BigNumber } from "@ethersproject/bignumber";
 
-const DEBUG = 0;
-const DEBUG_ADDRESS = "0xa3e8e8a08a7a27f65fc4c7fdf87db698cd4b1807";
-const DEBUG_BLOCK = 16453152;
-
 const SUBGRAPH_URL =
-    // "https://api.thegraph.com/subgraphs/name/ecographs/the-eco-currency-subgraphs";
-    "https://api.thegraph.com/subgraphs/name/carlosfebres/policy";
-// "https://api.thegraph.com/subgraphs/id/QmR2JHwnaKVRsB5gnzpbaT9WL7MRLtjQ9Lz1aCkvpu8Qbi";
+    "https://api.thegraph.com/subgraphs/name/ecographs/the-eco-currency-subgraphs";
 
 const ACCOUNTS_QUERY = `
     query ACCOUNTS_QUERY ($skip: Int!) {
@@ -80,6 +74,8 @@ interface Account {
     tokenDelegators: DelegationRecord[];
 }
 
+type Log = string[];
+
 function execQuery(
     url: string,
     query: string,
@@ -92,10 +88,6 @@ function execQuery(
             headers: { "Content-Type": "application/json" },
         }
     );
-}
-
-function log(...params) {
-    DEBUG && console.log(...params);
 }
 
 function formatBalanceRecord(token: Token, record: any): BalanceRecord {
@@ -160,7 +152,6 @@ function getPastBalance(
 ): BigNumber {
     for (const record of balances) {
         if (record.blockNumber <= blockNumber) {
-            base.isZero() && log("balance record", record);
             return record.value;
         }
     }
@@ -193,9 +184,6 @@ function getDelegationSnapshot(
 ): BigNumber {
     const tokenRecords = getTokenDelegation(records, token);
     const snapshotRecords = getPastDelegations(tokenRecords, blockNumber);
-
-    log("snapshot records", snapshotRecords);
-
     return snapshotRecords.reduce(
         (acc, record) => acc.add(record.amount),
         BigNumber.from(0)
@@ -221,21 +209,15 @@ function calculateTokenVP(
         blockNumber
     );
 
-    log("past balance", balanceSnapshot.toHexString());
-    log("delegateesSnapshot", delegateesSnapshot);
-    log("delegatorsSnapshot", delegatorsSnapshot);
-
     return balanceSnapshot.add(delegateesSnapshot).sub(delegatorsSnapshot);
 }
 
-function checkAccount(account: Account, inflationMultipliers: BalanceRecord[]) {
-    if (DEBUG && account.address !== DEBUG_ADDRESS) return [];
-
+function checkAccount(
+    account: Account,
+    inflationMultipliers: BalanceRecord[]
+): Log[] {
     return account.historicalVotingPowers.map((vpRecord) => {
         const { value, token, blockNumber } = vpRecord;
-
-        if (DEBUG && DEBUG_BLOCK && blockNumber != DEBUG_BLOCK) return [];
-
         const pastMultiplier =
             token === Token.ECO
                 ? getPastBalance(
@@ -269,18 +251,37 @@ function checkAccount(account: Account, inflationMultipliers: BalanceRecord[]) {
     });
 }
 
+function displayAccountLogs(address: string, logs: Log[]) {
+    console.log(`Checking ${address} ...`);
+    logs.forEach((log) => console.log(log[0], log[1]));
+}
+
 async function runTests() {
     const { accounts, multipliers } = await fetchData();
-    accounts.forEach((account) => {
-        const logs = checkAccount(account, multipliers).filter(
-            (log) => !!(log && log.length)
+    const accountLogs = accounts
+        .map((account: Account): [string, Log[]] => {
+            return [
+                account.address,
+                checkAccount(account, multipliers).filter(
+                    (log) => !!(log && log.length)
+                ),
+            ];
+        })
+        .filter((accountLog) => accountLog[1].length);
+
+    const accountsWithErrors = accountLogs.filter(([, logs]) =>
+        logs.some((log) => log[1].includes("Expected"))
+    );
+
+    if (accountsWithErrors.length) {
+        accountsWithErrors.forEach(([address, logs]) =>
+            displayAccountLogs(address, logs)
         );
-        const includesError = logs.some((log) => log[1].includes("Expected"));
-        if (logs.length && (!DEBUG || includesError)) {
-            console.log(`Checking ${account.address} ...`);
-            logs.forEach((log) => console.log(...log));
-        }
-    });
+    } else {
+        accountLogs.forEach(([address, logs]) =>
+            displayAccountLogs(address, logs)
+        );
+    }
 }
 
 runTests();
