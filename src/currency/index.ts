@@ -1,8 +1,6 @@
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 import { Account } from "../../generated/schema";
 
-// TODO: Check balance calculation for ECOx
-
 export function loadOrCreateAccount(address: Address): Account {
     let account = Account.load(address.toHexString());
     if (!account) {
