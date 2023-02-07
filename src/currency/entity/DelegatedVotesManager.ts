@@ -342,6 +342,15 @@ export class DelegatedVotesManager {
         return manager;
     }
 
+    private static getAccountDelegateType(
+        token: string,
+        account: Account
+    ): string {
+        return account
+            .get(DelegatedVotesManager.getAccountDelegateTypeField(token))!
+            .toString();
+    }
+
     delegatePrimary(amount: BigInt, blockNumber: BigInt): void {
         if (
             this.lastTokenDelegate &&
@@ -495,15 +504,6 @@ export class DelegatedVotesManager {
             manager!.index -= 1;
             manager!.save();
         }
-    }
-
-    private static getAccountDelegateType(
-        token: string,
-        account: Account
-    ): string {
-        return account
-            .get(DelegatedVotesManager.getAccountDelegateTypeField(token))!
-            .toString();
     }
 
     private setAccountDelegateType(type: string): void {

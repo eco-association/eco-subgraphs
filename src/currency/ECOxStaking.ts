@@ -79,6 +79,11 @@ export function handleTransfer(event: TransferEvent): void {
 
 // ECOxStaking.UpdatedVotes(address delegate, uint256 newVotes)
 export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
+    DelegatedVotesManager.handleUndelegateEvent(
+        DelegatedVotesManager.STAKED_ECO_X,
+        event
+    );
+
     // create new historical vote balance entry
     VotingPower.setSEcoX(
         event.params.voter.toHexString(),
