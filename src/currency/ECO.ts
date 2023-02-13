@@ -1,4 +1,4 @@
-import { Address, BigInt, ethereum, log, store } from "@graphprotocol/graph-ts";
+import { Address, BigInt, ethereum, store } from "@graphprotocol/graph-ts";
 import {
     Approval as ApprovalEvent,
     BaseValueTransfer as BaseValueTransferEvent,
@@ -6,13 +6,9 @@ import {
     ECO,
     NewInflationMultiplier as NewInflationMultiplierEvent,
     NewPrimaryDelegate as NewPrimaryDelegateEvent,
-    UpdatedVotes as UpdatedVotesEvent,
+    UpdatedVotes as UpdatedVotesEvent
 } from "../../generated/ECO/ECO";
-import {
-    ECOAllowance,
-    ECOBalance,
-    InflationMultiplier,
-} from "../../generated/schema";
+import { ECOAllowance, ECOBalance, InflationMultiplier } from "../../generated/schema";
 import { NULL_ADDRESS } from "../constants";
 import { loadOrCreateAccount } from ".";
 import { Token } from "./entity/Token";
@@ -78,7 +74,6 @@ export function handleApproval(event: ApprovalEvent): void {
 // ECO.BaseValueTransfer(address from, address to, uint256 value)
 export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
     const from = loadOrCreateAccount(event.params.from);
-    const to = loadOrCreateAccount(event.params.to);
 
     if (from.id != NULL_ADDRESS) {
         // not a mint
@@ -94,6 +89,7 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
         Token.load("eco", event.address).increaseSupply(event.params.value);
     }
 
+    const to = loadOrCreateAccount(event.params.to);
     if (to.id != NULL_ADDRESS) {
         // not a burn
         to.ECO = to.ECO.plus(event.params.value);
@@ -108,13 +104,14 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
     }
 
     if (
+        !event.params.value.isZero() &&
         to.ecoDelegationType ==
-            DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY &&
+        DelegatedVotesManager.ACCOUNT_DELEGATE_TYPE_PRIMARY &&
         to.ECODelegator
     ) {
-        const delegationManger = new DelegatedVotesManager(
-            "eco",
-            event.params.to,
+        const delegationManger = DelegatedVotesManager.load(
+            DelegatedVotesManager.ECO,
+            to,
             Address.fromString(to.ECODelegator!)
         );
         delegationManger.incrementDelegation(
@@ -125,21 +122,28 @@ export function handleBaseValueTransfer(event: BaseValueTransferEvent): void {
     }
 }
 
-// ECO.UpdatedVotes(address delegate, uint256 newBalance)
+// ECO.UpdatedVotes(address delegate, uint256 newVotes)
 export function handleUpdatedVotes(event: UpdatedVotesEvent): void {
-    const account = loadOrCreateAccount(event.params.voter);
-
-    const eco = ECO.bind(event.address);
-    const inflation = eco.getPastLinearInflation(event.block.number);
-    const amount = event.params.newVotes.div(inflation);
-
-    // create new historical
-    VotingPower.setEco(account.id, event.block.number, amount);
-
     DelegatedVotesManager.handleUndelegateEvent(
         DelegatedVotesManager.ECO,
         event
     );
+
+    // Gons => Amount
+    const eco = ECO.bind(event.address);
+    const inflation = eco.getPastLinearInflation(event.block.number);
+    const amount = event.params.newVotes.div(inflation);
+
+    // Create new history record
+    VotingPower.setEco(
+        event.params.voter.toHexString(),
+        event.block.number,
+        amount
+    );
+
+    const account = loadOrCreateAccount(event.params.voter);
+    account.ecoVotingPower = event.params.newVotes;
+    account.save();
 }
 
 // ECO.NewPrimaryDelegate(address, address)
@@ -164,14 +168,9 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
         );
         record.save();
 
-        log.info("ECO Undelegating Primary (delegator {}) (delegatee {})", [
-            event.params.delegator.toHexString(),
-            delegator.ECODelegator!,
-        ]);
-
-        const delegateManager = new DelegatedVotesManager(
+        const delegateManager = DelegatedVotesManager.load(
             DelegatedVotesManager.ECO,
-            event.params.delegator,
+            delegator,
             Address.fromString(delegator.ECODelegator!)
         );
         delegateManager.undelegatePrimary(event.block.number);
@@ -186,26 +185,18 @@ export function handleDelegation(event: NewPrimaryDelegateEvent): void {
 export function handleDelegatedVotes(event: DelegatedVotesEvent): void {
     if (!event.receipt) return;
 
-    const delegateManager = new DelegatedVotesManager(
+    const delegateManager = DelegatedVotesManager.loadWithAddress(
         DelegatedVotesManager.ECO,
         event.params.delegator,
         event.params.delegatee
     );
 
     if (DelegatedVotesManager.isPrimaryDelegation(event)) {
-        log.info("Primary delegation (delegator {}) (delegatee {})", [
-            event.params.delegator.toHexString(),
-            event.params.delegatee.toHexString(),
-        ]);
         delegateManager.delegatePrimary(
             event.params.amount,
             event.block.number
         );
     } else {
-        log.info("Amount delegation (delegator {}) (delegatee {})", [
-            event.params.delegator.toHexString(),
-            event.params.delegatee.toHexString(),
-        ]);
         delegateManager.delegateAmount(event.params.amount, event.block.number);
     }
 

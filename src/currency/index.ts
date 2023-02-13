@@ -10,6 +10,8 @@ export function loadOrCreateAccount(address: Address): Account {
         account.sECOx = BigInt.zero();
         account.wECO = BigInt.zero();
         account.votes = BigInt.zero();
+        account.ecoVotingPower = BigInt.zero();
+        account.stakedEcoXVotingPower = BigInt.zero();
 
         account.ecoDelegationType = "None";
         account.stakedEcoXDelegationType = "None";
