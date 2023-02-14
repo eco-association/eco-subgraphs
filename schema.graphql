@@ -234,6 +234,7 @@ type PolicyVote @entity {
     ENACTION_DELAY: BigInt!
     totalVotingPower: BigInt!
     blockNumber: BigInt!
+    createdAtBlock: BigInt!
     proposal: CommunityProposal!
     result: VoteResult
     yesVoteAmount: BigInt!
