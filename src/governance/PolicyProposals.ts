@@ -135,10 +135,12 @@ export function handleVoteStart(event: VoteStartEvent): void {
 
     // get the policyVotes contract and grab additional arguments
     const policyVoteContract = PolicyVotes.bind(event.params.contractAddress);
+    const blockNumber = policyVoteContract.blockNumber();
+
+    newPolicyVotes.blockNumber = blockNumber;
+    newPolicyVotes.createdAtBlock = event.block.number;
     newPolicyVotes.voteEnds = policyVoteContract.voteEnds();
     newPolicyVotes.ENACTION_DELAY = policyVoteContract.ENACTION_DELAY();
-    const blockNumber = policyVoteContract.blockNumber();
-    newPolicyVotes.blockNumber = blockNumber;
 
     const votingPowerResult =
         policyVoteContract.try_totalVotingPower(blockNumber);
